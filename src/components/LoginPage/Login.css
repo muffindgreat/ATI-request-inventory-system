@@ -1,3 +1,8 @@
-.MuiContainer-root {
-  background-color: blueviolet;
+body {
+  background-image: url("/src/Assets/image.png");
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; */
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
