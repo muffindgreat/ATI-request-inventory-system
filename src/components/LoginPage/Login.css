@@ -6,3 +6,9 @@ body {
   background-position: center;
   overflow: hidden;
 }
+
+.logo {
+  /* width: 120px;
+  height: auto;
+  display: block; */
+}

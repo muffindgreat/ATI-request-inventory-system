@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styles from "./Login.css";
+import logo from "../Logo/atilogs.png";
+import { ImageListItem } from "@mui/material";
 import {
   TextField,
   Button,
@@ -22,7 +24,6 @@ export default function Login() {
     }
     setError("");
     console.log("Logging in with:", { email, password });
-    // Add authentication logic here
   };
 
   return (
@@ -34,6 +35,13 @@ export default function Login() {
         justifyContent="center"
         minHeight="100vh"
       >
+        {/* Logo Box */}
+        <Box sx={{ position: "absolute", top: -20, left: -100 }}>
+          <ImageListItem sx={{ width: 400, height: "auto" }}>
+            <img src={logo} alt="Logo" />
+          </ImageListItem>
+        </Box>
+        {/* Login Form */}
         <Box p={4} boxShadow={3} borderRadius={2} bgcolor="white" width="100%">
           <Typography variant="h5" align="center" gutterBottom>
             Login
