@@ -69,7 +69,32 @@ export default function MyRequests() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+      overflow: "hidden",
+    }}
+  >
+    {/* Full-Screen Background Image with Blur */}
+    <Box
+      sx={{
+        position: "fixed", // Ensure it covers everything
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100vh",
+        backgroundImage: `url('/image.png')`, // Ensure this image is inside `public/`
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        zIndex: -1, // Send it behind everything
+      }}
+    />
+
+    <Container maxWidth="sm" sx={{ mt: 10 }}>
       <Card elevation={3}>
         <CardHeader 
           title="My Requests" 
@@ -84,7 +109,8 @@ export default function MyRequests() {
             variant="fullWidth"
             sx={{
               ".MuiTabs-indicator": { backgroundColor: "#1A854B" },
-              ".MuiTab-root": { backgroundColor: "white", color: "#1A854B" },
+              ".MuiTab-root": { backgroundColor: "white", color: "#1A854B", textTransform: "none", 
+                fontSize: "1rem" }, 
               ".Mui-selected": { backgroundColor: "#78B99E", color: "#1A854B" }
             }}
           >
@@ -100,5 +126,6 @@ export default function MyRequests() {
         </CardContent>
       </Card>
     </Container>
+    </Box>
   );
 }

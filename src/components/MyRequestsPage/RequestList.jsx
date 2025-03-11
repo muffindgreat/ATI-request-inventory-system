@@ -11,34 +11,104 @@ export default function RequestList({ items }) {
 
           return (
             <Accordion key={index} sx={{ my: 1 }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ display: "flex", alignItems: "center" }}>
-                {/* Display First Material Image */}
-                {item.materials.length > 0 && (
-                  <CardMedia
-                    component="img"
-                    sx={{ width: 40, height: 40, borderRadius: 1, mr: 2 }}
-                    image={item.materials[0].image}
-                    alt={item.materials[0].name}
-                  />
-                )}
+<AccordionSummary 
+  expandIcon={<ExpandMoreIcon />} 
+  sx={{ 
+    display: "flex", 
+    alignItems: "center", 
+    justifyContent: "space-between",  // Keeps the badge aligned
+    gap: 1, 
+    flexWrap: "nowrap",  // 🚀 Prevents the badge from moving down
+    overflow: "hidden",
+    minWidth: 0
+  }}
+>
+  {/* Image */}
+  {item.materials.length > 0 && (
+    <CardMedia
+      component="img"
+      sx={{ 
+        width: 40, 
+        height: 40, 
+        borderRadius: 1, 
+        flexShrink: 0 
+      }}
+      image={item.materials[0].image}
+      alt={item.materials[0].name}
+    />
+  )}
 
-                <Box sx={{ flexGrow: 1 }}>
-                  {/* Main Material + More Indicator */}
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                    {firstMaterial} {moreItems && <Typography component="span" color="textSecondary">({moreItems})</Typography>}
-                  </Typography>
+  {/* Text & Date (Flexible Box) */}
+  <Box 
+    sx={{ 
+      flexGrow: 1, 
+      minWidth: 0, 
+      overflow: "hidden", 
+      display: "flex", 
+      flexDirection: "column",  
+      justifyContent: "center"
+    }}
+  >
+    {/* Name */}
+    <Typography 
+      variant="body1" 
+      sx={{ 
+        fontWeight: "bold", 
+        whiteSpace: "nowrap",  // 🚀 Prevents text from breaking into multiple lines
+        overflow: "hidden", 
+        textOverflow: "ellipsis",
+        maxWidth: "100%"
+      }}
+    >
+      {firstMaterial}{" "}
+      {moreItems && <Typography component="span" color="textSecondary">({moreItems})</Typography>}
+    </Typography>
 
-                  {/* Request Date */}
-                  {item.requestTime && (
-                    <Typography variant="caption" color="textSecondary">
-                      {item.requestTime}
-                    </Typography>
-                  )}
-                </Box>
+    {/* Date & Time */}
+    {item.requestTime && (
+      <Typography 
+        variant="caption" 
+        color="textSecondary" 
+        sx={{ 
+          whiteSpace: "nowrap", 
+          overflow: "hidden", 
+          textOverflow: "ellipsis", 
+          display: "block",
+          maxWidth: "100%"
+        }}
+      >
+        {item.requestTime}
+      </Typography>
+    )}
+  </Box>
 
-                {/* Request Status */}
-                <Chip label={item.status} color={item.status === "Pending" ? "warning" : "success"} size="small" />
-              </AccordionSummary>
+  {/* Status (Fixed to Right) */}
+  <Box 
+    sx={{ 
+      flexShrink: 0, 
+      minWidth: "fit-content", 
+      display: "flex", 
+      alignItems: "center"
+    }}
+  >
+    <Chip 
+      label={item.status} 
+      color={item.status === "Pending" ? "warning" : "success"} 
+      size="small" 
+      sx={{
+        borderRadius: 2,
+        height: 24,
+        minWidth: 60, 
+        justifyContent: "center",
+        whiteSpace: "nowrap"
+      }}
+    />
+  </Box>
+</AccordionSummary>
+
+
+
+
               <AccordionDetails>
                 {/* Request Details */}
                 <Typography variant="body2" color="textSecondary">
