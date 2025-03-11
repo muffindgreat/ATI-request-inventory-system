@@ -36,8 +36,8 @@ function Navbar() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null); // Isara ang menu kapag may pinindot
+  const handleMouseLeave = () => {
+    setAnchorElUser(null);
   };
 
   return (
@@ -69,8 +69,8 @@ function Navbar() {
 
             {/* Profile Icon with Hover and Click Menu */}
             {!isMobile && (
-              <Box onMouseEnter={handleMouseEnter}>
-                <IconButton>
+              <Box sx={{ position: "relative" }}>
+                <IconButton onMouseEnter={handleMouseEnter}>
                   <AccountCircleIcon
                     sx={{ color: "black", fontSize: "28px" }}
                   />
@@ -78,7 +78,10 @@ function Navbar() {
                 <Menu
                   anchorEl={anchorElUser}
                   open={Boolean(anchorElUser)}
-                  onClose={() => setAnchorElUser(null)}
+                  onClose={handleMouseLeave}
+                  MenuListProps={{
+                    onMouseLeave: handleMouseLeave, // ⬅️ Ito ang nag-aapply ng onMouseLeave sa menu mismo!
+                  }}
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                   sx={{
@@ -113,19 +116,19 @@ function Navbar() {
                     </Box>
                   </Box>
                   <MenuItem
-                    onClick={handleCloseUserMenu}
+                    onClick={handleMouseLeave}
                     sx={{ display: "flex", gap: 1 }}
                   >
                     <PersonIcon /> Profile
                   </MenuItem>
                   <MenuItem
-                    onClick={handleCloseUserMenu}
+                    onClick={handleMouseLeave}
                     sx={{ display: "flex", gap: 1 }}
                   >
                     <AssignmentIcon /> My Requests
                   </MenuItem>
                   <MenuItem
-                    onClick={handleCloseUserMenu}
+                    onClick={handleMouseLeave}
                     sx={{ display: "flex", gap: 1 }}
                   >
                     <ExitToAppIcon /> Sign Out
@@ -157,19 +160,19 @@ function Navbar() {
                 </ListItem>
                 <Divider />
                 <ListItem disablePadding>
-                  <ListItemButton onClick={handleCloseUserMenu}>
+                  <ListItemButton onClick={handleMouseLeave}>
                     <PersonIcon sx={{ marginRight: "10px" }} />
                     <ListItemText primary="Profile" />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                  <ListItemButton onClick={handleCloseUserMenu}>
+                  <ListItemButton onClick={handleMouseLeave}>
                     <AssignmentIcon sx={{ marginRight: "10px" }} />
                     <ListItemText primary="My Requests" />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                  <ListItemButton onClick={handleCloseUserMenu}>
+                  <ListItemButton onClick={handleMouseLeave}>
                     <ExitToAppIcon sx={{ marginRight: "10px" }} />
                     <ListItemText primary="Sign Out" />
                   </ListItemButton>
