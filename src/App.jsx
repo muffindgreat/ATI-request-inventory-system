@@ -14,8 +14,9 @@ function App() {
       {/* <Login /> */}
       {/* <Register /> */}
       {/* <MyRequests /> */}
-      <MostViewed />
+      {/* <MostViewed /> */}
       {/* <Library /> */}
+      {/* <SearchFilterBar /> */}
     </div>
   );
 }
