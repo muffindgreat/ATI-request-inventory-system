@@ -4,28 +4,22 @@ import Register from "./components/RegisterPage/Register";
 import Navbar from "./components/NavBar/Navbar";
 import MyRequests from "./pages/MyRequests/MyRequests";
 import MostViewed from "./components/LandingPage/MostViewed";
-import ItemInfo from "./components/ItemInfo/ItemDetails";
 import Library from "./components/LandingPage/Library";
-<<<<<<< HEAD
-import UserProfile from "./components/UserProfile";
-=======
 import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
->>>>>>> origin/master
+import ItemInfo from "./components/ItemInfo/ItemInfo";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   return (
     <div>
       {/* <Login /> */}
       {/* <Register /> */}
-      <MyRequests />
+      {/* <MyRequests /> */}
       {/* <MostViewed /> */}
       {/* <Library /> */}
-<<<<<<< HEAD
-      {/* <Navbar /> */}
-      <UserProfile />
-=======
       {/* <SearchFilterBar /> */}
->>>>>>> origin/master
+      {/* <ItemInfo /> */}
+      {/* <UserProfile /> */}
     </div>
   );
 }

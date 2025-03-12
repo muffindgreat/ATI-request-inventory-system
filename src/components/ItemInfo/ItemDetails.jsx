@@ -1,21 +1,6 @@
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Button,
-  Box,
-  Paper,
-  Container,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Typography, Button } from "@mui/material";
 
-export default function ItemInfo() {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+const ItemDetails = ({ isSmallScreen }) => {
   return (
     <Container
       maxWidth="md"
@@ -23,6 +8,8 @@ export default function ItemInfo() {
         display:"flex",
         alignContent:"center",
         alignItems:"center",
+        alignItems: "center",
+        justifyContent:"center",
         height:"95vh",
       }}
     >
@@ -80,25 +67,31 @@ export default function ItemInfo() {
               Categories
             </Typography>
 
-            <Box sx={{ display: "flex", gap: 2, mt: 2, flexDirection: isSmallScreen ? "column" : "row" }}>
-              <Button
-                variant="contained"
-                fullWidth={isSmallScreen}
-                sx={{ bgcolor: "green", color: "white" }}
-              >
-                Download PDF
-              </Button>
-              <Button
-                variant="contained"
-                fullWidth={isSmallScreen}
-                sx={{ bgcolor: "green", color: "white" }}
-              >
-                Add to Request Cart
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      </Paper>
-    </Container>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          mt: 2,
+          flexDirection: isSmallScreen ? "column" : "row",
+        }}
+      >
+        <Button
+          variant="contained"
+          fullWidth={isSmallScreen}
+          sx={{ bgcolor: "green", color: "white" }}
+        >
+          Download PDF
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth={isSmallScreen}
+          sx={{ bgcolor: "green", color: "white" }}
+        >
+          Add to Request Cart
+        </Button>
+      </Box>
+    </Box>
   );
-}
+};
+
+export default ItemDetails;
