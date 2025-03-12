@@ -45,7 +45,13 @@ const UserProfile = () => {
       </Box>
 
       <CardContent
-        sx={{ display: "flex", gap: 4, padding: 4, alignItems: "center" }}
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 4,
+          padding: 4,
+          alignItems: "center",
+        }}
       >
         {/* Profile Picture and Actions Section */}
         <Box
@@ -53,7 +59,7 @@ const UserProfile = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            width: "30%",
+            width: { xs: "100%", md: "30%" },
           }}
         >
           <Avatar sx={{ width: 80, height: 80, mb: 1 }} />
@@ -69,9 +75,9 @@ const UserProfile = () => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
             gap: 2,
-            width: "70%",
+            width: "100%",
           }}
         >
           <TextField
@@ -91,14 +97,14 @@ const UserProfile = () => {
             variant="outlined"
             size="small"
             fullWidth
-            sx={{ gridColumn: "span 2" }}
+            sx={{ gridColumn: { xs: "span 1", md: "span 2" } }}
           />
           <TextField
             label="Designation"
             variant="outlined"
             size="small"
             fullWidth
-            sx={{ gridColumn: "span 2" }}
+            sx={{ gridColumn: { xs: "span 1", md: "span 2" } }}
           />
           <TextField
             label="Section"
