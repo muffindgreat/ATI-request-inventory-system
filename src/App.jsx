@@ -9,6 +9,11 @@ import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
 import ItemInfo from "./components/ItemInfo/ItemInfo";
 import UserProfile from "./components/UserProfile/UserProfile";
 import MatsReq from "./pages/MaterialRequisition/MatsReq";
+import ItemInfo from "./components/ItemInfo/ItemDetails";
+import Library from "./components/LandingPage/Library";
+import UserProfile from "./components/UserProfile";
+import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
+import MatsReq from "./pages/MaterialRequisition/MatsReq";
 
 function App() {
   return (
@@ -22,6 +27,8 @@ function App() {
       {/* <ItemInfo /> */}
       {/* <UserProfile /> */}
       {/* <MatsReq /> */}
+      {/* // <Navbar/>
+      // <MatsReq/> */}
     </div>
   );
 }
