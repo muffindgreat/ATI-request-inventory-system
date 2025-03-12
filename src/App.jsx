@@ -5,6 +5,7 @@ import Navbar from "./components/NavBar/Navbar";
 import MyRequests from "./components/MyRequestsPage/MyRequests";
 import MostViewed from "./components/LandingPage/MostViewed";
 import Library from "./components/LandingPage/Library";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   return (
@@ -12,8 +13,10 @@ function App() {
       {/* <Login /> */}
       {/* <Register /> */}
       {/* <MyRequests /> */}
-      <MostViewed />
+      {/* <MostViewed /> */}
       {/* <Library /> */}
+      {/* <Navbar /> */}
+      <UserProfile />
     </div>
   );
 }
