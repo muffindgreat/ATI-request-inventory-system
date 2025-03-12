@@ -13,7 +13,7 @@ const MostViewed = () => {
         variant="h6"
         sx={{ whiteSpace: "pre-line", textAlign: "center", mt: 2 }}
       >
-        Line One {"\n"} Line Two
+        {"\n"}
       </Typography>
 
       <Box
