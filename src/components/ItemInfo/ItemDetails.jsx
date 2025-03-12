@@ -23,8 +23,6 @@ export default function ItemInfo() {
         display:"flex",
         alignContent:"center",
         alignItems:"center",
-        alignItems: "center",
-        justifyContent:"center",
         height:"95vh",
       }}
     >
