@@ -6,17 +6,26 @@ import MyRequests from "./pages/MyRequests/MyRequests";
 import MostViewed from "./components/LandingPage/MostViewed";
 import ItemInfo from "./components/ItemInfo/ItemDetails";
 import Library from "./components/LandingPage/Library";
+<<<<<<< HEAD
+import UserProfile from "./components/UserProfile";
+=======
+import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
+>>>>>>> origin/master
 
 function App() {
   return (
     <div>
       {/* <Login /> */}
       {/* <Register /> */}
-      <Navbar />
       <MyRequests />
       {/* <MostViewed /> */}
-      {/* <ItemInfo /> */}
       {/* <Library /> */}
+<<<<<<< HEAD
+      {/* <Navbar /> */}
+      <UserProfile />
+=======
+      {/* <SearchFilterBar /> */}
+>>>>>>> origin/master
     </div>
   );
 }
