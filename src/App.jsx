@@ -5,6 +5,7 @@ import Navbar from "./components/NavBar/Navbar";
 import MyRequests from "./components/MyRequestsPage/MyRequests";
 import MostViewed from "./components/LandingPage/MostViewed";
 import Library from "./components/LandingPage/Library";
+import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
       {/* <Register /> */}
       {/* <MyRequests /> */}
       <MostViewed />
-      {/* <Library /> */}
+      <SearchFilterBar />
+      <Library />
     </div>
   );
 }
