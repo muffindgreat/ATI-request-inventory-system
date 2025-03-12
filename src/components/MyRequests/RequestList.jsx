@@ -1,9 +1,9 @@
-import { Accordion, AccordionSummary, AccordionDetails, Card, Typography, Box, CardMedia, Chip, Stack } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, CardMedia, Chip, Stack, Card } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function RequestList({ items }) {
   return (
-    <Box>
+    <Box sx={{ mt: 2, width: "100%", overflow: "hidden" }}>
       {items.length > 0 ? (
         items.map((item, index) => {
           const firstMaterial = item.materials[0]?.name || "No materials";
@@ -11,103 +11,95 @@ export default function RequestList({ items }) {
 
           return (
             <Accordion key={index} sx={{ my: 1 }}>
-<AccordionSummary 
-  expandIcon={<ExpandMoreIcon />} 
-  sx={{ 
-    display: "flex", 
-    alignItems: "center", 
-    justifyContent: "space-between",  // Keeps the badge aligned
-    gap: 1, 
-    flexWrap: "nowrap",  // 🚀 Prevents the badge from moving down
-    overflow: "hidden",
-    minWidth: 0
-  }}
->
-  {/* Image */}
-  {item.materials.length > 0 && (
-    <CardMedia
-      component="img"
-      sx={{ 
-        width: 40, 
-        height: 40, 
-        borderRadius: 1, 
-        flexShrink: 0 
-      }}
-      image={item.materials[0].image}
-      alt={item.materials[0].name}
-    />
-  )}
-
-  {/* Text & Date (Flexible Box) */}
-  <Box 
-    sx={{ 
-      flexGrow: 1, 
-      minWidth: 0, 
-      overflow: "hidden", 
-      display: "flex", 
-      flexDirection: "column",  
-      justifyContent: "center"
+<AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ width: "100%" }}>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      width: "100%",
+      gap: 2,
+      flexWrap: "wrap", // ✅ Wraps content when needed
+      justifyContent: "space-between",
     }}
   >
-    {/* Name */}
-    <Typography 
-      variant="body1" 
-      sx={{ 
-        fontWeight: "bold", 
-        whiteSpace: "nowrap",  // 🚀 Prevents text from breaking into multiple lines
-        overflow: "hidden", 
-        textOverflow: "ellipsis",
-        maxWidth: "100%"
+    {/* Left Section: Image + Title + (+ more) */}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flex: 1, // ✅ Allows expansion
+        minWidth: 0, // ✅ Prevents text overflow issues
+        gap: 2,
       }}
     >
-      {firstMaterial}{" "}
-      {moreItems && <Typography component="span" color="textSecondary">({moreItems})</Typography>}
-    </Typography>
+      {/* Image */}
+      {item.materials.length > 0 && (
+        <CardMedia
+          component="img"
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: 1,
+            flexShrink: 0,
+          }}
+          image={item.materials[0].image}
+          alt={item.materials[0].name}
+        />
+      )}
 
-    {/* Date & Time */}
-    {item.requestTime && (
-      <Typography 
-        variant="caption" 
-        color="textSecondary" 
-        sx={{ 
-          whiteSpace: "nowrap", 
-          overflow: "hidden", 
-          textOverflow: "ellipsis", 
-          display: "block",
-          maxWidth: "100%"
+      {/* Title + (+ more) wrapped in one container */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          minWidth: 0, // ✅ Prevents text overflow issues
+          display: "flex",
+          flexWrap: "wrap", // ✅ Ensures (+ more) does not collide with chip
+          alignItems: "center",
+          gap: 0.5,
         }}
       >
-        {item.requestTime}
-      </Typography>
-    )}
-  </Box>
+        {/* Name */}
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight: "bold",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {firstMaterial}
+        </Typography>
 
-  {/* Status (Fixed to Right) */}
-  <Box 
-    sx={{ 
-      flexShrink: 0, 
-      minWidth: "fit-content", 
-      display: "flex", 
-      alignItems: "center"
-    }}
-  >
-    <Chip 
-      label={item.status} 
-      color={item.status === "Pending" ? "warning" : "success"} 
-      size="small" 
+        {/* (+ more) should stay close to the title */}
+        {moreItems && (
+          <Typography
+            component="span"
+            color="textSecondary"
+            sx={{ whiteSpace: "nowrap" }}
+          >
+            ({moreItems})
+          </Typography>
+        )}
+      </Box>
+    </Box>
+
+    {/* Right Section: Status Chip */}
+    <Chip
+      label={item.status}
+      color={item.status === "Pending" ? "warning" : "success"}
+      size="small"
       sx={{
         borderRadius: 2,
         height: 24,
-        minWidth: 60, 
+        minWidth: 80,
         justifyContent: "center",
-        whiteSpace: "nowrap"
+        whiteSpace: "nowrap",
+        flexShrink: 0, // ✅ Prevents resizing issues
       }}
     />
   </Box>
 </AccordionSummary>
-
-
-
 
               <AccordionDetails>
                 {/* Request Details */}
@@ -163,7 +155,7 @@ export default function RequestList({ items }) {
           );
         })
       ) : (
-        <Typography>No requests found.</Typography>
+        <Typography>No Requests Found</Typography>
       )}
     </Box>
   );
