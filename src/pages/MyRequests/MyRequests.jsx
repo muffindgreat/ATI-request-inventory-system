@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Container, Tabs, Tab, Box, Card, CardHeader, CardContent } from "@mui/material";
-import RequestList from "./RequestList";
+import RequestList from "../../components/MyRequests/RequestList";
 
 export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
