@@ -9,13 +9,13 @@ import {
   MenuItem,
   Container,
   Button,
-  Tooltip,
   useMediaQuery,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -32,9 +32,13 @@ function Navbar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
-  const handleCloseUserMenu = () => setAnchorElUser(null);
-  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  const handleMouseEnter = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleMouseLeave = () => {
+    setAnchorElUser(null);
+  };
 
   return (
     <AppBar
@@ -62,86 +66,120 @@ function Navbar() {
             <IconButton>
               <ShoppingCartIcon sx={{ color: "black", fontSize: "24px" }} />
             </IconButton>
-            <Tooltip title="User Profile">
-              <IconButton onClick={handleOpenUserMenu}>
-                <AccountCircleIcon sx={{ color: "black", fontSize: "28px" }} />
-              </IconButton>
-            </Tooltip>
+
+            {/* Profile Icon with Hover and Click Menu */}
+            {!isMobile && (
+              <Box sx={{ position: "relative" }}>
+                <IconButton onMouseEnter={handleMouseEnter}>
+                  <AccountCircleIcon
+                    sx={{ color: "black", fontSize: "28px" }}
+                  />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorElUser}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleMouseLeave}
+                  MenuListProps={{
+                    onMouseLeave: handleMouseLeave, // ⬅️ Ito ang nag-aapply ng onMouseLeave sa menu mismo!
+                  }}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  sx={{
+                    mt: "10px",
+                    "& .MuiPaper-root": {
+                      borderRadius: "20px",
+                      backgroundColor: "#187737",
+                      padding: "10px",
+                      minWidth: "220px",
+                      color: "white",
+                      zIndex: 1302,
+                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      paddingBottom: "10px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
+                    }}
+                  >
+                    <AccountCircleIcon
+                      sx={{ fontSize: "40px", color: "white" }}
+                    />
+                    <Box sx={{ textAlign: "center", mt: 1 }}>
+                      <strong>Name</strong>
+                      <br />
+                      <small>Role</small>
+                    </Box>
+                  </Box>
+                  <MenuItem
+                    onClick={handleMouseLeave}
+                    sx={{ display: "flex", gap: 1 }}
+                  >
+                    <PersonIcon /> Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleMouseLeave}
+                    sx={{ display: "flex", gap: 1 }}
+                  >
+                    <AssignmentIcon /> My Requests
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleMouseLeave}
+                    sx={{ display: "flex", gap: 1 }}
+                  >
+                    <ExitToAppIcon /> Sign Out
+                  </MenuItem>
+                </Menu>
+              </Box>
+            )}
+
+            {/* Mobile Menu Icon */}
             {isMobile && (
-              <IconButton onClick={handleDrawerToggle}>
+              <IconButton onClick={() => setMobileOpen(!mobileOpen)}>
                 <MenuIcon sx={{ color: "black", fontSize: "28px" }} />
               </IconButton>
             )}
           </Box>
 
-          {/* Mobile Drawer (HOME Button) */}
-          <Drawer anchor="right" open={mobileOpen} onClose={handleDrawerToggle}>
-            <Box sx={{ width: 250 }}>
+          {/* Mobile Drawer (Sidebar) */}
+          <Drawer
+            anchor="right"
+            open={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+          >
+            <Box sx={{ width: 250, paddingTop: "10px" }}>
               <List>
                 <ListItem disablePadding>
-                  <ListItemButton onClick={handleDrawerToggle}>
+                  <ListItemButton onClick={() => setMobileOpen(false)}>
                     <ListItemText primary="HOME" />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+                <ListItem disablePadding>
+                  <ListItemButton onClick={handleMouseLeave}>
+                    <PersonIcon sx={{ marginRight: "10px" }} />
+                    <ListItemText primary="Profile" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={handleMouseLeave}>
+                    <AssignmentIcon sx={{ marginRight: "10px" }} />
+                    <ListItemText primary="My Requests" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={handleMouseLeave}>
+                    <ExitToAppIcon sx={{ marginRight: "10px" }} />
+                    <ListItemText primary="Sign Out" />
                   </ListItemButton>
                 </ListItem>
               </List>
             </Box>
           </Drawer>
-
-          {/* Profile Dropdown Menu */}
-          <Menu
-            sx={{
-              mt: "10px",
-              "& .MuiPaper-root": {
-                borderRadius: "20px",
-                backgroundColor: "#187737",
-                padding: "10px",
-                minWidth: "220px",
-                color: "white",
-                zIndex: 1302,
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-              },
-            }}
-            anchorEl={anchorElUser}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                paddingBottom: "10px",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
-              }}
-            >
-              <AccountCircleIcon sx={{ fontSize: "40px", color: "white" }} />
-              <Box sx={{ textAlign: "center", mt: 1 }}>
-                <strong>Name</strong>
-                <br />
-                <small>Role</small>
-              </Box>
-            </Box>
-            <MenuItem
-              onClick={handleCloseUserMenu}
-              sx={{ display: "flex", gap: 1 }}
-            >
-              <PersonIcon /> Profile
-            </MenuItem>
-            <MenuItem
-              onClick={handleCloseUserMenu}
-              sx={{ display: "flex", gap: 1 }}
-            >
-              <AssignmentIcon /> My Requests
-            </MenuItem>
-            <MenuItem
-              onClick={handleCloseUserMenu}
-              sx={{ display: "flex", gap: 1 }}
-            >
-              <ExitToAppIcon /> Sign Out
-            </MenuItem>
-          </Menu>
         </Toolbar>
       </Container>
     </AppBar>

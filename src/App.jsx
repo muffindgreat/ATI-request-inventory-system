@@ -4,6 +4,7 @@ import Register from "./components/RegisterPage/Register";
 import Navbar from "./components/NavBar/Navbar";
 import MyRequests from "./components/MyRequestsPage/MyRequests";
 import MostViewed from "./components/LandingPage/MostViewed";
+import ItemInfo from "./components/ItemInfo/ItemDetails";
 import Library from "./components/LandingPage/Library";
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
       {/* <Login /> */}
       {/* <Register /> */}
       {/* <MyRequests /> */}
-      <MostViewed />
+      {/* <MostViewed /> */}
+      <ItemInfo />
       {/* <Library /> */}
     </div>
   );
