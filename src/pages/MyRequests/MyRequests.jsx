@@ -78,7 +78,7 @@ export default function MyRequests() {
       overflow: "hidden",
     }}
   >
-    {/* Full-Screen Background Image with Blur */}
+    {/* Full-Screen Background Image with Blur
     <Box
       sx={{
         position: "fixed", // Ensure it covers everything
@@ -91,7 +91,7 @@ export default function MyRequests() {
         backgroundPosition: "center",
         zIndex: -1, // Send it behind everything
       }}
-    />
+    /> */}
 
     <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
       <Card elevation={3}>
