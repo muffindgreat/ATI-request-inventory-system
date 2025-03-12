@@ -9,7 +9,7 @@ export default function MyRequests() {
   const allRequests = [
     {
       status: "Pending",
-      requestTime: "March 10, 2025, 08:30 AM",
+      requestedTime: "March 10, 2025, 08:30 AM",
       acknowledgedTime: "March 10, 2025, 10:15 AM",
       completedTime: null, // Pending, so no completed time
       materials: [
@@ -31,7 +31,7 @@ export default function MyRequests() {
     },
     {
       status: "Completed",
-      requestTime: "March 8, 2025, 09:00 AM",
+      requestedTime: "March 8, 2025, 09:00 AM",
       acknowledgedTime: "March 8, 2025, 11:30 AM",
       completedTime: "March 9, 2025, 02:00 PM",
       materials: [
