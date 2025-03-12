@@ -24,7 +24,8 @@ export default function ItemInfo() {
         alignContent:"center",
         alignItems:"center",
         alignItems: "center",
-        height: "100vh",
+        justifyContent:"center",
+        height:"95vh",
       }}
     >
       <Paper
