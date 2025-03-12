@@ -12,6 +12,7 @@ function App() {
     <div>
       {/* <Login /> */}
       {/* <Register /> */}
+      <Navbar />
       <MyRequests />
       {/* <MostViewed /> */}
       {/* <ItemInfo /> */}

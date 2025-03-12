@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Container, Tabs, Tab, Box, Card, CardHeader, CardContent } from "@mui/material";
 import RequestList from "../../components/MyRequests/RequestList";
+import RequestTabs from "../../components/MyRequests/RequestTabs";
 
 export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -94,30 +95,14 @@ export default function MyRequests() {
       }}
     />
 
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
+    <Container maxWidth="lg" sx={{ mt: 10 }}>
       <Card elevation={3}>
         <CardHeader 
           title="My Requests" 
           sx={{ backgroundColor: "#1A854B", color: "white", textAlign: "center" }} 
         />
         <CardContent>
-          <Tabs 
-            value={tabIndex} 
-            onChange={handleChange} 
-            textColor="inherit"
-            indicatorColor="primary"
-            variant="fullWidth"
-            sx={{
-              ".MuiTabs-indicator": { backgroundColor: "#1A854B" },
-              ".MuiTab-root": { backgroundColor: "white", color: "#1A854B", textTransform: "none", 
-                fontSize: "1rem" }, 
-              ".Mui-selected": { backgroundColor: "#78B99E", color: "#1A854B" }
-            }}
-          >
-            <Tab label="All" />
-            <Tab label="Pending" />
-            <Tab label="Completed" />
-          </Tabs>
+        <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
           <Box sx={{ mt: 2 }}>
             {tabIndex === 0 && <RequestList items={allRequests} />}
             {tabIndex === 1 && <RequestList items={pendingRequests} />}
