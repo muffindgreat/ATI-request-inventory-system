@@ -60,8 +60,6 @@ export default function MyRequests() {
     }
   ];
   
-  
-
   const pendingRequests = allRequests.filter((req) => req.status === "Pending");
   const completedRequests = allRequests.filter((req) => req.status === "Completed");
 
@@ -95,7 +93,7 @@ export default function MyRequests() {
       }}
     />
 
-    <Container maxWidth="lg" sx={{ mt: 10 }}>
+    <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
       <Card elevation={3}>
         <CardHeader 
           title="My Requests" 

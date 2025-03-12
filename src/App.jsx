@@ -7,7 +7,7 @@ import MostViewed from "./components/LandingPage/MostViewed";
 import Library from "./components/LandingPage/Library";
 import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
 import ItemInfo from "./components/ItemInfo/ItemInfo";
-import UserProfile from "./components/UserProfile";
+import UserProfile from "./components/UserProfile/UserProfile";
 
 function App() {
   return (
