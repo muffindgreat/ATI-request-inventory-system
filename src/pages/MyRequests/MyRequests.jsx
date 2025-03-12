@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Container, Tabs, Tab, Box, Card, CardHeader, CardContent } from "@mui/material";
 import RequestList from "../../components/MyRequests/RequestList";
+import RequestTabs from "../../components/MyRequests/RequestTabs";
 
 export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -8,7 +9,7 @@ export default function MyRequests() {
   const allRequests = [
     {
       status: "Pending",
-      requestTime: "March 10, 2025, 08:30 AM",
+      requestedTime: "March 10, 2025, 08:30 AM",
       acknowledgedTime: "March 10, 2025, 10:15 AM",
       completedTime: null, // Pending, so no completed time
       materials: [
@@ -30,7 +31,7 @@ export default function MyRequests() {
     },
     {
       status: "Completed",
-      requestTime: "March 8, 2025, 09:00 AM",
+      requestedTime: "March 8, 2025, 09:00 AM",
       acknowledgedTime: "March 8, 2025, 11:30 AM",
       completedTime: "March 9, 2025, 02:00 PM",
       materials: [
@@ -59,8 +60,6 @@ export default function MyRequests() {
     }
   ];
   
-  
-
   const pendingRequests = allRequests.filter((req) => req.status === "Pending");
   const completedRequests = allRequests.filter((req) => req.status === "Completed");
 
@@ -94,30 +93,14 @@ export default function MyRequests() {
       }}
     />
 
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
+    <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
       <Card elevation={3}>
         <CardHeader 
           title="My Requests" 
           sx={{ backgroundColor: "#1A854B", color: "white", textAlign: "center" }} 
         />
         <CardContent>
-          <Tabs 
-            value={tabIndex} 
-            onChange={handleChange} 
-            textColor="inherit"
-            indicatorColor="primary"
-            variant="fullWidth"
-            sx={{
-              ".MuiTabs-indicator": { backgroundColor: "#1A854B" },
-              ".MuiTab-root": { backgroundColor: "white", color: "#1A854B", textTransform: "none", 
-                fontSize: "1rem" }, 
-              ".Mui-selected": { backgroundColor: "#78B99E", color: "#1A854B" }
-            }}
-          >
-            <Tab label="All" />
-            <Tab label="Pending" />
-            <Tab label="Completed" />
-          </Tabs>
+        <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
           <Box sx={{ mt: 2 }}>
             {tabIndex === 0 && <RequestList items={allRequests} />}
             {tabIndex === 1 && <RequestList items={pendingRequests} />}
