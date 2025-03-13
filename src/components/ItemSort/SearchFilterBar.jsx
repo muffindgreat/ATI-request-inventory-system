@@ -4,14 +4,14 @@ import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import CategoryButtons from "./CategoryButtons";
 
-const SearchFilterBar = () => {
+const SearchFilterBar = ({ onCategoryChange }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState(null);
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleFilterChange = (order) => setFilter(order);
-  const handleCategorySelect = (category) => console.log("Selected:", category);
+  const handleCategorySelect = (category) => onCategoryChange(category);
 
   return (
     <Box

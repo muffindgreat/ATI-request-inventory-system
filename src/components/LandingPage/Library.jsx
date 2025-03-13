@@ -1,38 +1,50 @@
 import React from "react";
-import { Box, Grid, Card, CardMedia } from "@mui/material";
+import { Card, CardMedia, Grid, Container } from "@mui/material";
 
-const images = [
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-  "https://via.placeholder.com/150",
-];
-
-const ImageLibrary = () => {
+// ImageCard Component
+const ImageCard = ({ src, alt }) => {
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
+    <Card sx={{ width: "100%", aspectRatio: "9 / 16", boxShadow: 2, borderRadius: 2 }}>
+      <CardMedia
+        component="img"
+        image={src || "https://via.placeholder.com/150"}
+        alt={alt || "Image"}
+        sx={{ width: "100%", height: "100%", objectFit: "cover" }} // Ensures full coverage
+      />
+    </Card>
+  );
+};
+
+// ImageLibrary Component
+const ImageLibrary = ({ selectedCategory }) => {
+  const images = [
+    { src: "/ngulay.jpg", category: "Rice" },
+    { src: "/isda.jpg", category: "Corn" },
+    { src: "/broiler.jpg", category: "Coconut" },
+    { src: "/organic.jpg", category: "Rice" },
+    { src: "/vege.jpg", category: "Corn" },
+    { src: "/vege.jpg", category: "Corn" },
+    { src: "/organic.jpg", category: "Rice" },
+    { src: "/broiler.jpg", category: "Coconut" },
+    { src: "/isda.jpg", category: "Corn" },
+    { src: "/ngulay.jpg", category: "Rice" },
+  ];
+
+  // Filter images based on selected category
+  const filteredImages = selectedCategory
+    ? images.filter((img) => img.category === selectedCategory)
+    : images;
+
+  return (
+    <Container sx={{ pt: 3 }}>
       <Grid container spacing={2} justifyContent="center">
-        {images.map((src, index) => (
-          <Grid item xs={6} sm={4} md={3} lg={2} key={index}>
-            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-              <CardMedia
-                component="img"
-                height="200"
-                image={src}
-                alt={`Image ${index + 1}`}
-                sx={{ objectFit: "cover" }}
-              />
-            </Card>
+        {filteredImages.map((img, index) => (
+          <Grid item key={index} xs={10} sm={6} md={4} lg={3} xl={2.4}>
+            <ImageCard src={img.src} alt={img.category} />
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 
