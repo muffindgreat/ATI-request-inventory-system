@@ -9,7 +9,7 @@ export default function MyRequests() {
   const allRequests = [
     {
       status: "Pending",
-      requestTime: "March 10, 2025, 08:30 AM",
+      requestedTime: "March 10, 2025, 08:30 AM",
       acknowledgedTime: "March 10, 2025, 10:15 AM",
       completedTime: null, // Pending, so no completed time
       materials: [
@@ -31,7 +31,7 @@ export default function MyRequests() {
     },
     {
       status: "Completed",
-      requestTime: "March 8, 2025, 09:00 AM",
+      requestedTime: "March 8, 2025, 09:00 AM",
       acknowledgedTime: "March 8, 2025, 11:30 AM",
       completedTime: "March 9, 2025, 02:00 PM",
       materials: [
@@ -60,8 +60,6 @@ export default function MyRequests() {
     }
   ];
   
-  
-
   const pendingRequests = allRequests.filter((req) => req.status === "Pending");
   const completedRequests = allRequests.filter((req) => req.status === "Completed");
 
@@ -80,7 +78,7 @@ export default function MyRequests() {
       overflow: "hidden",
     }}
   >
-    {/* Full-Screen Background Image with Blur */}
+    {/* Full-Screen Background Image with Blur
     <Box
       sx={{
         position: "fixed", // Ensure it covers everything
@@ -93,9 +91,9 @@ export default function MyRequests() {
         backgroundPosition: "center",
         zIndex: -1, // Send it behind everything
       }}
-    />
+    /> */}
 
-    <Container maxWidth="lg" sx={{ mt: 10 }}>
+    <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
       <Card elevation={3}>
         <CardHeader 
           title="My Requests" 
