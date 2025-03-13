@@ -1,9 +1,16 @@
 import { Button, Stack, useMediaQuery } from "@mui/material";
+import { useState } from "react";
 
-const categories = ["Rice", "Corn", "Coconut"];
+const categories = ["All", "Rice", "Corn", "Coconut"];
 
 const CategoryButtons = ({ onSelect }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const handleClick = (category) => {
+    setActiveCategory(category);
+    onSelect(category === "All" ? null : category); // Reset filter if "All" is selected
+  };
 
   return (
     <Stack
@@ -16,10 +23,10 @@ const CategoryButtons = ({ onSelect }) => {
       {categories.map((category) => (
         <Button
           key={category}
-          variant="contained"
+          variant={activeCategory === category ? "contained" : "outlined"}
           sx={{
-            bgcolor: "white",
-            color: "black",
+            bgcolor: activeCategory === category ? "green" : "white",
+            color: activeCategory === category ? "white" : "black",
             borderRadius: "20px",
             textTransform: "none",
             fontWeight: "bold",
@@ -27,7 +34,7 @@ const CategoryButtons = ({ onSelect }) => {
             fontSize: isMobile ? "12px" : "14px",
             "&:hover": { bgcolor: "lightgray" },
           }}
-          onClick={() => onSelect(category)}
+          onClick={() => handleClick(category)}
         >
           {category}
         </Button>

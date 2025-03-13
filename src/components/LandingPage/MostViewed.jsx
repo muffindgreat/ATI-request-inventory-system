@@ -9,12 +9,10 @@ const MostViewed = () => {
   const images = [
     { src: "/ngulay.jpg", views: 10027, link: "#" },
     { src: "/isda.jpg", views: 14136, link: "#" },
-    { src: "/ngulay.jpg", views: 10027, link: "#" },
-    { src: "/isda.jpg", views: 14136, link: "#" },
-    { src: "/ngulay.jpg", views: 10027, link: "#" },
-    { src: "/isda.jpg", views: 14136, link: "#" },
-    { src: "/ngulay.jpg", views: 10027, link: "#" },
-    { src: "/isda.jpg", views: 14136, link: "#" },
+    { src: "/broiler.jpg", views: 10027, link: "#" },
+    { src: "/organic.jpg", views: 14136, link: "#" },
+    { src: "/vege.jpg", views: 14136, link: "#" },
+    
   ];
 
   const settings = {
@@ -78,13 +76,29 @@ const MostViewed = () => {
                       {item.views}
                     </Typography>
                   </Box>
-                  <Box sx={{ width: "100%", height: 450, overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "none" }}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: 450, // Fixed height
+                      overflow: "hidden",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "none",
+                      position: "relative",
+                    }}
+                  >
                     <img
                       src={item.src}
                       alt={`Publication ${index + 1}`}
-                      style={{ maxWidth: "100%", maxHeight: "400px", objectFit: "cover" }}
+                      style={{
+                        width: 250, // Fixed width
+                        height: 450, // Fixed height
+                        objectFit: "cover",
+                      }}
                     />
                   </Box>
+
                 </a>
               </Box>
             ))}
