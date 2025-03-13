@@ -9,6 +9,7 @@ import MostViewed from "./components/LandingPage/MostViewed";
 //import UserProfile from "./components/UserProfile";
 //import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
 import MatsReq from "./pages/MaterialRequisition/MatsReq";
+import ReqCart from "./pages/RequestCart/ReqCart";
 
 
 function App() {
@@ -21,7 +22,8 @@ function App() {
       {/* <Library /> */}
       {/* <SearchFilterBar /> */}
       <Navbar/>
-      <MatsReq/>
+      {/* <MatsReq/> */}
+      <ReqCart/>
     </div>
   );
 }
