@@ -8,7 +8,6 @@ const ItemDetails = ({ isSmallScreen }) => {
         display:"flex",
         alignContent:"center",
         alignItems:"center",
-        alignItems: "center",
         justifyContent:"center",
         height:"95vh",
       }}
@@ -91,6 +90,9 @@ const ItemDetails = ({ isSmallScreen }) => {
         </Button>
       </Box>
     </Box>
+  </Box>
+  </Paper>
+  </Container>
   );
 };
 
