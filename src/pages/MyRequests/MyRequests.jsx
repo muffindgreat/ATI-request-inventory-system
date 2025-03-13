@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Container, Tabs, Tab, Box, Card, CardHeader, CardContent } from "@mui/material";
-import RequestList from "../../components/MyRequests/RequestList";
+import RequestList from "../../components/MyRequests/RequestList3";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
+import BackgroundImage from "../../components/UI/BackgroundImage";
+import bgImage from "/image.png";
 
 export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -11,20 +13,13 @@ export default function MyRequests() {
       status: "Pending",
       requestedTime: "March 10, 2025, 08:30 AM",
       acknowledgedTime: "March 10, 2025, 10:15 AM",
-      completedTime: null, // Pending, so no completed time
+      completedTime: null,
       materials: [
         { 
           name: "Fisheries Guide Book", 
           quantity: 10, 
           type: "Book", 
-          bannerPrograms: ["Fisheries"], 
-          image: "https://via.placeholder.com/64" 
-        },
-        { 
-          name: "Rice & Corn Flyer", 
-          quantity: 5, 
-          type: "Flyer", 
-          bannerPrograms: ["Rice", "Corn"], 
+          bannerPrograms: ["Livestock", "Poultry", "Agriculture"], 
           image: "https://via.placeholder.com/64" 
         }
       ]
@@ -46,7 +41,7 @@ export default function MyRequests() {
           name: "Livestock Booklet", 
           quantity: 12, 
           type: "Booklet", 
-          bannerPrograms: ["Livestock", "Poultry"], 
+          bannerPrograms: ["Livestock", "Poultry", "Farm"], 
           image: "https://via.placeholder.com/64" 
         },
         { 
@@ -78,20 +73,8 @@ export default function MyRequests() {
       overflow: "hidden",
     }}
   >
-    {/* Full-Screen Background Image with Blur
-    <Box
-      sx={{
-        position: "fixed", // Ensure it covers everything
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100vh",
-        backgroundImage: `url('/image.png')`, // Ensure this image is inside `public/`
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        zIndex: -1, // Send it behind everything
-      }}
-    /> */}
+
+    <BackgroundImage imageUrl={bgImage} />
 
     <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
       <Card elevation={3}>
