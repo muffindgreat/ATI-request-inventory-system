@@ -15,7 +15,7 @@ import { Divider } from "@mui/material";
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
 export default function RequestList({ items }) {
-  console.log("RequestList Items:", items); // ✅ Debugging output
+  // console.log("RequestList Items:", items);
 
   return (
     <Box sx={{ mt: 2, width: "100%", overflow: "hidden" }}>
