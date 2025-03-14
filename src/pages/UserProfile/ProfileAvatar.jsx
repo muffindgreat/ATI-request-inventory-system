@@ -20,7 +20,7 @@ const ProfileAvatar = ({ profilePic, handleFileChange, setOpenModal }) => (
       onChange={handleFileChange}
     />
     <Button
-      sx={{ textTransform: "none" }}
+      sx={{ textTransform: "none", width: 200 }}
       variant="text"
       color="primary"
       onClick={() => document.getElementById("profile-pic-input").click()}
@@ -28,7 +28,7 @@ const ProfileAvatar = ({ profilePic, handleFileChange, setOpenModal }) => (
       Change Profile Picture
     </Button>
     <Button
-      sx={{ textTransform: "none" }}
+      sx={{ textTransform: "none", width: 200 }}
       variant="text"
       color="primary"
       onClick={() => setOpenModal(true)}

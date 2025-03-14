@@ -15,24 +15,76 @@ import {
   Box,
   Stack,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
 export default function ReqCart() {
+  const navigate = useNavigate(); // Initialize navigate
   // State for cart items
   const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Book A", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 2, name: "Book B", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 3, name: "Book C", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 4, name: "Book D", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 5, name: "Book E", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 6, name: "Book F", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 7, name: "Book G", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 8, name: "Book H", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 9, name: "Book I", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
-    { id: 10, name: "Book J", image: "https://dummyimage.com/60x60/000/fff", quantity: 1 },
+    {
+      id: 1,
+      name: "Book A",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 2,
+      name: "Book B",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 3,
+      name: "Book C",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 4,
+      name: "Book D",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 5,
+      name: "Book E",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 6,
+      name: "Book F",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 7,
+      name: "Book G",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 8,
+      name: "Book H",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 9,
+      name: "Book I",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
+    {
+      id: 10,
+      name: "Book J",
+      image: "https://dummyimage.com/60x60/000/fff",
+      quantity: 1,
+    },
   ]);
 
   // State for selected items (checkbox selections)
@@ -49,7 +101,9 @@ export default function ReqCart() {
   const handleQuantityChange = (id, amount) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
+        item.id === id
+          ? { ...item, quantity: Math.max(1, item.quantity + amount) }
+          : item
       )
     );
   };
@@ -109,18 +163,30 @@ export default function ReqCart() {
             ) : (
               <>
                 {/* Select All & Delete Options */}
-                <Box display="flex" alignItems="center" mb={2} justifyContent="space-between">
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  mb={2}
+                  justifyContent="space-between"
+                >
                   {/* Select All */}
                   <Box sx={{ display: "flex", alignItems: "center", ml: 0.5 }}>
                     <Checkbox
-                      checked={selectedItems.length === cartItems.length && cartItems.length > 0}
+                      checked={
+                        selectedItems.length === cartItems.length &&
+                        cartItems.length > 0
+                      }
                       onChange={() =>
                         setSelectedItems(
-                          selectedItems.length === cartItems.length ? [] : cartItems.map((item) => item.id)
+                          selectedItems.length === cartItems.length
+                            ? []
+                            : cartItems.map((item) => item.id)
                         )
                       }
                     />
-                    <Typography sx={{ fontWeight: "bold", color: "green" }}>Select All</Typography>
+                    <Typography sx={{ fontWeight: "bold", color: "green" }}>
+                      Select All
+                    </Typography>
                   </Box>
 
                   {/* Delete Button */}
@@ -130,7 +196,11 @@ export default function ReqCart() {
                       sx={{ textDecoration: "underline", fontWeight: "bold" }}
                       disabled={selectedItems.length === 0}
                       onClick={() => {
-                        setCartItems((prev) => prev.filter((item) => !selectedItems.includes(item.id)));
+                        setCartItems((prev) =>
+                          prev.filter(
+                            (item) => !selectedItems.includes(item.id)
+                          )
+                        );
                         setSelectedItems([]); // Clear selections after deletion
                       }}
                     >
@@ -157,7 +227,11 @@ export default function ReqCart() {
                       />
 
                       {/* Item Details with Quantity Controls */}
-                      <Box display="flex" alignItems="center" sx={{ overflow: "hidden", width: "100%" }}>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{ overflow: "hidden", width: "100%" }}
+                      >
                         <CardMedia
                           component="img"
                           sx={{ width: 60, height: 60, borderRadius: 1 }}
@@ -180,11 +254,27 @@ export default function ReqCart() {
                               padding: "2px 6px",
                             }}
                           >
-                            <IconButton size="small" sx={{ color: "green", padding: "3px" }} onClick={() => handleQuantityChange(item.id, -1)}>
+                            <IconButton
+                              size="small"
+                              sx={{ color: "green", padding: "3px" }}
+                              onClick={() => handleQuantityChange(item.id, -1)}
+                            >
                               <RemoveIcon fontSize="small" />
                             </IconButton>
-                            <Typography sx={{ fontSize: "0.85rem", minWidth: "20px", textAlign: "center" }}>{item.quantity}</Typography>
-                            <IconButton size="small" sx={{ color: "green", padding: "3px" }} onClick={() => handleQuantityChange(item.id, 1)}>
+                            <Typography
+                              sx={{
+                                fontSize: "0.85rem",
+                                minWidth: "20px",
+                                textAlign: "center",
+                              }}
+                            >
+                              {item.quantity}
+                            </Typography>
+                            <IconButton
+                              size="small"
+                              sx={{ color: "green", padding: "3px" }}
+                              onClick={() => handleQuantityChange(item.id, 1)}
+                            >
                               <AddIcon fontSize="small" />
                             </IconButton>
                           </Box>
@@ -193,7 +283,10 @@ export default function ReqCart() {
 
                       {/* Remove Button */}
                       <Box display="flex" justifyContent="center">
-                        <IconButton color="error" onClick={() => handleDelete(item.id)}>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDelete(item.id)}
+                        >
                           <CloseIcon />
                         </IconButton>
                       </Box>
@@ -216,7 +309,8 @@ export default function ReqCart() {
               boxShadow: 3,
               opacity: selectedItems.length > 0 ? 1 : 0,
               transform: selectedItems.length > 0 ? "scale(1)" : "scale(0.9)",
-              transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out",
+              transition:
+                "opacity 0.3s ease-in-out, transform 0.3s ease-in-out",
               maxHeight: "400px",
             }}
           >
@@ -285,7 +379,10 @@ export default function ReqCart() {
                         >
                           {item.name}
                         </TableCell>
-                        <TableCell align="center" sx={{ fontWeight: "bold", width: "100px" }}>
+                        <TableCell
+                          align="center"
+                          sx={{ fontWeight: "bold", width: "100px" }}
+                        >
                           {item.quantity} pcs
                         </TableCell>
                       </TableRow>
@@ -295,13 +392,25 @@ export default function ReqCart() {
             </Box>
 
             {/* Footer Section: Total Items & Check Out Button */}
-            <Box sx={{ p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box
+              sx={{
+                p: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 Total {totalItems} items: {totalQuantity}
               </Typography>
               <Button
                 variant="contained"
-                sx={{ backgroundColor: "green", color: "white", textTransform: "none" }}
+                sx={{
+                  backgroundColor: "green",
+                  color: "white",
+                  textTransform: "none",
+                }}
+                onClick={() => navigate("/material-request")} // Navigate to Home
               >
                 Check Out
               </Button>
