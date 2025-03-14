@@ -25,7 +25,7 @@ const CategoryButtons = ({ onSelect }) => {
           key={category}
           variant={activeCategory === category ? "contained" : "outlined"}
           sx={{
-            bgcolor: activeCategory === category ? "green" : "white",
+            bgcolor: activeCategory === category ? "#00b300" : "white",
             color: activeCategory === category ? "white" : "black",
             borderRadius: "20px",
             textTransform: "none",

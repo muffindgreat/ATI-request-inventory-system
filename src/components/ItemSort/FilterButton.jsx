@@ -23,6 +23,9 @@ const FilterButton = ({ onFilter }) => {
           width: isMobile ? "35px" : "40px",
           height: isMobile ? "35px" : "40px",
           ml: isMobile ? 0 : 1, // Adjust margin for spacing
+          // "&:hover": {
+          //   bgcolor: "#00b300", // Change background color on hover
+          // },
         }}
       >
         <FilterListIcon fontSize={isMobile ? "small" : "medium"} />
