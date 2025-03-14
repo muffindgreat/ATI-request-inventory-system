@@ -4,9 +4,6 @@ import {
   Box,
   useMediaQuery,
   useTheme,
-  AppBar,
-  Toolbar,
-  IconButton,
   Typography,
   Button,
 } from "@mui/material";
