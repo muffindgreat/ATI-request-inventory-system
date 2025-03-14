@@ -15,9 +15,9 @@ const MatsReq = () => {
   const [formData, setFormData] = useState({
     reqNo: '',
     dateRequested: '',
-    name: '',
-    section: '',
-    designation: '',
+    // name: '',
+    // section: '',
+    // designation: '',
     program: '',
     items: '',
     purpose: '',
@@ -36,16 +36,16 @@ const MatsReq = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 10}}>
+    <Container maxWidth="lg" sx={{ mt: 10 }}>
+      <Typography 
+        variant="h5" 
+        component="h2" 
+        sx={{ color: 'green', fontWeight: 'bold', textAlign: 'center', mb: 3 }}
+      >
+        Material Requisition Form
+      </Typography>
       <Card sx={{ maxWidth: 2000, margin: 'auto', borderRadius: 4, boxShadow: 7, mb: 4 }}>
         <CardContent>
-          <Typography 
-            variant="h5" 
-            component="h2" 
-            sx={{ color: 'green',fontWeight: 'bold', textAlign: 'center', marginTop: 5 , mb:5}} 
-          >
-            Material Requisition Form
-          </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -72,7 +72,7 @@ const MatsReq = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   label="Name"
                   variant="outlined"
@@ -101,7 +101,7 @@ const MatsReq = () => {
                   onChange={handleChange}
                   fullWidth
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Program"
