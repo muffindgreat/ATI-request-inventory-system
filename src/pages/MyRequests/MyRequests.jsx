@@ -78,7 +78,13 @@ export default function MyRequests() {
     >
       <BackgroundImage imageUrl={bgImage} />
 
-      <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
+      <Container
+        maxWidth="lg"
+        sx={{
+          pt: { xs: 12, sm: 14, md: 16 }, // Adjust padding top based on screen size
+          mb: 10,
+        }}
+      >
         <Card elevation={3}>
           <CustomCardHeader
             title="My Requests"
