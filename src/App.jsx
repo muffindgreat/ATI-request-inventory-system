@@ -1,41 +1,45 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import LogIn from "./pages/LogIn/LogIn";
 import Register from "./pages/Register/Register";
 import Navbar from "./components/NavBar/Navbar";
 import MyRequests from "./pages/MyRequests/MyRequests";
-import MostViewed from "./components/LandingPage/MostViewed";
-import Library from "./components/LandingPage/Library";
-import SearchFilterBar from "./components/ItemSort/SearchFilterBar";
 import ItemInfo from "./pages/ItemInfo/ItemInfo";
 import UserProfile from "./pages/UserProfile/UserProfile";
+import RequestCart from "./pages/RequestCart/ReqCart";
 import MatsReq from "./pages/MaterialRequisition/MatsReq";
-import ItemDetails from "./components/ItemInfo/ItemDetails";
+import Home from "./pages/Home/Home";
 
-function App() {
+function Layout() {
+  const location = useLocation();
+  const hideNavbarRoutes = ["/login", "/register"];
+
   return (
-    <Router>
+    <>
+      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
       <Routes>
-        {/* <LogIn /> */}
-        {/* <Register /> */}
-        {/* <Navbar /> */}
-        {/* <MyRequests /> */}
-        {/* <MostViewed /> */}
-        {/* <Library /> */}
-        {/* <SearchFilterBar /> */}
-        {/* <ItemInfo /> */}
-        {/* <UserProfile /> */}
-        {/* <MatsReq /> */}
-
-        <Route path="/" element={<MyRequests />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/request-cart" element={<RequestCart />} />
         <Route path="/my-requests" element={<MyRequests />} />
-        <Route path="/most-viewed" element={<MostViewed />} />
-        <Route path="/library" element={<Library />} />
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/item-info" element={<ItemInfo />} />
         <Route path="/material-request" element={<MatsReq />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Layout />
     </Router>
   );
 }
