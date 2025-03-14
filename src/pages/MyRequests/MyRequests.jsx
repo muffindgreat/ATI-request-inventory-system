@@ -1,16 +1,9 @@
 import { useState } from "react";
-import {
-  Container,
-  Tabs,
-  Tab,
-  Box,
-  Card,
-  CardHeader,
-  CardContent,
-} from "@mui/material";
+import { Container, Box, Card, CardContent } from "@mui/material";
 import RequestList from "../../components/MyRequests/RequestList3";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
 import BackgroundImage from "../../components/UI/BackgroundImage";
+import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import bgImage from "/image.png";
 
 export default function MyRequests() {
@@ -87,13 +80,10 @@ export default function MyRequests() {
 
       <Container maxWidth="lg" sx={{ mt: 10, mb: 10 }}>
         <Card elevation={3}>
-          <CardHeader
+          <CustomCardHeader
             title="My Requests"
-            sx={{
-              backgroundColor: "#1A854B",
-              color: "white",
-              textAlign: "center",
-            }}
+            showBackButton
+            backLink="/login"
           />
           <CardContent>
             <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
