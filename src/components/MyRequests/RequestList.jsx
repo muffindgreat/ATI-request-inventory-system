@@ -2,10 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   Typography,
-  Badge,
   Box,
-  Card,
-  CardMedia,
   Stack,
   Chip,
 } from "@mui/material";

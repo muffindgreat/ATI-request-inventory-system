@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import navLogo from "../Logo/navlogs.png";
+import navLogo from "/navlogs.png";
 import {
   AppBar,
   Box,
