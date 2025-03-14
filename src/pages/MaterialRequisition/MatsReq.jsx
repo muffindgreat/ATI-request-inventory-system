@@ -36,15 +36,7 @@ const MatsReq = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 10 }}>
-      <Card
-        sx={{
-          maxWidth: 2000,
-          margin: "auto",
-          borderRadius: 4,
-          boxShadow: 7,
-          mb: 4,
-        }}
-      >
+      <Card sx={{ maxWidth: 2000, margin: "auto", borderRadius: 4, boxShadow: 7, mb: 4 }}>
         <CustomCardHeader title="Material Requisition Form" showBackButton />
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -119,12 +111,7 @@ const MatsReq = () => {
             <CardActions sx={{ justifyContent: "flex-end", padding: 2 }}>
               <Button
                 variant="contained"
-                sx={{
-                  backgroundColor: "#2E7D32",
-                  color: "white",
-                  borderRadius: 1,
-                  textTransform: "none",
-                }}
+                sx={{ backgroundColor: "#2E7D32", color: "white", borderRadius: 1, textTransform: "none" }}
                 type="submit"
               >
                 Submit
