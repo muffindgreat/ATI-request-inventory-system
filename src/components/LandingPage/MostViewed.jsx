@@ -12,7 +12,6 @@ const MostViewed = () => {
     { src: "/broiler.jpg", views: 10027, link: "#" },
     { src: "/organic.jpg", views: 14136, link: "#" },
     { src: "/vege.jpg", views: 14136, link: "#" },
-    
   ];
 
   const settings = {
@@ -37,15 +36,39 @@ const MostViewed = () => {
   return (
     <>
       <Navbar />
-      <Box sx={{ position: "relative", width: "100%", backgroundColor: "rgb(255, 255, 255)", py: 6 }}>
-        <Typography variant="h3" component="h2" sx={{ color: "#000", textAlign: "center", mb: 2, fontWeight: "normal", mt: 5 }}>
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          backgroundColor: "rgb(255, 255, 255)",
+          py: 6,
+        }}
+      >
+        <Typography
+          variant="h3"
+          component="h2"
+          sx={{
+            color: "#000",
+            textAlign: "center",
+            mb: 2,
+            fontWeight: "normal",
+            mt: 5,
+          }}
+        >
           MOST VIEWED
         </Typography>
         <Box sx={{ width: "90%", mx: "auto", position: "relative" }}>
           <Slider {...settings}>
             {images.map((item, index) => (
               <Box key={index} sx={{ padding: "0 10px" }}>
-                <a href={item.link} style={{ textDecoration: "none", position: "relative", display: "block" }}>
+                <a
+                  href={item.link}
+                  style={{
+                    textDecoration: "none",
+                    position: "relative",
+                    display: "block",
+                  }}
+                >
                   <Box
                     sx={{
                       position: "absolute",
@@ -57,7 +80,7 @@ const MostViewed = () => {
                       px: 1,
                       py: 0.5,
                       display: "flex",
-                      alignItems: "center"
+                      alignItems: "center",
                     }}
                   >
                     <Box
@@ -69,10 +92,13 @@ const MostViewed = () => {
                         borderRadius: "50%",
                         backgroundColor: "transparent",
                         border: "2px solid white",
-                        mr: 0.5
+                        mr: 0.5,
                       }}
                     />
-                    <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#fff", fontWeight: "bold" }}
+                    >
                       {item.views}
                     </Typography>
                   </Box>
@@ -98,7 +124,6 @@ const MostViewed = () => {
                       }}
                     />
                   </Box>
-
                 </a>
               </Box>
             ))}

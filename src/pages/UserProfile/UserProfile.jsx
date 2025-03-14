@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
-import bgImage from "/image.png";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileForm from "./ProfileForm";
 import PasswordModal from "./PasswordModal";
@@ -67,7 +66,7 @@ const UserProfile = () => {
         overflow: "hidden",
       }}
     >
-      <BackgroundImage imageUrl={bgImage} />
+      <BackgroundImage />
 
       <Container
         maxWidth="md"
@@ -77,11 +76,7 @@ const UserProfile = () => {
         }}
       >
         <Card elevation={3}>
-          <CustomCardHeader
-            title="Profile Information"
-            showBackButton
-            backLink="/dashboard"
-          />
+          <CustomCardHeader title="Profile Information" showBackButton />
           <CardContent
             sx={{
               display: "flex",

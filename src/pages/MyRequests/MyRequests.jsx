@@ -91,11 +91,7 @@ export default function MyRequests() {
         }}
       >
         <Card elevation={3}>
-          <CustomCardHeader
-            title="My Requests"
-            showBackButton
-            backLink="/login"
-          />
+          <CustomCardHeader title="My Requests" showBackButton />
           <CardContent>
             <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
             <Box sx={{ mt: 2 }}>

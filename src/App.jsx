@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import LogIn from "./pages/LogIn/LogIn";
 import Register from "./pages/Register/Register";
@@ -22,7 +23,6 @@ function Layout() {
     <>
       {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<Register />} />
@@ -31,6 +31,10 @@ function Layout() {
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/item-info" element={<ItemInfo />} />
         <Route path="/material-request" element={<MatsReq />} />
+
+        {/* Redirect "/" and all unknown routes to /home */}
+        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </>
   );

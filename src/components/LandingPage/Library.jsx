@@ -4,7 +4,14 @@ import { Card, CardMedia, Grid, Container } from "@mui/material";
 // ImageCard Component
 const ImageCard = ({ src, alt }) => {
   return (
-    <Card sx={{ width: "100%", aspectRatio: "9 / 16", boxShadow: 2, borderRadius: 2 }}>
+    <Card
+      sx={{
+        width: "100%",
+        aspectRatio: "9 / 16",
+        boxShadow: 2,
+        borderRadius: 2,
+      }}
+    >
       <CardMedia
         component="img"
         image={src || "https://via.placeholder.com/150"}
