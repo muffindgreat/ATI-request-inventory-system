@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Card, CardContent, Container } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Container,
+  Divider,
+} from "@mui/material";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import bgImage from "/image.png";
@@ -63,7 +70,7 @@ const UserProfile = () => {
       <BackgroundImage imageUrl={bgImage} />
 
       <Container
-        maxWidth="lg"
+        maxWidth="md"
         sx={{
           pt: { xs: 12, sm: 14, md: 16 }, // Adjust padding top based on screen size
           mb: 10,
@@ -95,12 +102,15 @@ const UserProfile = () => {
               handleInputChange={handleInputChange}
             />
           </CardContent>
-          <ProfileActions
-            isEditing={isEditing}
-            handleSave={handleSave}
-            handleCancel={handleCancel}
-            setIsEditing={setIsEditing}
-          />
+          <Divider></Divider>
+          <CardActions sx={{ justifyContent: "flex-end" }}>
+            <ProfileActions
+              isEditing={isEditing}
+              handleSave={handleSave}
+              handleCancel={handleCancel}
+              setIsEditing={setIsEditing}
+            />
+          </CardActions>
         </Card>
         <PasswordModal
           openModal={openModal}

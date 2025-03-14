@@ -200,6 +200,17 @@ function RequestDetails({ item }) {
           <strong>Completed:</strong> {item.completedTime}
         </Typography>
       )}
+      {/* Add Purpose, Date Needed, and Program */}
+      <Typography variant="body2" color="textSecondary">
+        <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+        <strong>Date Needed:</strong> {item.dateNeeded || "No date specified"}
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+        <strong>Program:</strong> {item.program || "No program specified"}
+      </Typography>
+
       <Box sx={{ mt: 2, borderBottom: "1px solid #ddd" }} />
     </Box>
   );

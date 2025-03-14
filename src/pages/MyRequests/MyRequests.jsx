@@ -4,7 +4,6 @@ import RequestList from "../../components/MyRequests/RequestList";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
-import bgImage from "/image.png";
 
 export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -15,13 +14,16 @@ export default function MyRequests() {
       requestedTime: "March 10, 2025, 08:30 AM",
       acknowledgedTime: "March 10, 2025, 10:15 AM",
       completedTime: null,
+      purpose: "For school research project",
+      dateNeeded: "March 15, 2025",
+      program: "Agricultural Studies",
       materials: [
         {
           name: "Fisheries Guide Book",
           quantity: 10,
           type: "Book",
           bannerPrograms: ["Livestock", "Poultry", "Agriculture"],
-          image: "https://www.imagetotext.cc/images/logo.png",
+          image: "/broiler.jpg",
         },
       ],
     },
@@ -30,27 +32,30 @@ export default function MyRequests() {
       requestedTime: "March 8, 2025, 09:00 AM",
       acknowledgedTime: "March 8, 2025, 11:30 AM",
       completedTime: "March 9, 2025, 02:00 PM",
+      purpose: "Community livelihood training",
+      dateNeeded: "March 12, 2025",
+      program: "Farmers’ Assistance Program",
       materials: [
         {
           name: "Corn Farming Manual",
           quantity: 7,
           type: "Manual",
           bannerPrograms: ["Corn"],
-          image: "https://www.imagetotext.cc/images/logo.png",
+          image: "/ngulay.jpg",
         },
         {
           name: "Livestock Booklet",
           quantity: 12,
           type: "Booklet",
           bannerPrograms: ["Livestock", "Poultry", "Farm"],
-          image: "https://www.imagetotext.cc/images/logo.png",
+          image: "/isda.jpg",
         },
         {
           name: "Rice Farming Handbook",
           quantity: 18,
           type: "Coffee Table Book",
           bannerPrograms: ["Rice"],
-          image: "https://www.imagetotext.cc/images/logo.png",
+          image: "/vege.jpg",
         },
       ],
     },
@@ -76,7 +81,7 @@ export default function MyRequests() {
         overflow: "hidden",
       }}
     >
-      <BackgroundImage imageUrl={bgImage} />
+      <BackgroundImage />
 
       <Container
         maxWidth="lg"

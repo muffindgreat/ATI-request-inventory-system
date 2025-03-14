@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
+import bgImage from "/image.png";
 
-const BackgroundImage = ({ imageUrl }) => {
+const BackgroundImage = () => {
   return (
     <Box
       sx={{
@@ -9,7 +10,7 @@ const BackgroundImage = ({ imageUrl }) => {
         left: 0,
         width: "100vw",
         height: "100vh",
-        backgroundImage: `url(${imageUrl})`,
+        backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         zIndex: -1,
