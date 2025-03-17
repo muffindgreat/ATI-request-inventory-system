@@ -30,17 +30,15 @@ const ImageLibrary = ({ selectedCategory }) => {
     { src: "/broiler.jpg", category: "Coconut" },
     { src: "/organic.jpg", category: "Rice" },
     { src: "/vege.jpg", category: "Corn" },
-    { src: "/vege.jpg", category: "Corn" },
     { src: "/organic.jpg", category: "Rice" },
     { src: "/broiler.jpg", category: "Coconut" },
     { src: "/isda.jpg", category: "Corn" },
     { src: "/ngulay.jpg", category: "Rice" },
   ];
 
-  // Filter images based on selected category
-  const filteredImages = selectedCategory
-    ? images.filter((img) => img.category === selectedCategory)
-    : images;
+  // Show all images if "All" is selected, otherwise filter them
+  const filteredImages =
+    selectedCategory === null ? images : images.filter((img) => img.category === selectedCategory);
 
   return (
     <Container sx={{ pt: 3 }}>
