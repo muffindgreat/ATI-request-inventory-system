@@ -20,23 +20,12 @@ import ReqCart from "./pages/RequestCart/ReqCart";
 function App() {
   return (
     <div>
-      <LogIn />
       {/* <Register /> */}
       {/* <MyRequests /> */}
       {/* <MostViewed /> */}
       {/* <Library /> */}
       {/* <SearchFilterBar /> */}
-<<<<<<< HEAD
-      <Navbar/>
-      {/* <MatsReq/> */}
-      <ReqCart/>
-=======
-      {/* <ItemInfo /> */}
-      {/* <UserProfile /> */}
-      {/* <MatsReq /> */}
-      {/* // <Navbar/>
-      // <MatsReq/> */}
->>>>>>> 6f399c53bda7ac3b63f1ca2d306d86678e56a9c0
+      <ReqCart />
     </div>
   );
 }
