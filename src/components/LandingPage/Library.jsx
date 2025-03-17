@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardMedia, Grid, Container } from "@mui/material";
 
-// ImageCard Component
+// ImageCard Component with Hover Effect and Cursor Pointer
 const ImageCard = ({ src, alt }) => {
   return (
     <Card
@@ -10,6 +10,12 @@ const ImageCard = ({ src, alt }) => {
         aspectRatio: "9 / 16",
         boxShadow: 2,
         borderRadius: 2,
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "scale(1.05)", // Slight zoom effect
+          boxShadow: 6, // Increased shadow on hover
+          cursor: "pointer", // Changes cursor to pointer
+        },
       }}
     >
       <CardMedia
@@ -30,17 +36,18 @@ const ImageLibrary = ({ selectedCategory }) => {
     { src: "/broiler.jpg", category: "Coconut" },
     { src: "/organic.jpg", category: "Rice" },
     { src: "/vege.jpg", category: "Corn" },
-    { src: "/vege.jpg", category: "Corn" },
     { src: "/organic.jpg", category: "Rice" },
     { src: "/broiler.jpg", category: "Coconut" },
     { src: "/isda.jpg", category: "Corn" },
     { src: "/ngulay.jpg", category: "Rice" },
+    { src: "/vege.jpg", category: "Corn" },
   ];
 
-  // Filter images based on selected category
-  const filteredImages = selectedCategory
-    ? images.filter((img) => img.category === selectedCategory)
-    : images;
+  // Show all images if "All" is selected, otherwise filter them
+  const filteredImages =
+    selectedCategory === null
+      ? images
+      : images.filter((img) => img.category === selectedCategory);
 
   return (
     <Container sx={{ pt: 3 }}>

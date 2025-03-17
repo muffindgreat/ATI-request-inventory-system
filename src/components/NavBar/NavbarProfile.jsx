@@ -33,10 +33,9 @@ function NavbarProfile() {
         onClose={handleCloseUserMenu}
         sx={{
           "& .MuiPaper-root": {
-            backgroundColor: "#2e7d32",
+            backgroundColor: "white",
             borderRadius: "10px",
             padding: "10px",
-            color: "white",
           },
         }}
       >
@@ -45,15 +44,22 @@ function NavbarProfile() {
             display: "flex",
             alignItems: "center",
             padding: "10px",
-            borderBottom: "1px solid white",
+            borderBottom: "1px solid #2e7d32",
           }}
         >
-          <AccountCircleIcon sx={{ fontSize: "40px", marginRight: "10px" }} />
+          <AccountCircleIcon
+            sx={{ fontSize: "40px", marginRight: "10px", color: "#2e7d32" }}
+          />
           <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ color: "#2e7d32", fontWeight: "bold" }}
+            >
               Name
             </Typography>
-            <Typography variant="body2">Role</Typography>
+            <Typography variant="body2" sx={{ color: "#2e7d32" }}>
+              Role
+            </Typography>
           </Box>
         </Box>
         <MenuItem
@@ -61,16 +67,18 @@ function NavbarProfile() {
             navigate("/user-profile");
             handleCloseUserMenu();
           }}
+          sx={{ color: "#2e7d32" }} // Make text green
         >
-          <PersonIcon sx={{ color: "white", marginRight: "10px" }} /> Profile
+          <PersonIcon sx={{ color: "#2e7d32", marginRight: "10px" }} /> Profile
         </MenuItem>
         <MenuItem
           onClick={() => {
             navigate("/my-requests");
             handleCloseUserMenu();
           }}
+          sx={{ color: "#2e7d32" }} // Make text green
         >
-          <AssignmentIcon sx={{ color: "white", marginRight: "10px" }} /> My
+          <AssignmentIcon sx={{ color: "#2e7d32", marginRight: "10px" }} /> My
           Requests
         </MenuItem>
         <MenuItem
@@ -78,8 +86,9 @@ function NavbarProfile() {
             console.log("Sign Out");
             handleCloseUserMenu();
           }}
+          sx={{ color: "#2e7d32" }} // Make text green
         >
-          <ExitToAppIcon sx={{ color: "white", marginRight: "10px" }} /> Sign
+          <ExitToAppIcon sx={{ color: "#2e7d32", marginRight: "10px" }} /> Sign
           Out
         </MenuItem>
       </Menu>

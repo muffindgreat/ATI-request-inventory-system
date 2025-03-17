@@ -7,6 +7,7 @@ import Navbar from "../NavBar/Navbar";
 import { allMaterials } from "../UI/sample_data"; // Import the materials data
 
 const MostViewed = () => {
+
   const settings = {
     dots: true,
     infinite: true,
@@ -18,6 +19,19 @@ const MostViewed = () => {
     cssEase: "linear",
     centerMode: false,
     arrows: false,
+    customPaging: (i) => (
+      <div
+        style={{
+          width: "12px",
+          height: "12px",
+          background: "#555",
+          borderRadius: "50%",
+          margin: "0 5px",
+          transition: "all 0.3s ease",
+        }}
+      />
+    ),
+    dotsClass: "slick-dots custom-dots",
     responsive: [
       { breakpoint: 1200, settings: { slidesToShow: 4 } },
       { breakpoint: 992, settings: { slidesToShow: 3 } },
@@ -35,6 +49,7 @@ const MostViewed = () => {
           width: "100%",
           backgroundColor: "rgb(255, 255, 255)",
           py: 6,
+          margin: 0,
         }}
       >
         <Typography
@@ -43,17 +58,42 @@ const MostViewed = () => {
           sx={{
             color: "#000",
             textAlign: "center",
-            mb: 2,
+            mb: { xs: 1, sm: 2 }, // Adjusts margin bottom for different screens
             fontWeight: "normal",
-            mt: 5,
+            mt: { xs: 3, sm: 4, md: 6 }, // Adjusts margin top
+            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem", lg: "3rem" }, // Responsive font size
           }}
         >
           MOST VIEWED
         </Typography>
-        <Box sx={{ width: "90%", mx: "auto", position: "relative" }}>
+        <Box 
+          sx={{ 
+            width: "90%", 
+            mx: "auto", 
+            position: "relative",
+            '& .slick-track': {
+              display: 'flex',
+              gap: { xs: '4px', sm: '8px', md: '12px' }, // Adjust spacing between slides
+            },
+            '& .slick-slide': {
+              display: 'flex',
+              justifyContent: 'center',
+            },
+            '& .slick-list': {
+              overflow: "hidden",
+            },
+            '& .slick-dots': {
+              position: 'absolute',
+              bottom: '-60px', /* Move dots lower */
+              display: 'flex !important',
+              justifyContent: 'center',
+              listStyle: 'none',
+            },
+          }}
+        >
           <Slider {...settings}>
             {allMaterials.map((material, index) => (
-              <Box key={index} sx={{ padding: "0 10px" }}>
+              <Box key={index} sx={{ flex: "0 0 auto" }}>
                 <a
                   href="#"
                   style={{
@@ -98,21 +138,25 @@ const MostViewed = () => {
                   <Box
                     sx={{
                       width: "100%",
-                      height: 450,
-                      overflow: "hidden",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
+                      maxWidth: "300px", // Set uniform width
+                      maxHeight: "450px", // Set uniform height
                       position: "relative",
+                      aspectRatio: "9 / 16",
+                      overflow: "hidden",
+                      borderRadius: "8px",
+                      display: "flex", // Ensures images take up full box
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     <img
                       src={material.image}
                       alt={material.name}
                       style={{
-                        width: 250,
-                        height: 450,
-                        objectFit: "cover",
+                        width: "100%", 
+                        height: "100%", 
+                        objectFit: "cover", // Ensures images fill the box uniformly
+                        borderRadius: "8px",
                       }}
                     />
                   </Box>

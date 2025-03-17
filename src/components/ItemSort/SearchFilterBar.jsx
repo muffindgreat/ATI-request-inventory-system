@@ -3,12 +3,14 @@ import { Box, Stack, useMediaQuery, Container } from "@mui/material";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import CategoryButtons from "./CategoryButtons";
+import ImageLibrary from "../LandingPage/Library";
 
-const SearchFilterBar = ({ onCategoryChange }) => {
+const SearchFilterBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); // State for category selection
   const isMobile = useMediaQuery("(max-width:600px)");
-  const [navbarHeight, setNavbarHeight] = useState(80); // Default height
+  const [navbarHeight, setNavbarHeight] = useState(80);
 
   useEffect(() => {
     const navbar = document.getElementById("navbar");
@@ -19,12 +21,11 @@ const SearchFilterBar = ({ onCategoryChange }) => {
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleFilterChange = (order) => setFilter(order);
-  const handleCategorySelect = (category) => onCategoryChange(category);
+  const handleCategorySelect = (category) => setSelectedCategory(category); // Update selected category
 
   return (
-    <>
-      <Box sx={{ height: `${navbarHeight}px` }} />{" "}
-      {/* Spacer for content shift */}
+    <>  
+      <Box sx={{ height: `${navbarHeight}px` }} /> {/* Spacer for content shift */}
       <Box
         sx={{
           bgcolor: "green",
@@ -33,11 +34,11 @@ const SearchFilterBar = ({ onCategoryChange }) => {
           flexDirection: "column",
           alignItems: "center",
           position: "sticky",
-          top: `${navbarHeight}px`, // Position below navbar
-          width: "100vw", // Full width of viewport
-          maxWidth: "100%", // Prevent overflow
-          overflowX: "hidden", // Remove horizontal scrolling
-          boxSizing: "border-box", // Include padding/margin in width calculation
+          top: `${navbarHeight}px`,
+          width: "100vw",
+          maxWidth: "100%",
+          overflowX: "hidden",
+          boxSizing: "border-box",
           zIndex: 1000,
         }}
       >
@@ -65,8 +66,10 @@ const SearchFilterBar = ({ onCategoryChange }) => {
 
         <CategoryButtons onSelect={handleCategorySelect} />
       </Box>
+      {/* Image Library Component */}
+      <ImageLibrary selectedCategory={selectedCategory} />
     </>
   );
 };
-
+// .
 export default SearchFilterBar;
