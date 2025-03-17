@@ -20,7 +20,7 @@ const ProfileActions = ({
           }}
           onClick={handleSave}
         >
-          Save Profile
+          Save
         </Button>
         <Button
           variant="outlined"

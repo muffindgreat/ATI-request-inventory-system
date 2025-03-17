@@ -1,6 +1,17 @@
-import { Container, TextField, Button, Box, Typography, Link, Card } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Link,
+  Card,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import { useState, useEffect } from "react";
-import logo from "/atilogs.png"; // Ensure this is inside `public/`
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
 
@@ -10,11 +21,12 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"; // Prevent scrolling
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "auto"; // Restore on unmount
+      document.body.style.overflow = "auto";
     };
   }, []);
 
@@ -41,7 +53,6 @@ export default function Register() {
     >
       <BackgroundImage imageUrl={bgImage} />
 
-      {/* Logo at Top Left */}
       <Box
         sx={{
           position: "absolute",
@@ -53,15 +64,9 @@ export default function Register() {
         <img src={logo} alt="Logo" style={{ width: 350 }} />
       </Box>
 
-      {/* Register Form Container */}
       <Container
         maxWidth="xs"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mt: 20,
-          mb: 10,
-        }}
+        sx={{ display: "flex", justifyContent: "center", mt: 20, mb: 10 }}
       >
         <Card
           elevation={3}
@@ -106,12 +111,24 @@ export default function Register() {
             />
             <TextField
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               fullWidth
               variant="outlined"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               sx={{ mb: 2 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               type="submit"

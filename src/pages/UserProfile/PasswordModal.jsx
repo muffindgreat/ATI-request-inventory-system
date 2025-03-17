@@ -61,14 +61,15 @@ const PasswordModal = ({
           }}
         />
       ))}
-      <Button
-        variant="contained"
-        fullWidth
-        sx={{ mt: 2 }}
-        onClick={() => setOpenModal(false)}
-      >
-        Save
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Button
+          variant="contained"
+          sx={{ bgcolor: "#2E7D32", color: "white", textTransform: "none" }}
+          onClick={() => setOpenModal(false)}
+        >
+          Save
+        </Button>
+      </Box>
     </Box>
   </Modal>
 );
