@@ -4,10 +4,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CartItemList from "./CartItemList";
 import CartOrderSummary from "./CartOrderSummary";
 
-import CustomCardHeader from "../../components/UI/CustomCardHeader";
-
-import BackgroundImage from "../../components/UI/BackgroundImage";
-
 // Sample cart items state
 const initialCartItems = [
   {
@@ -70,6 +66,36 @@ const initialCartItems = [
     image: "https://dummyimage.com/60x60/000/fff",
     quantity: 1,
   },
+  {
+    id: 11,
+    name: "Book K",
+    image: "https://dummyimage.com/60x60/000/fff",
+    quantity: 1,
+  },
+  {
+    id: 12,
+    name: "Book L",
+    image: "https://dummyimage.com/60x60/000/fff",
+    quantity: 1,
+  },
+  {
+    id: 13,
+    name: "Book M",
+    image: "https://dummyimage.com/60x60/000/fff",
+    quantity: 1,
+  },
+  {
+    id: 14,
+    name: "Book N",
+    image: "https://dummyimage.com/60x60/000/fff",
+    quantity: 1,
+  },
+  {
+    id: 15,
+    name: "Book O",
+    image: "https://dummyimage.com/60x60/000/fff",
+    quantity: 1,
+  },
 ];
 
 export default function ReqCart() {
@@ -107,24 +133,13 @@ export default function ReqCart() {
     .reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        position: "relative",
-        overflow: "hidden",
-        // mt: "80px",
-        px: 3,
-      }}
-    >
-      <BackgroundImage />
-      {/* <Typography
+    <Box sx={{ mt: "80px", p: 2 }}>
+      <Typography
         variant="h4"
         sx={{ textAlign: "center", color: "green", fontWeight: "bold", mb: 1 }}
       >
         REQUEST CART
-      </Typography> */}
+      </Typography>
 
       <Box
         sx={{
@@ -134,14 +149,14 @@ export default function ReqCart() {
           "@media (min-width: 600px)": {
             flexDirection: "row",
           },
-          pt: { xs: 12, sm: 14, md: 16 },
-          mb: 10,
-          ml: { xs: 0, md: 10 },
-          mr: { xs: 0, md: 10 },
         }}
       >
-        <Card sx={{ borderRadius: 2, boxShadow: 3, flex: 2 }}>
-          <CustomCardHeader title="Request Cart" showBackButton />
+        <Card sx={{ borderRadius: 3, boxShadow: 3, flex: 2 }}>
+          <Box sx={{ color: "green", p: 2 }}>
+            <IconButton sx={{ p: 0, ml: 1, color: "green" }}>
+              <ArrowBackIcon />
+            </IconButton>
+          </Box>
 
           <CartItemList
             cartItems={cartItems}
