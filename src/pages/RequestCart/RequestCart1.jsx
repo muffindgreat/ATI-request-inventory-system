@@ -7,73 +7,17 @@ import CartOrderSummary from "./CartOrderSummary";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 
 import BackgroundImage from "../../components/UI/BackgroundImage";
-
-// Sample cart items state
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Book A",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Book B",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: "Book C",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 4,
-    name: "Book D",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 5,
-    name: "Book E",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 6,
-    name: "Book F",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 7,
-    name: "Book G",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 8,
-    name: "Book H",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 9,
-    name: "Book I",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-  {
-    id: 10,
-    name: "Book J",
-    image: "https://dummyimage.com/60x60/000/fff",
-    quantity: 1,
-  },
-];
+import { allMaterials } from "../../components/UI/sample_data";
 
 export default function ReqCart() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState(
+    allMaterials.map(({ id, name, image, quantity }) => ({
+      id,
+      name,
+      image,
+      quantity: 1,
+    }))
+  );
   const [selectedItems, setSelectedItems] = useState([]);
 
   // Toggle item selection in the cart

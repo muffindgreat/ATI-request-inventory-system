@@ -61,6 +61,7 @@ export const allRequests = [
 
 export const allMaterials = [
   {
+    id: 1,
     name: "Fisheries Guide Book",
     quantity: 10,
     type: "Book",
@@ -70,6 +71,7 @@ export const allMaterials = [
     downloadCount: 45,
   },
   {
+    id: 2,
     name: "Corn Farming Manual",
     quantity: 7,
     type: "Manual",
@@ -79,6 +81,7 @@ export const allMaterials = [
     downloadCount: 78,
   },
   {
+    id: 3,
     name: "Livestock Booklet",
     quantity: 12,
     type: "Booklet",
@@ -88,6 +91,7 @@ export const allMaterials = [
     downloadCount: 120,
   },
   {
+    id: 4,
     name: "Rice Farming Handbook",
     quantity: 18,
     type: "Coffee Table Book",
