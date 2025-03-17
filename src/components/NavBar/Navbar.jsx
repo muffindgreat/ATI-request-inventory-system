@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import navLogo from "../Logo/navlogs.png";
 import {
   AppBar,
@@ -29,6 +30,7 @@ import { useTheme } from "@mui/material/styles";
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize navigate
 
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
@@ -55,9 +57,11 @@ function Navbar() {
               src={navLogo}
               alt="Logo"
               style={{
-                height: isMobile ? "40px" : "50px",
-                width: isMobile ? "auto" : "auto",
+                height: isMobile ? "40px" : "40px",
+                width: "auto",
+                cursor: "pointer",
               }}
+              onClick={() => navigate("/home")} // Navigate to Home when clicked
             />
           </Box>
 
@@ -65,6 +69,7 @@ function Navbar() {
           {!isTablet && (
             <Button
               sx={{ color: "black", fontWeight: "bold", fontSize: "16px" }}
+              onClick={() => navigate("/home")} // Navigate to Home
             >
               HOME
             </Button>
@@ -72,7 +77,7 @@ function Navbar() {
 
           {/* Icons Section */}
           <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <IconButton>
+            <IconButton onClick={() => navigate("/request-cart")}>
               <ShoppingCartIcon
                 sx={{ color: "black", fontSize: isMobile ? "22px" : "24px" }}
               />
@@ -102,25 +107,25 @@ function Navbar() {
             <Box sx={{ width: 250, paddingTop: "10px" }}>
               <List>
                 <ListItem disablePadding>
-                  <ListItemButton onClick={handleDrawerToggle}>
+                  <ListItemButton onClick={() => navigate("/")}>
                     <ListItemText primary="HOME" />
                   </ListItemButton>
                 </ListItem>
                 <Divider />
                 <ListItem disablePadding>
-                  <ListItemButton>
+                  <ListItemButton onClick={() => navigate("/user-profile")}>
                     <PersonIcon sx={{ marginRight: "10px" }} />
                     <ListItemText primary="Profile" />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                  <ListItemButton>
+                  <ListItemButton onClick={() => navigate("/my-requests")}>
                     <AssignmentIcon sx={{ marginRight: "10px" }} />
                     <ListItemText primary="My Requests" />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                  <ListItemButton>
+                  <ListItemButton onClick={() => console.log("Sign Out")}>
                     <ExitToAppIcon sx={{ marginRight: "10px" }} />
                     <ListItemText primary="Sign Out" />
                   </ListItemButton>
@@ -166,19 +171,28 @@ function Navbar() {
               </Box>
             </Box>
             <MenuItem
-              onClick={handleCloseUserMenu}
+              onClick={() => {
+                navigate("/user-profile");
+                handleCloseUserMenu();
+              }}
               sx={{ display: "flex", gap: 1 }}
             >
               <PersonIcon /> Profile
             </MenuItem>
             <MenuItem
-              onClick={handleCloseUserMenu}
+              onClick={() => {
+                navigate("/my-requests");
+                handleCloseUserMenu();
+              }}
               sx={{ display: "flex", gap: 1 }}
             >
               <AssignmentIcon /> My Requests
             </MenuItem>
             <MenuItem
-              onClick={handleCloseUserMenu}
+              onClick={() => {
+                console.log("Sign Out");
+                handleCloseUserMenu();
+              }}
               sx={{ display: "flex", gap: 1 }}
             >
               <ExitToAppIcon /> Sign Out

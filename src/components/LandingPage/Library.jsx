@@ -36,7 +36,7 @@ const ImageLibrary = ({ selectedCategory }) => {
     : images;
 
   return (
-    <Container sx={{ pt: 3 }}>
+    <Container sx={{ pt: 4, pb: 4}}>
       <Grid container spacing={2} justifyContent="center">
         {filteredImages.map((img, index) => (
           <Grid item key={index} xs={10} sm={6} md={4} lg={3} xl={2.4}>
