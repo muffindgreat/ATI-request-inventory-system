@@ -61,7 +61,14 @@ const PasswordModal = ({
           }}
         />
       ))}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2, gap: 1 }}>
+        <Button
+          variant="outlined"
+          sx={{ textTransform: "none" }}
+          onClick={() => setOpenModal(false)}
+        >
+          Cancel
+        </Button>
         <Button
           variant="contained"
           sx={{ bgcolor: "#2E7D32", color: "white", textTransform: "none" }}
