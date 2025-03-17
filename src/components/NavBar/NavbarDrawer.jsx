@@ -24,8 +24,8 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
       onClose={handleDrawerToggle}
       sx={{
         "& .MuiDrawer-paper": {
-          backgroundColor: "#2e7d32", // Green color from the provided image
-          color: "white",
+          backgroundColor: "white", // Background changed to white
+          color: "#2e7d32", // Text color changed to green
         },
       }}
     >
@@ -34,34 +34,37 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/")}>
               <ListItemIcon>
-                <HomeIcon sx={{ color: "white" }} />
+                <HomeIcon sx={{ color: "#2e7d32" }} /> {/* Icon Green */}
               </ListItemIcon>
-              <ListItemText primary="HOME" />
+              <ListItemText
+                primary="HOME"
+                sx={{ color: "#2e7d32", fontWeight: "bold" }} // Text Green
+              />
             </ListItemButton>
           </ListItem>
-          <Divider sx={{ backgroundColor: "white" }} />
+          <Divider sx={{ backgroundColor: "#2e7d32" }} />
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/user-profile")}>
               <ListItemIcon>
-                <PersonIcon sx={{ color: "white" }} />
+                <PersonIcon sx={{ color: "#2e7d32" }} />
               </ListItemIcon>
-              <ListItemText primary="Profile" />
+              <ListItemText primary="Profile" sx={{ color: "#2e7d32" }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/my-requests")}>
               <ListItemIcon>
-                <AssignmentIcon sx={{ color: "white" }} />
+                <AssignmentIcon sx={{ color: "#2e7d32" }} />
               </ListItemIcon>
-              <ListItemText primary="My Requests" />
+              <ListItemText primary="My Requests" sx={{ color: "#2e7d32" }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton onClick={() => console.log("Sign Out")}>
               <ListItemIcon>
-                <ExitToAppIcon sx={{ color: "white" }} />
+                <ExitToAppIcon sx={{ color: "#2e7d32" }} />
               </ListItemIcon>
-              <ListItemText primary="Sign Out" />
+              <ListItemText primary="Sign Out" sx={{ color: "#2e7d32" }} />
             </ListItemButton>
           </ListItem>
         </List>
