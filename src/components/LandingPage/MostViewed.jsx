@@ -7,13 +7,6 @@ import Navbar from "../NavBar/Navbar";
 import { allMaterials } from "../UI/sample_data"; // Import the materials data
 
 const MostViewed = () => {
-  const images = [
-    { src: "/ngulay.jpg", views: 10027, link: "#" },
-    { src: "/isda.jpg", views: 14136, link: "#" },
-    { src: "/broiler.jpg", views: 10027, link: "#" },
-    { src: "/organic.jpg", views: 14136, link: "#" },
-    { src: "/vege.jpg", views: 14136, link: "#" },
-  ];
 
   const settings = {
     dots: true,
@@ -73,7 +66,6 @@ const MostViewed = () => {
         >
           MOST VIEWED
         </Typography>
-
         <Box 
           sx={{ 
             width: "90%", 
@@ -100,8 +92,8 @@ const MostViewed = () => {
           }}
         >
           <Slider {...settings}>
-            {images.map((item, index) => (
-              <Box key={index} sx={{ padding: "0 10px" }}>
+            {allMaterials.map((material, index) => (
+              <Box key={index} sx={{ flex: "0 0 auto" }}>
                 <a
                   href="#"
                   style={{
@@ -110,7 +102,6 @@ const MostViewed = () => {
                     display: "block",
                   }}
                 >
-                  {/* view count */}
                   <Box
                     sx={{
                       position: "absolute",
@@ -144,28 +135,28 @@ const MostViewed = () => {
                       {material.views}
                     </Typography>
                   </Box>
-
                   <Box
                     sx={{
                       width: "100%",
-                      height: 450, // Fixed height
+                      maxWidth: "300px", // Set uniform width
+                      maxHeight: "450px", // Set uniform height
+                      position: "relative",
+                      aspectRatio: "9 / 16",
                       overflow: "hidden",
                       borderRadius: "8px",
                       display: "flex", // Ensures images take up full box
                       alignItems: "center",
                       justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "none",
-                      position: "relative",
                     }}
                   >
                     <img
                       src={material.image}
                       alt={material.name}
                       style={{
-                        width: 250, // Fixed width
-                        height: 450, // Fixed height
-                        objectFit: "cover",
+                        width: "100%", 
+                        height: "100%", 
+                        objectFit: "cover", // Ensures images fill the box uniformly
+                        borderRadius: "8px",
                       }}
                     />
                   </Box>

@@ -34,6 +34,7 @@ const ImageLibrary = ({ selectedCategory }) => {
     { src: "/broiler.jpg", category: "Coconut" },
     { src: "/isda.jpg", category: "Corn" },
     { src: "/ngulay.jpg", category: "Rice" },
+    { src: "/vege.jpg", category: "Corn" },
   ];
 
   // Show all images if "All" is selected, otherwise filter them

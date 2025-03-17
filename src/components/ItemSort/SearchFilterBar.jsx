@@ -71,5 +71,5 @@ const SearchFilterBar = () => {
     </>
   );
 };
-
+// .
 export default SearchFilterBar;
