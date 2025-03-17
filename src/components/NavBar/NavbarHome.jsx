@@ -6,7 +6,7 @@ function NavbarHome() {
   const navigate = useNavigate();
   return (
     <Button
-      sx={{ color: "black", fontWeight: "bold", fontSize: "16px" }}
+      sx={{ color: "black", fontWeight: "bold", fontSize: "16px", mr: "30px" }}
       onClick={() => navigate("/home")}
     >
       HOME
