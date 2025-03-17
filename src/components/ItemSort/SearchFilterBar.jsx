@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Stack, useMediaQuery } from "@mui/material";
+import { Box, Stack, useMediaQuery, Container } from "@mui/material";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import CategoryButtons from "./CategoryButtons";
@@ -42,15 +42,28 @@ const SearchFilterBar = () => {
           zIndex: 1000,
         }}
       >
-        <Stack
-          direction={isMobile ? "column" : "row"}
-          spacing={isMobile ? 1 : 2}
-          alignItems="center"
-          width={isMobile ? "100%" : "auto"}
+        <Container
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: isMobile ? "100%" : "auto",
+          }}
         >
-          <SearchBar value={searchTerm} onChange={handleSearchChange} />
-          <FilterButton onFilter={handleFilterChange} />
-        </Stack>
+          <Stack
+            direction="row" // Ensures row layout
+            spacing={2} // Adjust spacing between SearchBar & FilterButton
+            alignItems="center" // Centers items vertically
+            justifyContent="center" // Centers items horizontally
+            sx={{
+              flexWrap: "nowrap", // Prevents wrapping to the next line
+              mx: isMobile ? 2 : 0, // Adds left & right margin on small screens
+            }}
+          >
+            <SearchBar value={searchTerm} onChange={handleSearchChange} />
+            <FilterButton onFilter={handleFilterChange} />
+          </Stack>
+        </Container>
+
         <CategoryButtons onSelect={handleCategorySelect} />
       </Box>
       {/* Image Library Component */}

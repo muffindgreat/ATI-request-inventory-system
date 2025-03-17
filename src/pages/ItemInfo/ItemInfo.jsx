@@ -16,16 +16,15 @@ import { useState } from "react";
 const ItemInfo = ({ material }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Sample Data (Used if no props are passed)
+  // Sample Data (From provided materials)
   const sampleMaterial = {
-    name: "Sustainable Farming Guide",
-    type: "Brochure",
-    image:
-      "https://diybookcovers.com/wp-content/uploads/2023/07/scifi4thumb.jpg", // Replace with an actual image URL
-    bannerPrograms: ["Organic Agriculture", "Agri-Tech Innovations"],
+    name: "Fisheries Guide Book",
+    type: "Book",
+    image: "/broiler.jpg",
+    bannerPrograms: ["Livestock", "Poultry", "Agriculture"],
+    views: 120,
   };
 
   // Use the provided material or fallback to sampleMaterial
@@ -47,7 +46,7 @@ const ItemInfo = ({ material }) => {
         maxWidth="md"
         sx={{
           alignContent: "center",
-          pt: { xs: 12, sm: 14, md: 16 }, // Adjust padding top based on screen size
+          pt: { xs: 12, sm: 14, md: 16 },
           mb: 10,
         }}
       >
@@ -56,7 +55,6 @@ const ItemInfo = ({ material }) => {
           sx={{
             width: "100%",
             maxWidth: 900,
-            borderRadius: 2,
             overflow: "hidden",
             boxShadow: "-8px 8px 14px rgba(0, 0, 0, 0.2)",
           }}
@@ -73,7 +71,7 @@ const ItemInfo = ({ material }) => {
               gap: 2,
             }}
           >
-            {/* Image Placeholder */}
+            {/* Image */}
             <Box
               sx={{
                 width: isSmallScreen ? "100%" : "30%",
@@ -107,7 +105,7 @@ const ItemInfo = ({ material }) => {
                 gutterBottom
                 onClick={() => setIsExpanded(!isExpanded)}
                 sx={{
-                  cursor: "pointer", // Makes it clear it's clickable
+                  cursor: "pointer",
                   display: isExpanded ? "block" : "-webkit-box",
                   WebkitBoxOrient: "vertical",
                   WebkitLineClamp: isExpanded ? "unset" : 2,
@@ -133,13 +131,37 @@ const ItemInfo = ({ material }) => {
                 {item.type}
               </Typography>
 
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                }}
+              >
+                Views: {item.views}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+                sx={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                }}
+              >
+                Downloads: {item.downloadCount || 0}
+              </Typography>
+
               {/* Banner Programs */}
               {item.bannerPrograms?.length > 0 && (
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{ mt: 1, flexWrap: "wrap" }}
-                >
+                <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
                   {item.bannerPrograms.map((program, i) => (
                     <Chip
                       key={i}
@@ -151,14 +173,15 @@ const ItemInfo = ({ material }) => {
                 </Stack>
               )}
 
+              {/* Buttons */}
               <Box
                 sx={{
                   display: "flex",
                   gap: 2,
                   mt: 2,
                   flexDirection: isSmallScreen ? "column" : "row",
-                  flexWrap: "wrap", // Ensures wrapping if needed
-                  width: "100%", // Makes sure buttons expand properly
+                  flexWrap: "wrap",
+                  width: "100%",
                 }}
               >
                 <Button
@@ -167,7 +190,6 @@ const ItemInfo = ({ material }) => {
                     bgcolor: "#1A854B",
                     color: "white",
                     textTransform: "none",
-                    width: isSmallScreen ? "100%" : "auto", // Explicitly set width
                   }}
                 >
                   Download PDF
@@ -178,7 +200,6 @@ const ItemInfo = ({ material }) => {
                     bgcolor: "#1A854B",
                     color: "white",
                     textTransform: "none",
-                    width: isSmallScreen ? "100%" : "auto", // Ensures proper width
                   }}
                 >
                   Add to Request Cart

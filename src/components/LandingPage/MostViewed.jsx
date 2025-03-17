@@ -4,12 +4,13 @@ import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "../NavBar/Navbar";
+import { allMaterials } from "../UI/sample_data"; // Import the materials data
 
 const MostViewed = () => {
   const images = [
-    { src: "https://img.pikbest.com/origin/06/28/72/12zpIkbEsTVjv.jpg!w700wp", views: 10027, link: "#" },
-    { src: "https://files.magzter.com/resize/magazine/1403149542/1570239156/view/3.jpg", views: 14136, link: "#" },
-    { src: "https://scontent.fmnl17-1.fna.fbcdn.net/v/t1.15752-9/433884370_791061999576137_5594001860413791526_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=0024fc&_nc_ohc=iqz9ph-sYJkQ7kNvgGAZZN0&_nc_oc=AdieVZmEdryZpPClZPbFOo5zlcb8hIPgqDshSTB7ggI-vuX7mdhWuYL3xaMgwmizpCs&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fmnl17-1.fna&oh=03_Q7cD1wEabxRpfcn0UM8AtFJ--48BDolPoKFimPULadrc19gMVg&oe=67FF3C79", views: 10027, link: "#" },
+    { src: "/ngulay.jpg", views: 10027, link: "#" },
+    { src: "/isda.jpg", views: 14136, link: "#" },
+    { src: "/broiler.jpg", views: 10027, link: "#" },
     { src: "/organic.jpg", views: 14136, link: "#" },
     { src: "/vege.jpg", views: 14136, link: "#" },
   ];
@@ -100,9 +101,9 @@ const MostViewed = () => {
         >
           <Slider {...settings}>
             {images.map((item, index) => (
-              <Box key={index} sx={{ flex: "0 0 auto" }}>
+              <Box key={index} sx={{ padding: "0 10px" }}>
                 <a
-                  href={item.link}
+                  href="#"
                   style={{
                     textDecoration: "none",
                     position: "relative",
@@ -140,32 +141,31 @@ const MostViewed = () => {
                       variant="body2"
                       sx={{ color: "#fff", fontWeight: "bold" }}
                     >
-                      {item.views}
+                      {material.views}
                     </Typography>
                   </Box>
 
                   <Box
                     sx={{
                       width: "100%",
-                      maxWidth: "250px", // Set uniform width
-                      maxHeight: "400px", // Set uniform height
-                      position: "relative",
-                      aspectRatio: "9 / 16",
+                      height: 450, // Fixed height
                       overflow: "hidden",
                       borderRadius: "8px",
                       display: "flex", // Ensures images take up full box
                       alignItems: "center",
                       justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "none",
+                      position: "relative",
                     }}
                   >
                     <img
-                      src={item.src}
-                      alt={`Publication ${index + 1}`}
+                      src={material.image}
+                      alt={material.name}
                       style={{
-                        width: "100%", 
-                        height: "100%", 
-                        objectFit: "cover", // Ensures images fill the box uniformly
-                        borderRadius: "8px",
+                        width: 250, // Fixed width
+                        height: 450, // Fixed height
+                        objectFit: "cover",
                       }}
                     />
                   </Box>
