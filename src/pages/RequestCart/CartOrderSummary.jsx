@@ -1,8 +1,25 @@
-import { Card, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
+import {
+  Card,
+  Box,
+  Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-export default function CartOrderSummary({ cartItems, selectedItems, totalItems, totalQuantity }) {
+export default function CartOrderSummary({
+  cartItems,
+  selectedItems,
+  totalItems,
+  totalQuantity,
+}) {
   if (selectedItems.length === 0) return null; // Hide summary if no items are selected
 
+  const navigate = useNavigate(); // Initialize navigate
   return (
     <Card
       sx={{
@@ -20,8 +37,8 @@ export default function CartOrderSummary({ cartItems, selectedItems, totalItems,
       {/* Header Section */}
       <Box
         sx={{
-          backgroundColor: "green",
-          color: "white",
+          backgroundColor: "#1A854B",
+          color: "#ffffff",
           p: 1,
           textAlign: "center",
           borderTopLeftRadius: "10px",
@@ -49,7 +66,7 @@ export default function CartOrderSummary({ cartItems, selectedItems, totalItems,
                 sx={{
                   fontWeight: "bold",
                   backgroundColor: "#e0e0e0",
-                  color: "green",
+                  color: "#1A854B",
                   whiteSpace: "normal",
                   wordBreak: "break-word",
                   maxWidth: "200px",
@@ -62,7 +79,7 @@ export default function CartOrderSummary({ cartItems, selectedItems, totalItems,
                   fontWeight: "bold",
                   textAlign: "center",
                   backgroundColor: "#e0e0e0",
-                  color: "green",
+                  color: "#1A854B",
                   width: "100px",
                 }}
               >
@@ -84,7 +101,10 @@ export default function CartOrderSummary({ cartItems, selectedItems, totalItems,
                   >
                     {item.name}
                   </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold", width: "100px" }}>
+                  <TableCell
+                    align="center"
+                    sx={{ fontWeight: "bold", width: "100px" }}
+                  >
                     {item.quantity} pcs
                   </TableCell>
                 </TableRow>
@@ -94,11 +114,26 @@ export default function CartOrderSummary({ cartItems, selectedItems, totalItems,
       </Box>
 
       {/* Footer Section: Total Items & Check Out Button */}
-      <Box sx={{ p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          p: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Total {totalItems} items: {totalQuantity}
         </Typography>
-        <Button variant="contained" sx={{ backgroundColor: "green", color: "white", textTransform: "none" }}>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: "#1A854B",
+            color: "white",
+            textTransform: "none",
+          }}
+          onClick={() => navigate("/material-request")}
+        >
           Check Out
         </Button>
       </Box>

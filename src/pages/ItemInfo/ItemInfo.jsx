@@ -57,6 +57,7 @@ const ItemInfo = ({ material }) => {
             maxWidth: 900,
             overflow: "hidden",
             boxShadow: "-8px 8px 14px rgba(0, 0, 0, 0.2)",
+            borderRadius: 2,
           }}
         >
           {/* Header */}

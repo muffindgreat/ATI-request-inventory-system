@@ -38,7 +38,7 @@ export default function MyRequests() {
           mb: 10,
         }}
       >
-        <Card elevation={3}>
+        <Card elevation={3} sx={{ borderRadius: 2 }}>
           <CustomCardHeader title="My Requests" showBackButton />
           <CardContent>
             <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />

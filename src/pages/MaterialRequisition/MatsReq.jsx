@@ -59,7 +59,7 @@ const MatsReq = () => {
           sx={{
             maxWidth: 2000,
             margin: "auto",
-            borderRadius: 4,
+            borderRadius: 2,
             boxShadow: 7,
             mb: 4,
           }}

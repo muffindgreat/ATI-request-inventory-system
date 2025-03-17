@@ -75,7 +75,7 @@ const UserProfile = () => {
           mb: 10,
         }}
       >
-        <Card elevation={3}>
+        <Card elevation={3} sx={{ borderRadius: 2 }}>
           <CustomCardHeader title="Profile Information" showBackButton />
           <CardContent
             sx={{
