@@ -4,16 +4,9 @@ import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "../NavBar/Navbar";
+import { allMaterials } from "../../data"; // Import the materials data
 
 const MostViewed = () => {
-  const images = [
-    { src: "/ngulay.jpg", views: 10027, link: "#" },
-    { src: "/isda.jpg", views: 14136, link: "#" },
-    { src: "/broiler.jpg", views: 10027, link: "#" },
-    { src: "/organic.jpg", views: 14136, link: "#" },
-    { src: "/vege.jpg", views: 14136, link: "#" },
-  ];
-
   const settings = {
     dots: true,
     infinite: true,
@@ -59,10 +52,10 @@ const MostViewed = () => {
         </Typography>
         <Box sx={{ width: "90%", mx: "auto", position: "relative" }}>
           <Slider {...settings}>
-            {images.map((item, index) => (
+            {allMaterials.map((material, index) => (
               <Box key={index} sx={{ padding: "0 10px" }}>
                 <a
-                  href={item.link}
+                  href="#"
                   style={{
                     textDecoration: "none",
                     position: "relative",
@@ -99,27 +92,26 @@ const MostViewed = () => {
                       variant="body2"
                       sx={{ color: "#fff", fontWeight: "bold" }}
                     >
-                      {item.views}
+                      {material.views}
                     </Typography>
                   </Box>
                   <Box
                     sx={{
                       width: "100%",
-                      height: 450, // Fixed height
+                      height: 450,
                       overflow: "hidden",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      backgroundColor: "none",
                       position: "relative",
                     }}
                   >
                     <img
-                      src={item.src}
-                      alt={`Publication ${index + 1}`}
+                      src={material.image}
+                      alt={material.name}
                       style={{
-                        width: 250, // Fixed width
-                        height: 450, // Fixed height
+                        width: 250,
+                        height: 450,
                         objectFit: "cover",
                       }}
                     />
