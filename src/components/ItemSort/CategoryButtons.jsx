@@ -15,8 +15,8 @@ const CategoryButtons = ({ onSelect }) => {
   return (
     <Stack
       direction="row"
-      spacing={isMobile ? 0.5 : 1}
-      mt={1}
+      spacing={isMobile ? 1 : 2} // Adjust spacing for mobile
+      mt={isMobile ? 0.5 : 1}
       flexWrap="wrap"
       justifyContent="center"
     >
@@ -25,13 +25,14 @@ const CategoryButtons = ({ onSelect }) => {
           key={category}
           variant={activeCategory === category ? "contained" : "outlined"}
           sx={{
-            bgcolor: activeCategory === category ? "green" : "white",
+            bgcolor: activeCategory === category ? "#FFB603" : "white",
             color: activeCategory === category ? "white" : "black",
-            borderRadius: "20px",
+            borderRadius: "14px",
             textTransform: "none",
             fontWeight: "bold",
-            minWidth: isMobile ? "70px" : "80px",
+            minWidth: isMobile ? "80px" : "140px", // Adjust button width
             fontSize: isMobile ? "12px" : "14px",
+            mx: isMobile ? "5px" : "10px", // Adjust horizontal margin
             "&:hover": { bgcolor: "lightgray" },
           }}
           onClick={() => handleClick(category)}

@@ -8,7 +8,7 @@ import ImageLibrary from "../LandingPage/Library";
 const SearchFilterBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null); // State for category selection
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const isMobile = useMediaQuery("(max-width:600px)");
   const [navbarHeight, setNavbarHeight] = useState(80);
 
@@ -21,21 +21,20 @@ const SearchFilterBar = () => {
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleFilterChange = (order) => setFilter(order);
-  const handleCategorySelect = (category) => setSelectedCategory(category); // Update selected category
+  const handleCategorySelect = (category) => setSelectedCategory(category);
 
   return (
-    <>  
-      <Box sx={{ height: `${navbarHeight}px` }} /> {/* Spacer for content shift */}
-      <Box
+    <>
+    <Box
         sx={{
-          bgcolor: "green",
+          bgcolor: "#1E874A",
           p: isMobile ? 1 : 2,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           position: "sticky",
           top: `${navbarHeight}px`,
-          width: "100vw",
+          width: "100%",
           maxWidth: "100%",
           overflowX: "hidden",
           boxSizing: "border-box",
@@ -46,30 +45,38 @@ const SearchFilterBar = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            width: isMobile ? "100%" : "auto",
+            width: "100%",
+            maxWidth: isMobile ? "90%" : "1200px", // Mobile: 90% width, Desktop: max 1200px
           }}
         >
           <Stack
-            direction="row" // Ensures row layout
-            spacing={2} // Adjust spacing between SearchBar & FilterButton
-            alignItems="center" // Centers items vertically
-            justifyContent="center" // Centers items horizontally
+            direction="row"
+            spacing={isMobile ? 1 : 2} // Reduce spacing on mobile
+            alignItems="center"
+            justifyContent="center"
             sx={{
-              flexWrap: "nowrap", // Prevents wrapping to the next line
-              mx: isMobile ? 2 : 0, // Adds left & right margin on small screens
+              flexWrap: "nowrap",
+              width: "100%",
+              maxWidth: isMobile ? "100%" : "600px",
             }}
           >
-            <SearchBar value={searchTerm} onChange={handleSearchChange} />
+            <Box sx={{ flexGrow: 1 }}>
+              <SearchBar value={searchTerm} onChange={handleSearchChange} />
+            </Box>
             <FilterButton onFilter={handleFilterChange} />
           </Stack>
         </Container>
 
-        <CategoryButtons onSelect={handleCategorySelect} />
+        <Box sx={{ mt: isMobile ? 1 : 1.25 }}>
+          {" "}
+          {/* Adjust spacing for mobile */}
+          <CategoryButtons onSelect={handleCategorySelect} />
+        </Box>
       </Box>
-      {/* Image Library Component */}
+
       <ImageLibrary selectedCategory={selectedCategory} />
     </>
   );
 };
-// .
+
 export default SearchFilterBar;

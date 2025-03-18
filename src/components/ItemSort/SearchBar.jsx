@@ -14,11 +14,12 @@ const SearchBar = ({ value, onChange }) => {
       fullWidth={isMobile} // Make full width on mobile
       sx={{
         bgcolor: "white",
-        borderRadius: "20px",
-        maxWidth: isMobile ? "100%" : "250px", // Adjust width for desktop
+        borderRadius: "15px",
+        maxWidth: isMobile ? "100%" : "800px", // Wider search bar on desktop
+        width: "100%",
         "& .MuiOutlinedInput-root": {
-          borderRadius: "20px",
-          height: "40px",
+          borderRadius: "15px",
+          height: isMobile ? "40px" : "45px", // Slightly smaller on mobile
         },
       }}
       InputProps={{
