@@ -104,6 +104,7 @@ const MostViewed = () => {
               listStyle: "none",
               padding: 0,
               margin: 0,
+              
             },
             "& .slick-dots li": {
               margin: "0 6px",
@@ -114,6 +115,7 @@ const MostViewed = () => {
               background: "#fff",
               width: "20px", // Default dot size
               height: "6px",
+              borderRadius: "8px",
             },
             "& .slick-dots li button:before": {
               content: '""',
@@ -122,11 +124,13 @@ const MostViewed = () => {
               height: "6px",
               background: "#fff", // Default inactive color
               transition: "all 0.3s ease",
+              borderRadius: "8px",
             },
             "& .slick-dots li.slick-active button:before": {
               width: "20px", // Larger active dot
               height: "6px",
               background: "#1E874A", // Active color (adjust as needed)
+              borderRadius: "8px",
             },
           }}
         >
