@@ -113,7 +113,7 @@ export const allMaterials = [
     downloadCount: 95,
   },
   {
-    id: 4,
+    id: 6,
     name: "Rice Farming Handbook",
     stock: 18,
     type: "Coffee Table Book",
@@ -123,7 +123,7 @@ export const allMaterials = [
     downloadCount: 95,
   },
   {
-    id: 5,
+    id: 7,
     name: "Rice Farming Handbook Rice Farming Handbook Rice Farming Handbook",
     stock: 18,
     type: "Coffee Table Book",

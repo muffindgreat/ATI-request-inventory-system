@@ -122,7 +122,7 @@ const CartItemList = ({
                 display="grid"
                 gridTemplateColumns="50px 1fr 50px"
                 alignItems="center"
-                gap={2}
+                gap={1}
                 p={1}
               >
                 {/* Checkbox for Selection */}
@@ -150,11 +150,44 @@ const CartItemList = ({
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 2,
-                        overflow: "hidden", // Truncate after 2 lines
+                        overflow: "hidden",
                       }}
                     >
                       {item.name}
                     </Typography>
+
+                    {item?.type ? (
+                      <Typography variant="body2" color="textSecondary">
+                        {item.type}
+                      </Typography>
+                    ) : (
+                      <Typography variant="body2" color="error">
+                        No type available
+                      </Typography>
+                    )}
+
+                    {/* Display Banner Programs
+                    {item.bannerPrograms?.length > 0 && (
+                      <Box
+                        sx={{
+                          mt: 1,
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 1,
+                          alignItems: "center",
+                        }}
+                      >
+                        {item.bannerPrograms.map((program, i) => (
+                          <Chip
+                            key={i}
+                            label={program}
+                            color="primary"
+                            size="small"
+                            sx={{ m: 0 }}
+                          />
+                        ))}
+                      </Box>
+                    )} */}
 
                     {/* Quantity Controls */}
                     <Box
@@ -164,6 +197,7 @@ const CartItemList = ({
                         backgroundColor: "#e0e0e0",
                         borderRadius: "6px",
                         padding: "1px 4px",
+                        mt: 1,
                       }}
                     >
                       <IconButton
