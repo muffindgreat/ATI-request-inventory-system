@@ -29,7 +29,7 @@ const CartItemList = ({
     const numericValue = Number(value);
 
     if (!isNaN(numericValue)) {
-      const clampedValue = Math.min(99999, Math.max(1, numericValue)); // Keep within range
+      const clampedValue = Math.min(99999, Math.max(1, numericValue));
       setCartItems((prev) =>
         prev.map((item) =>
           item.id === id ? { ...item, quantity: clampedValue } : item
@@ -41,7 +41,7 @@ const CartItemList = ({
   const handleInputBlur = (id) => {
     const item = cartItems.find((item) => item.id === id);
     if (!item || isNaN(item.quantity) || item.quantity < 1) {
-      handleQuantityChange(id, 1); // Reset to 1 if invalid input
+      handleQuantityChange(id, 1);
     }
   };
 
@@ -150,7 +150,7 @@ const CartItemList = ({
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 2,
-                        overflow: "hidden", // Truncate after 2 lines
+                        overflow: "hidden",
                       }}
                     >
                       {item.name}

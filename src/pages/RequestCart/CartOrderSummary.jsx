@@ -10,7 +10,7 @@ import {
   Tooltip,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import CardHeaderCenter from "../../components/UI/CardHeaderCenter";
 
 export default function CartOrderSummary({
@@ -19,9 +19,7 @@ export default function CartOrderSummary({
   totalItems,
   totalQuantity,
 }) {
-  if (selectedItems.length === 0) return null; // Hide summary if no items are selected
-
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   return (
     <Card
       sx={{
@@ -36,7 +34,15 @@ export default function CartOrderSummary({
         maxHeight: "400px",
       }}
     >
-      <CardHeaderCenter title="Summary" />
+      <CardHeaderCenter
+        title="Summary"
+        sx={{
+          height: "40px",
+          backgroundColor: "#1E874A",
+          color: "#fff",
+          flexShrink: 0,
+        }}
+      />
 
       {/* Item List Section */}
       <Box
@@ -44,7 +50,7 @@ export default function CartOrderSummary({
           backgroundColor: "#e0e0e0",
           borderRadius: 1.5,
           m: 1.5,
-          flexGrow: 1, // Allows the table to take available space
+          flexGrow: 1,
           overflowY: "auto",
           maxHeight: "250px",
         }}
@@ -111,8 +117,8 @@ export default function CartOrderSummary({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderTop: "1px solid #ddd", // Adds a subtle separator
-          backgroundColor: "white", // Ensures it stays visible
+          borderTop: "1px solid #ddd",
+          backgroundColor: "white",
           position: "relative",
         }}
       >

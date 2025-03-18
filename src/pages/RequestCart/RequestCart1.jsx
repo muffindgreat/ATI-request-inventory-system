@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { Typography, Button, IconButton, Card, Box } from "@mui/material";
+import {
+  Typography,
+  Button,
+  IconButton,
+  Card,
+  Box,
+  Collapse,
+} from "@mui/material";
 import CartItemList from "./CartItemList";
 import CartOrderSummary from "./CartOrderSummary";
-
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
-
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import { allMaterials } from "../../components/UI/sample_data";
 
@@ -32,11 +37,8 @@ export default function ReqCart() {
       prev.map((item) => {
         if (item.id === id) {
           let newQuantity = item.quantity + change;
-
-          // Ensure quantity stays within bounds
           if (newQuantity < 1) newQuantity = 1;
           if (newQuantity > 99999) newQuantity = 99999;
-
           return { ...item, quantity: newQuantity };
         }
         return item;
@@ -64,18 +66,10 @@ export default function ReqCart() {
         justifyContent: "center",
         position: "relative",
         overflow: "hidden",
-        // mt: "80px",
         px: 3,
       }}
     >
       <BackgroundImage />
-      {/* <Typography
-        variant="h4"
-        sx={{ textAlign: "center", color: "green", fontWeight: "bold", mb: 1 }}
-      >
-        REQUEST CART
-      </Typography> */}
-
       <Box
         sx={{
           display: "flex",
@@ -90,9 +84,26 @@ export default function ReqCart() {
           mr: { xs: 0, md: 10 },
         }}
       >
-        <Card sx={{ borderRadius: 2, boxShadow: 3, flex: 2 }}>
-          <CustomCardHeader title="Request Cart" showBackButton />
-
+        {/* Cart Item List (Full width if no items selected) */}
+        <Card
+          sx={{
+            borderRadius: 2,
+            boxShadow: 3,
+            flex: selectedItems.length === 0 ? 1 : 2,
+            transition: "flex 0.3s ease-in-out",
+          }}
+        >
+          <CustomCardHeader
+            title="Request Cart"
+            showBackButton
+            sx={{
+              height: "40px",
+              backgroundColor: "#1E874A",
+              color: "#fff",
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+            }}
+          />
           <CartItemList
             cartItems={cartItems}
             selectedItems={selectedItems}
@@ -104,12 +115,24 @@ export default function ReqCart() {
           />
         </Card>
 
-        <CartOrderSummary
-          cartItems={cartItems}
-          selectedItems={selectedItems}
-          totalItems={totalItems}
-          totalQuantity={totalQuantity}
-        />
+        {/* Cart Order Summary (with Collapse Animation) */}
+        <Collapse
+          in={selectedItems.length > 0}
+          timeout={300}
+          sx={{
+            flex: selectedItems.length > 0 ? 1.2 : 0,
+            transition: "flex 0.3s ease-in-out",
+          }}
+        >
+          {selectedItems.length > 0 && (
+            <CartOrderSummary
+              cartItems={cartItems}
+              selectedItems={selectedItems}
+              totalItems={totalItems}
+              totalQuantity={totalQuantity}
+            />
+          )}
+        </Collapse>
       </Box>
     </Box>
   );
