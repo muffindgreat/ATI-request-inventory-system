@@ -157,18 +157,7 @@ const MostViewed = () => {
                       gap: "4px",
                     }}
                   >
-                    <Box
-                      component="span"
-                      sx={{
-                        display: "inline-block",
-                        width: "15px",
-                        height: "15px",
-                        borderRadius: "50%",
-                        backgroundColor: "transparent",
-                        border: "2px solid white",
-                        mr: 0.5,
-                      }}
-                    />
+                    <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
                     <Typography
                       variant="body2"
                       sx={{ color: "#fff", fontWeight: "bold" }}
