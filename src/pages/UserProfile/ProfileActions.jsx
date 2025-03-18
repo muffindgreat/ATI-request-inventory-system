@@ -11,6 +11,13 @@ const ProfileActions = ({
     {isEditing ? (
       <>
         <Button
+          variant="outlined"
+          sx={{ borderRadius: 1, textTransform: "none" }}
+          onClick={handleCancel}
+        >
+          Cancel
+        </Button>
+        <Button
           variant="contained"
           sx={{
             backgroundColor: "#2E7D32",
@@ -21,13 +28,6 @@ const ProfileActions = ({
           onClick={handleSave}
         >
           Save
-        </Button>
-        <Button
-          variant="outlined"
-          sx={{ borderRadius: 1, textTransform: "none" }}
-          onClick={handleCancel}
-        >
-          Cancel
         </Button>
       </>
     ) : (
