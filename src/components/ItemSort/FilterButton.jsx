@@ -20,13 +20,14 @@ const FilterButton = ({ onFilter }) => {
         sx={{
           bgcolor: "white",
           borderRadius: "50%",
-          width: isMobile ? "35px" : "40px",
-          height: isMobile ? "35px" : "40px",
-          ml: isMobile ? 0 : 1, // Adjust margin for spacing
+          width: isMobile ? "32px" : "40px", // Adjust size
+          height: isMobile ? "32px" : "40px",
+          ml: isMobile ? 0 : 1,
         }}
       >
         <FilterListIcon fontSize={isMobile ? "small" : "medium"} />
       </IconButton>
+
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         <MenuItem onClick={() => handleFilter("asc")}>A - Z</MenuItem>
         <MenuItem onClick={() => handleFilter("desc")}>Z - A</MenuItem>
