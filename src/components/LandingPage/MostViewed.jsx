@@ -131,7 +131,7 @@ const MostViewed = () => {
           }}
         >
           <Slider {...settings}>
-            {allMaterials.map((material, index) => (
+            {allMaterials.slice(0,5).map((material, index) => (
               <Box key={index} sx={{ flex: "0 0 auto" }}>
                 <a
                   href="#"
@@ -157,7 +157,18 @@ const MostViewed = () => {
                       gap: "4px",
                     }}
                   >
-                    <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
+                    <Box
+                      component="span"
+                      sx={{
+                        display: "inline-block",
+                        width: "15px",
+                        height: "15px",
+                        borderRadius: "50%",
+                        backgroundColor: "transparent",
+                        border: "2px solid white",
+                        mr: 0.5,
+                      }}
+                    />
                     <Typography
                       variant="body2"
                       sx={{ color: "#fff", fontWeight: "bold" }}
