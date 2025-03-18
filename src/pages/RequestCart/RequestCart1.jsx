@@ -15,11 +15,12 @@ import { allMaterials } from "../../components/UI/sample_data";
 
 export default function ReqCart() {
   const [cartItems, setCartItems] = useState(
-    allMaterials.map(({ id, name, image, quantity }) => ({
+    allMaterials.map(({ id, name, image, quantity, type }) => ({
       id,
       name,
       image,
       quantity: 1,
+      type,
     }))
   );
   const [selectedItems, setSelectedItems] = useState([]);
@@ -70,18 +71,18 @@ export default function ReqCart() {
       }}
     >
       <BackgroundImage />
+
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           gap: 2,
-          "@media (min-width: 600px)": {
+          "@media (min-width: 900px)": {
             flexDirection: "row",
           },
           pt: { xs: 12, sm: 14, md: 16 },
           mb: 10,
-          ml: { xs: 0, md: 10 },
-          mr: { xs: 0, md: 10 },
+          mx: { xs: 0, sm: 0, md: 10, lg: 20 },
         }}
       >
         {/* Cart Item List (Full width if no items selected) */}
