@@ -31,11 +31,15 @@ function NavbarProfile() {
         anchorEl={anchorElUser}
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
+        disableScrollLock={true} // ✅ Allow main content scrolling
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
         sx={{
           "& .MuiPaper-root": {
             backgroundColor: "white",
             borderRadius: "10px",
             padding: "10px",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
           },
         }}
       >
@@ -67,7 +71,7 @@ function NavbarProfile() {
             navigate("/user-profile");
             handleCloseUserMenu();
           }}
-          sx={{ color: "#2e7d32" }} // Make text green
+          sx={{ color: "#2e7d32" }}
         >
           <PersonIcon sx={{ color: "#2e7d32", marginRight: "10px" }} /> Profile
         </MenuItem>
@@ -76,7 +80,7 @@ function NavbarProfile() {
             navigate("/my-requests");
             handleCloseUserMenu();
           }}
-          sx={{ color: "#2e7d32" }} // Make text green
+          sx={{ color: "#2e7d32" }}
         >
           <AssignmentIcon sx={{ color: "#2e7d32", marginRight: "10px" }} /> My
           Requests
@@ -86,7 +90,7 @@ function NavbarProfile() {
             console.log("Sign Out");
             handleCloseUserMenu();
           }}
-          sx={{ color: "#2e7d32" }} // Make text green
+          sx={{ color: "#2e7d32" }}
         >
           <ExitToAppIcon sx={{ color: "#2e7d32", marginRight: "10px" }} /> Sign
           Out
