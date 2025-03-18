@@ -7,9 +7,11 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Tooltip,
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import CardHeaderCenter from "../../components/UI/CardHeaderCenter";
 
 export default function CartOrderSummary({
   cartItems,
@@ -34,19 +36,7 @@ export default function CartOrderSummary({
         maxHeight: "400px",
       }}
     >
-      {/* Header Section */}
-      <Box
-        sx={{
-          backgroundColor: "#1A854B",
-          color: "#ffffff",
-          p: 1,
-          textAlign: "center",
-          borderTopLeftRadius: "10px",
-          borderTopRightRadius: "10px",
-        }}
-      >
-        <Typography fontWeight="bold">Summary</Typography>
-      </Box>
+      <CardHeaderCenter title="Summary" />
 
       {/* Item List Section */}
       <Box
@@ -54,7 +44,7 @@ export default function CartOrderSummary({
           backgroundColor: "#e0e0e0",
           borderRadius: 1.5,
           m: 1.5,
-          flexGrow: 1,
+          flexGrow: 1, // Allows the table to take available space
           overflowY: "auto",
           maxHeight: "250px",
         }}
@@ -90,17 +80,22 @@ export default function CartOrderSummary({
           <TableBody>
             {cartItems
               .filter((item) => selectedItems.includes(item.id))
-              .map((item) => (
-                <TableRow key={item.id}>
+              .map((item, index) => (
+                <TableRow key={item.id || index}>
                   <TableCell
                     sx={{
-                      whiteSpace: "normal",
-                      wordBreak: "break-word",
-                      maxWidth: "200px",
+                      maxWidth: "50px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      fontWeight: "bold",
                     }}
                   >
-                    {item.name}
+                    {/* <Tooltip title={item.name} arrow> */}
+                    <span>{item.name}</span>
+                    {/* </Tooltip> */}
                   </TableCell>
+
                   <TableCell
                     align="center"
                     sx={{ fontWeight: "bold", width: "100px" }}
@@ -113,18 +108,22 @@ export default function CartOrderSummary({
         </Table>
       </Box>
 
-      {/* Footer Section: Total Items & Check Out Button */}
+      {/* Footer Section: Always Stays at Bottom */}
       <Box
         sx={{
           p: 2,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          borderTop: "1px solid #ddd", // Adds a subtle separator
+          backgroundColor: "white", // Ensures it stays visible
+          position: "relative",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Total {totalItems} items: {totalQuantity}
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+          Total {totalItems} items: {totalQuantity} pcs
         </Typography>
+
         <Button
           variant="contained"
           sx={{
