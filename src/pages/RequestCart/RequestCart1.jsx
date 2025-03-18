@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Typography, Button, IconButton, Card, Box } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CartItemList from "./CartItemList";
 import CartOrderSummary from "./CartOrderSummary";
 
@@ -28,13 +27,20 @@ export default function ReqCart() {
   };
 
   // Handle quantity change for items
-  const handleQuantityChange = (id, amount) => {
+  const handleQuantityChange = (id, change) => {
     setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + amount) }
-          : item
-      )
+      prev.map((item) => {
+        if (item.id === id) {
+          let newQuantity = item.quantity + change;
+
+          // Ensure quantity stays within bounds
+          if (newQuantity < 1) newQuantity = 1;
+          if (newQuantity > 99999) newQuantity = 99999;
+
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      })
     );
   };
 

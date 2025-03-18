@@ -26,21 +26,22 @@ const CartItemList = ({
   const [quantityInputs, setQuantityInputs] = useState({});
 
   const handleInputChange = (id, value) => {
-    if (!isNaN(value) && value >= 1) {
-      setQuantityInputs((prev) => ({ ...prev, [id]: value }));
+    const numericValue = Number(value);
+
+    if (!isNaN(numericValue)) {
+      const clampedValue = Math.min(99999, Math.max(1, numericValue)); // Keep within range
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, quantity: clampedValue } : item
+        )
+      );
     }
   };
 
   const handleInputBlur = (id) => {
-    const newQuantity = parseInt(
-      quantityInputs[id] || cartItems.find((item) => item.id)?.quantity,
-      10
-    );
-    if (newQuantity >= 1) {
-      handleQuantityChange(
-        id,
-        newQuantity - cartItems.find((item) => item.id)?.quantity
-      );
+    const item = cartItems.find((item) => item.id === id);
+    if (!item || isNaN(item.quantity) || item.quantity < 1) {
+      handleQuantityChange(id, 1); // Reset to 1 if invalid input
     }
   };
 
@@ -143,7 +144,17 @@ const CartItemList = ({
                     alt={item.name}
                   />
                   <Box sx={{ ml: 2, width: "100%" }}>
-                    <Typography fontWeight="bold">{item.name}</Typography>
+                    <Typography
+                      fontWeight="bold"
+                      sx={{
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 2,
+                        overflow: "hidden", // Truncate after 2 lines
+                      }}
+                    >
+                      {item.name}
+                    </Typography>
 
                     {/* Quantity Controls */}
                     <Box
@@ -171,11 +182,11 @@ const CartItemList = ({
                         }
                         onBlur={() => handleInputBlur(item.id)}
                         type="number"
-                        inputProps={{ min: 1 }}
+                        inputProps={{ min: 1, max: 99999, maxLength: 5 }}
                         variant="standard"
                         size="small"
                         sx={{
-                          width: "30px",
+                          width: "50px",
                           textAlign: "center",
                           mx: 0.5,
                           padding: 0,
