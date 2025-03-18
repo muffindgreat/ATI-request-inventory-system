@@ -62,7 +62,7 @@ export default function CartOrderSummary({
                   maxWidth: "200px",
                 }}
               >
-                Title
+                Particulars
               </TableCell>
               <TableCell
                 sx={{
@@ -88,7 +88,6 @@ export default function CartOrderSummary({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
-                      fontWeight: "bold",
                     }}
                   >
                     {/* <Tooltip title={item.name} arrow> */}
@@ -96,10 +95,7 @@ export default function CartOrderSummary({
                     {/* </Tooltip> */}
                   </TableCell>
 
-                  <TableCell
-                    align="center"
-                    sx={{ fontWeight: "bold", width: "100px" }}
-                  >
+                  <TableCell align="center" sx={{ width: "100px" }}>
                     {item.quantity} pcs
                   </TableCell>
                 </TableRow>
@@ -130,6 +126,7 @@ export default function CartOrderSummary({
             backgroundColor: "#1A854B",
             color: "white",
             textTransform: "none",
+            p: 1,
           }}
           onClick={() => navigate("/material-request")}
         >
