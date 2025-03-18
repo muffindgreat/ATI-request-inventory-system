@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
@@ -7,6 +7,9 @@ import Navbar from "../NavBar/Navbar";
 import { allMaterials } from "../UI/sample_data"; // Import the materials data
 
 const MostViewed = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const totalSlides = allMaterials.length;
+  const maxDots = 5;
 
   const settings = {
     dots: true,
@@ -19,18 +22,28 @@ const MostViewed = () => {
     cssEase: "linear",
     centerMode: false,
     arrows: false,
-    customPaging: (i) => (
-      <div
-        style={{
-          width: "12px",
-          height: "12px",
-          background: "#555",
-          borderRadius: "50%",
-          margin: "0 5px",
-          transition: "all 0.3s ease",
-        }}
-      />
-    ),
+    draggable: true,
+    focusOnSelect: true,
+    beforeChange: (oldIndex, newIndex) => setCurrentSlide(newIndex),
+    customPaging: (i) => {
+      let start = Math.max(0, currentSlide - Math.floor(maxDots / 2));
+      let end = Math.min(totalSlides - 1, start + maxDots - 1);
+      if (end - start + 1 < maxDots) start = Math.max(0, end - maxDots + 1);
+      const isActive = i === currentSlide;
+      return (
+        <div
+          onClick={() => setCurrentSlide(i)}
+          style={{
+            width: "20px",
+            height: "4px",  
+            background: isActive ? "#00ff1e" : "#f5f5f5", //Change color of the Pagination dots <left = active>
+            margin: "0 5px",
+            transition: "all 0.3s ease",
+            cursor: "pointer",
+          }}
+        />
+      );
+    },
     dotsClass: "slick-dots custom-dots",
     responsive: [
       { breakpoint: 1200, settings: { slidesToShow: 4 } },
@@ -46,30 +59,45 @@ const MostViewed = () => {
       <Box
         sx={{
           position: "relative",
-          width: "100%",
-          backgroundColor: "rgb(255, 255, 255)",
+          width: "100vw",
+          backgroundImage: "url('/image.png')",
           py: 6,
+          backgroundSize: "cover", // Ensures the image fully covers the background
+          backgroundPosition: "center", // Centers the image
+          backgroundRepeat: "no-repeat", // Prevents repetition
           margin: 0,
+          zIndex:"-2",
         }}
       >
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Black overlay with 50% opacity
+          zIndex:"-1",
+        }}
+      />
         <Typography
           variant="h3"
           component="h2"
           sx={{
-            color: "#000",
+            color: "#fff",
             textAlign: "center",
-            mb: { xs: 1, sm: 2 }, // Adjusts margin bottom for different screens
+            mb: { xs: 1, sm: 2 },
             fontWeight: "normal",
-            mt: { xs: 3, sm: 4, md: 6 }, // Adjusts margin top
-            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem", lg: "3rem" }, // Responsive font size
+            mt: { xs: 3, sm: 4, md: 6 },
+            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem", lg: "3rem" },
           }}
         >
           MOST VIEWED
         </Typography>
-        <Box 
-          sx={{ 
-            width: "90%", 
-            mx: "auto", 
+        <Box
+          sx={{
+            width: "90%",
+            mx: "auto",
             position: "relative",
             '& .slick-track': {
               display: 'flex',
@@ -84,8 +112,8 @@ const MostViewed = () => {
             },
             '& .slick-dots': {
               position: 'absolute',
-              bottom: '-60px', /* Move dots lower */
-              display: 'flex !important',
+              bottom: '-40px',
+              display: 'flex',
               justifyContent: 'center',
               listStyle: 'none',
             },
@@ -100,51 +128,18 @@ const MostViewed = () => {
                     textDecoration: "none",
                     position: "relative",
                     display: "block",
+                    cursor: "pointer",
                   }}
                 >
                   <Box
                     sx={{
-                      position: "absolute",
-                      top: 10,
-                      left: 10,
-                      zIndex: 2,
-                      backgroundColor: "rgba(0, 0, 0, 0.22)",
-                      borderRadius: "4px",
-                      px: 1,
-                      py: 0.5,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box
-                      component="span"
-                      sx={{
-                        display: "inline-block",
-                        width: "15px",
-                        height: "15px",
-                        borderRadius: "50%",
-                        backgroundColor: "transparent",
-                        border: "2px solid white",
-                        mr: 0.5,
-                      }}
-                    />
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "#fff", fontWeight: "bold" }}
-                    >
-                      {material.views}
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
                       width: "100%",
-                      maxWidth: "300px", // Set uniform width
-                      maxHeight: "450px", // Set uniform height
-                      position: "relative",
+                      maxWidth: "300px",
+                      maxHeight: "440px",
                       aspectRatio: "9 / 16",
                       overflow: "hidden",
                       borderRadius: "8px",
-                      display: "flex", // Ensures images take up full box
+                      display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
@@ -153,9 +148,9 @@ const MostViewed = () => {
                       src={material.image}
                       alt={material.name}
                       style={{
-                        width: "100%", 
-                        height: "100%", 
-                        objectFit: "cover", // Ensures images fill the box uniformly
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                         borderRadius: "8px",
                       }}
                     />
