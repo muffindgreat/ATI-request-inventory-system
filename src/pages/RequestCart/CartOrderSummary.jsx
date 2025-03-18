@@ -43,7 +43,7 @@ export default function CartOrderSummary({
         sx={{
           backgroundColor: "#e0e0e0",
           borderRadius: 1.5,
-          m: 1.5,
+          m: 0,
           flexGrow: 1, // Allows the table to take available space
           overflowY: "auto",
           maxHeight: "250px",
@@ -51,11 +51,12 @@ export default function CartOrderSummary({
       >
         <Table stickyHeader>
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
+            <TableRow>
               <TableCell
                 sx={{
                   fontWeight: "bold",
-                  backgroundColor: "#e0e0e0",
+                  backgroundColor: "#ffffff",
+                  textAlign: "center",
                   color: "#1A854B",
                   whiteSpace: "normal",
                   wordBreak: "break-word",
@@ -68,7 +69,7 @@ export default function CartOrderSummary({
                 sx={{
                   fontWeight: "bold",
                   textAlign: "center",
-                  backgroundColor: "#e0e0e0",
+                  backgroundColor: "#ffffff",
                   color: "#1A854B",
                   width: "100px",
                 }}
@@ -88,6 +89,7 @@ export default function CartOrderSummary({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      backgroundColor: "#ffffff",
                     }}
                   >
                     {/* <Tooltip title={item.name} arrow> */}
@@ -95,7 +97,10 @@ export default function CartOrderSummary({
                     {/* </Tooltip> */}
                   </TableCell>
 
-                  <TableCell align="center" sx={{ width: "100px" }}>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "100px", backgroundColor: "#ffffff" }}
+                  >
                     {item.quantity} pcs
                   </TableCell>
                 </TableRow>
