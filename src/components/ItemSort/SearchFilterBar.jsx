@@ -25,7 +25,7 @@ const SearchFilterBar = () => {
 
   return (
     <>
-    <Box
+      <Box
         sx={{
           bgcolor: "#1E874A",
           p: isMobile ? 1 : 2,
