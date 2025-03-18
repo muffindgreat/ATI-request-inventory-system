@@ -1,5 +1,6 @@
 export const allRequests = [
   {
+    id: 1,
     status: "Pending",
     requestedTime: "March 10, 2025, 08:30 AM",
     acknowledgedTime: "March 10, 2025, 10:15 AM",
@@ -20,6 +21,7 @@ export const allRequests = [
     ],
   },
   {
+    id: 2,
     status: "Completed",
     requestedTime: "March 8, 2025, 09:00 AM",
     acknowledgedTime: "March 8, 2025, 11:30 AM",
