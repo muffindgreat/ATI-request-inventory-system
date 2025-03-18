@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Drawer,
   Box,
@@ -17,38 +17,15 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (mobileOpen) {
-      console.log("Drawer Opened - Enabling Scroll"); // Debugging log
-      document.body.style.overflow = "auto"; // ✅ Force-enable scrolling
-      document.documentElement.style.overflow = "auto"; // ✅ Ensure scrolling on HTML element too
-    } else {
-      console.log("Drawer Closed - Keeping Scroll Enabled");
-      document.body.style.overflow = "auto"; // ✅ Ensure scrolling stays enabled
-      document.documentElement.style.overflow = "auto";
-    }
-
-    return () => {
-      document.body.style.overflow = "auto";
-      document.documentElement.style.overflow = "auto";
-    };
-  }, [mobileOpen]);
-
   return (
     <Drawer
       anchor="right"
       open={mobileOpen}
       onClose={handleDrawerToggle}
-      ModalProps={{
-        disableScrollLock: true, // ✅ Prevent MUI from blocking scrolling
-      }}
       sx={{
         "& .MuiDrawer-paper": {
-          backgroundColor: "white",
-          color: "#2e7d32",
-          overflowY: "auto", // ✅ Drawer should be scrollable
-          maxHeight: "100vh",
+          backgroundColor: "white", // Background changed to white
+          color: "#2e7d32", // Text color changed to green
         },
       }}
     >
@@ -57,11 +34,11 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/")}>
               <ListItemIcon>
-                <HomeIcon sx={{ color: "#2e7d32" }} />
+                <HomeIcon sx={{ color: "#2e7d32" }} /> {/* Icon Green */}
               </ListItemIcon>
               <ListItemText
                 primary="HOME"
-                sx={{ color: "#2e7d32", fontWeight: "bold" }}
+                sx={{ color: "#2e7d32", fontWeight: "bold" }} // Text Green
               />
             </ListItemButton>
           </ListItem>
