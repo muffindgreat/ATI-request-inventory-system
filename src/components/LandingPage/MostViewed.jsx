@@ -1,50 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "../NavBar/Navbar";
-import { allMaterials } from "../UI/sample_data"; // Import the materials data
+import { allMaterials } from "../UI/sample_data"; // Import materials data
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const MostViewed = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = allMaterials.length;
-  const maxDots = 5;
-
   const settings = {
-    dots: true,
+    dots: true, // Enable pagination dots
     infinite: true,
-    speed: 500,
+    speed: 800,
     slidesToShow: 5,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 2500,
     cssEase: "linear",
     centerMode: false,
     arrows: false,
-    draggable: true,
-    focusOnSelect: true,
-    beforeChange: (oldIndex, newIndex) => setCurrentSlide(newIndex),
-    customPaging: (i) => {
-      let start = Math.max(0, currentSlide - Math.floor(maxDots / 2));
-      let end = Math.min(totalSlides - 1, start + maxDots - 1);
-      if (end - start + 1 < maxDots) start = Math.max(0, end - maxDots + 1);
-      const isActive = i === currentSlide;
-      return (
-        <div
-          onClick={() => setCurrentSlide(i)}
-          style={{
-            width: "20px",
-            height: "4px",  
-            background: isActive ? "#00ff1e" : "#f5f5f5", //Change color of the Pagination dots <left = active>
-            margin: "0 5px",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-        />
-      );
-    },
-    dotsClass: "slick-dots custom-dots",
+    dotsClass: "slick-dots custom-dots", // Ensures dots are properly applied
     responsive: [
       { breakpoint: 1200, settings: { slidesToShow: 4 } },
       { breakpoint: 992, settings: { slidesToShow: 3 } },
@@ -59,27 +34,31 @@ const MostViewed = () => {
       <Box
         sx={{
           position: "relative",
-          width: "100vw",
-          backgroundImage: "url('/image.png')",
-          py: 6,
-          backgroundSize: "cover", // Ensures the image fully covers the background
-          backgroundPosition: "center", // Centers the image
-          backgroundRepeat: "no-repeat", // Prevents repetition
+          maxWidth: "100%",
+          minHeight: "90vh",
+          backgroundImage: "url('/image.png')", // Change to your image
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
           margin: 0,
-          zIndex:"-2",
         }}
       >
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)", // Black overlay with 50% opacity
-          zIndex:"-1",
-        }}
-      />
+        {/* Dark Overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Title */}
         <Typography
           variant="h3"
           component="h2"
@@ -90,32 +69,64 @@ const MostViewed = () => {
             fontWeight: "normal",
             mt: { xs: 3, sm: 4, md: 6 },
             fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem", lg: "3rem" },
+            position: "relative",
+            zIndex: 2,
           }}
         >
           MOST VIEWED
         </Typography>
+
+        {/* Carousel Section */}
         <Box
           sx={{
             width: "90%",
             mx: "auto",
             position: "relative",
-            '& .slick-track': {
-              display: 'flex',
-              gap: { xs: '4px', sm: '8px', md: '12px' }, // Adjust spacing between slides
+            zIndex: 2,
+            "& .slick-track": {
+              display: "flex",
+              gap: { xs: "4px", sm: "8px", md: "12px" },
             },
-            '& .slick-slide': {
-              display: 'flex',
-              justifyContent: 'center',
+            "& .slick-slide": {
+              display: "flex",
+              justifyContent: "center",
             },
-            '& .slick-list': {
+            "& .slick-list": {
               overflow: "hidden",
             },
-            '& .slick-dots': {
-              position: 'absolute',
-              bottom: '-40px',
-              display: 'flex',
-              justifyContent: 'center',
-              listStyle: 'none',
+
+            /* ✅ Fixed Pagination Dots Styling */
+            "& .slick-dots": {
+              position: "absolute",
+              bottom: "-35px", // Ensures visibility
+              display: "flex",
+              justifyContent: "center",
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+            },
+            "& .slick-dots li": {
+              margin: "0 6px",
+            },
+            "& .slick-dots li button": {
+              padding: 0,
+              border: "none",
+              background: "#fff",
+              width: "20px", // Default dot size
+              height: "6px",
+            },
+            "& .slick-dots li button:before": {
+              content: '""',
+              display: "block",
+              width: "20px", // Default dot size
+              height: "6px",
+              background: "#fff", // Default inactive color
+              transition: "all 0.3s ease",
+            },
+            "& .slick-dots li.slick-active button:before": {
+              width: "20px", // Larger active dot
+              height: "6px",
+              background: "#1E874A", // Active color (adjust as needed)
             },
           }}
         >
@@ -128,14 +139,40 @@ const MostViewed = () => {
                     textDecoration: "none",
                     position: "relative",
                     display: "block",
-                    cursor: "pointer",
                   }}
                 >
+                  {/* View Counter */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      left: 10,
+                      zIndex: 2,
+                      backgroundColor: "rgba(0, 0, 0, 0.22)",
+                      borderRadius: "4px",
+                      px: 1,
+                      py: 0.5,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#fff", fontWeight: "bold" }}
+                    >
+                      {material.views}
+                    </Typography>
+                  </Box>
+
+                  {/* Image */}
                   <Box
                     sx={{
                       width: "100%",
                       maxWidth: "300px",
-                      maxHeight: "440px",
+                      maxHeight: "450px",
+                      position: "relative",
                       aspectRatio: "9 / 16",
                       overflow: "hidden",
                       borderRadius: "8px",

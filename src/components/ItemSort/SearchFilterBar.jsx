@@ -25,8 +25,7 @@ const SearchFilterBar = () => {
 
   return (
     <>
-      <Box sx={{ height: `${navbarHeight}px` }} />
-      <Box
+    <Box
         sx={{
           bgcolor: "#1E874A",
           p: isMobile ? 1 : 2,
