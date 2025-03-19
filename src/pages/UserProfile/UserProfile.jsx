@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   Box,
   Card,
@@ -7,6 +8,8 @@ import {
   Container,
   Divider,
 } from "@mui/material";
+import { auth, db } from "../../config/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import ProfileAvatar from "./ProfileAvatar";
@@ -16,15 +19,14 @@ import ProfileActions from "./ProfileActions";
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [originalData, setOriginalData] = useState({
-    firstName: "Johnny",
-    lastName: "Trees",
-    email: "johnny3s@example.com",
-    designation: "Animator",
-    section: "IT",
-    phoneNumber: "123-456-7890",
+  const [userData, setUserData] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    designation: "",
+    section: "",
+    phoneNumber: "",
   });
-  const [userData, setUserData] = useState({ ...originalData });
   const [profilePic, setProfilePic] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [passwords, setPasswords] = useState({
@@ -38,6 +40,38 @@ const UserProfile = () => {
     confirm: false,
   });
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userRef = doc(db, "test", user.uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            console.log("User Data Found:", userSnap.data());
+            const fetchedData = userSnap.data();
+            setUserData({
+              fname: fetchedData?.fname || "",
+              lname: fetchedData?.lname || "",
+              email: fetchedData?.email || user.email || "",
+              designation: fetchedData?.designation || "",
+              section: fetchedData?.section || "",
+              phoneNumber: fetchedData?.phoneNumber || "",
+            });
+          } else {
+            console.log("No such user document in 'test' collection!");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        console.log("No authenticated user found.");
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleInputChange = (e) =>
     setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   const handleFileChange = (event) => {
@@ -47,11 +81,9 @@ const UserProfile = () => {
   const toggleVisibility = (field) =>
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   const handleSave = () => {
-    setOriginalData({ ...userData });
     setIsEditing(false);
   };
   const handleCancel = () => {
-    setUserData({ ...originalData });
     setIsEditing(false);
   };
 
@@ -71,7 +103,7 @@ const UserProfile = () => {
       <Container
         maxWidth="md"
         sx={{
-          pt: { xs: 12, sm: 14, md: 16 }, // Adjust padding top based on screen size
+          pt: { xs: 12, sm: 14, md: 16 },
           mb: 10,
         }}
       >
@@ -91,11 +123,13 @@ const UserProfile = () => {
               handleFileChange={handleFileChange}
               setOpenModal={setOpenModal}
             />
-            <ProfileForm
-              userData={userData}
-              isEditing={isEditing}
-              handleInputChange={handleInputChange}
-            />
+            {userData && (
+              <ProfileForm
+                userData={userData}
+                isEditing={isEditing}
+                handleInputChange={handleInputChange}
+              />
+            )}
           </CardContent>
           <Divider></Divider>
           <CardActions sx={{ justifyContent: "flex-end" }}>

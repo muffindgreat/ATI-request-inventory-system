@@ -11,6 +11,13 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { auth } from "../../config/firebaseConfig";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
@@ -20,6 +27,7 @@ export default function LogIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -28,14 +36,26 @@ export default function LogIn() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setError("Both fields are required");
       return;
     }
     setError("");
-    console.log("Logging in with:", { email, password });
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log("Login successful:", userCredential.user);
+      navigate("/home"); // Redirect to home after successful login
+    } catch (err) {
+      setError("Invalid email or password");
+      console.error("Login failed:", err.message);
+    }
   };
 
   return (

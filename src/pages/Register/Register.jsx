@@ -11,6 +11,9 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { auth, db } from "../../config/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
@@ -30,14 +33,36 @@ export default function Register() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!firstName || !lastName || !email || !password) {
       setError("All fields are required");
       return;
     }
     setError("");
-    console.log("Registering with:", { firstName, lastName, email, password });
+
+    try {
+      // Create user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Save user data in Firestore under "test" collection
+      await setDoc(doc(db, "test", user.uid), {
+        fname: firstName,
+        lname: lastName,
+        email: user.email,
+        createdAt: new Date(),
+      });
+
+      console.log("User registered and data saved in Firestore!");
+    } catch (error) {
+      console.error("Error registering user:", error);
+      setError(error.message);
+    }
   };
 
   return (

@@ -1,6 +1,15 @@
 import React from "react";
 import { Box, Typography, TextField } from "@mui/material";
 
+const fieldLabels = {
+  fname: "First Name",
+  lname: "Last Name",
+  email: "Email",
+  designation: "Designation",
+  section: "Section",
+  phoneNumber: "Phone Number",
+};
+
 const ProfileForm = ({ userData, isEditing, handleInputChange }) => (
   <Box
     sx={{
@@ -13,9 +22,7 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => (
     {Object.entries(userData).map(([key, value]) => (
       <Box key={key} sx={{ display: "flex", flexDirection: "column" }}>
         <Typography variant="caption" fontWeight="medium" sx={{ mb: 0.5 }}>
-          {key
-            .replace(/([A-Z])/g, " $1")
-            .replace(/^./, (str) => str.toUpperCase())}
+          {fieldLabels[key] || key}
         </Typography>
         <TextField
           name={key}
@@ -24,7 +31,7 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => (
           variant="outlined"
           size="small"
           fullWidth
-          disabled={!isEditing}
+          disabled={!isEditing || key === "email"} // Email field is always disabled
         />
       </Box>
     ))}
