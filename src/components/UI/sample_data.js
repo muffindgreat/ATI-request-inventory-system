@@ -1,3 +1,10 @@
+export const userData = {
+  id: 1,
+  name: "John Doe John Doe John Doe John Doe John Doe John Doe",
+  email: "johndoe@example.com",
+  role: "Staff",
+};
+
 export const allRequests = [
   {
     id: 1,
