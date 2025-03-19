@@ -130,6 +130,7 @@ const CartItemList = ({
                 alignItems="center"
                 gap={1}
                 p={1}
+                sx={{ borderBottom: "1px solid #ddd" }}
               >
                 {/* Checkbox for Selection */}
                 <Checkbox
@@ -203,6 +204,7 @@ const CartItemList = ({
                           <RemoveIcon fontSize="small" />
                         </IconButton>
 
+                        {/* Quantity Input */}
                         <TextField
                           value={quantityInputs[item.id] ?? item.quantity}
                           onChange={(e) =>
