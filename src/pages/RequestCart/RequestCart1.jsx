@@ -1,8 +1,5 @@
 import { useState } from "react";
 import {
-  Typography,
-  Button,
-  IconButton,
   Card,
   Box,
   Collapse,
@@ -15,7 +12,7 @@ import { allMaterials } from "../../components/UI/sample_data";
 
 export default function ReqCart() {
   const [cartItems, setCartItems] = useState(
-    allMaterials.map(({ id, name, image, quantity, type }) => ({
+    allMaterials.map(({ id, name, image, type }) => ({
       id,
       name,
       image,

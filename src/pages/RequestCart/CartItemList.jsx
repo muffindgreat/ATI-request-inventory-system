@@ -82,7 +82,13 @@ const CartItemList = ({
                   )
                 }
               />
-              <Typography sx={{ fontWeight: "bold", color: "green" }}>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  color: "green",
+                  fontSize: "0.875rem",
+                }}
+              >
                 Select All
               </Typography>
             </Box>
@@ -109,7 +115,7 @@ const CartItemList = ({
                   setSelectedItems([]);
                 }}
               >
-                Delete
+                Remove
               </Button>
             </Box>
           </Box>
@@ -139,10 +145,19 @@ const CartItemList = ({
                 >
                   <CardMedia
                     component="img"
-                    sx={{ width: 60, height: 60, borderRadius: 1 }}
+                    sx={{
+                      width: 60,
+                      height: 90,
+                      minWidth: 60,
+                      minHeight: 90,
+                      borderRadius: 1,
+                      flexShrink: 0,
+                      objectFit: "cover",
+                    }}
                     image={item.image}
                     alt={item.name}
                   />
+
                   <Box sx={{ ml: 2, width: "100%" }}>
                     <Typography
                       fontWeight="bold"
@@ -165,29 +180,6 @@ const CartItemList = ({
                         No type available
                       </Typography>
                     )}
-
-                    {/* Display Banner Programs
-                    {item.bannerPrograms?.length > 0 && (
-                      <Box
-                        sx={{
-                          mt: 1,
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: 1,
-                          alignItems: "center",
-                        }}
-                      >
-                        {item.bannerPrograms.map((program, i) => (
-                          <Chip
-                            key={i}
-                            label={program}
-                            color="primary"
-                            size="small"
-                            sx={{ m: 0 }}
-                          />
-                        ))}
-                      </Box>
-                    )} */}
 
                     {/* Quantity Controls */}
                     <Box
