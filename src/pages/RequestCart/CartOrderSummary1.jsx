@@ -140,7 +140,7 @@ export default function CartOrderSummary({
             color: "white",
             textTransform: "none",
           }}
-          onClick={() => navigate("/material-request")}
+          onClick={() => navigate("/material-request-form")}
         >
           Check Out
         </Button>

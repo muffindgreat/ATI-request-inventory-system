@@ -130,6 +130,7 @@ const CartItemList = ({
                 alignItems="center"
                 gap={1}
                 p={1}
+                sx={{ borderBottom: "1px solid #ddd" }}
               >
                 {/* Checkbox for Selection */}
                 <Checkbox
@@ -141,111 +142,115 @@ const CartItemList = ({
                 <Box
                   display="flex"
                   alignItems="center"
-                  sx={{ overflow: "hidden", width: "100%" }}
+                  sx={{ width: "100%", justifyContent: "space-between" }}
                 >
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      width: 60,
-                      height: 90,
-                      minWidth: 60,
-                      minHeight: 90,
-                      borderRadius: 1,
-                      flexShrink: 0,
-                      objectFit: "cover",
-                    }}
-                    image={item.image}
-                    alt={item.name}
-                  />
-
-                  <Box sx={{ ml: 2, width: "100%" }}>
-                    <Typography
-                      fontWeight="bold"
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}
+                  >
+                    <CardMedia
+                      component="img"
                       sx={{
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 2,
-                        overflow: "hidden",
+                        width: 60,
+                        height: 90,
+                        minWidth: 60,
+                        minHeight: 90,
+                        borderRadius: 1,
+                        flexShrink: 0,
+                        objectFit: "cover",
                       }}
-                    >
-                      {item.name}
-                    </Typography>
+                      image={item.image}
+                      alt={item.name}
+                    />
 
-                    {item?.type ? (
-                      <Typography variant="body2" color="textSecondary">
-                        {item.type}
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2" color="error">
-                        No type available
-                      </Typography>
-                    )}
-
-                    {/* Quantity Controls */}
-                    <Box
-                      sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        backgroundColor: "#e0e0e0",
-                        borderRadius: "6px",
-                        padding: "1px 4px",
-                        mt: 1,
-                      }}
-                    >
-                      <IconButton
-                        size="small"
-                        sx={{ color: "green", padding: "2px" }}
-                        onClick={() => handleQuantityChange(item.id, -1)}
-                      >
-                        <RemoveIcon fontSize="small" />
-                      </IconButton>
-
-                      {/* Quantity Input */}
-                      <TextField
-                        value={quantityInputs[item.id] ?? item.quantity}
-                        onChange={(e) =>
-                          handleInputChange(item.id, e.target.value)
-                        }
-                        onBlur={() => handleInputBlur(item.id)}
-                        type="number"
-                        inputProps={{ min: 1, max: 99999, maxLength: 5 }}
-                        variant="standard"
-                        size="small"
+                    <Box sx={{ ml: 2, flexGrow: 1 }}>
+                      <Typography
+                        fontWeight="bold"
                         sx={{
-                          width: "50px",
-                          textAlign: "center",
-                          mx: 0.5,
-                          padding: 0,
-                          "& .MuiInputBase-root": {
-                            borderBottom: "none !important",
-                            padding: "0 !important",
-                            minHeight: "auto",
-                          },
-                          "& .MuiInput-underline:before, & .MuiInput-underline:after":
-                            {
-                              display: "none",
-                            },
-                          "& .MuiInputBase-input": {
-                            textAlign: "center",
-                            padding: "0 !important",
-                            fontSize: "0.85rem",
-                            MozAppearance: "textfield",
-                            "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
-                              {
-                                WebkitAppearance: "none",
-                                margin: 0,
-                              },
-                          },
+                          display: "-webkit-box",
+                          WebkitBoxOrient: "vertical",
+                          WebkitLineClamp: 2,
+                          overflow: "hidden",
                         }}
-                      />
-
-                      <IconButton
-                        size="small"
-                        sx={{ color: "green", padding: "2px" }}
-                        onClick={() => handleQuantityChange(item.id, 1)}
                       >
-                        <AddIcon fontSize="small" />
-                      </IconButton>
+                        {item.name}
+                      </Typography>
+
+                      {item?.type ? (
+                        <Typography variant="body2" color="textSecondary">
+                          {item.type}
+                        </Typography>
+                      ) : (
+                        <Typography variant="body2" color="error">
+                          No type available
+                        </Typography>
+                      )}
+
+                      {/* Quantity Controls */}
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          backgroundColor: "#e0e0e0",
+                          borderRadius: "6px",
+                          padding: "1px 4px",
+                          mt: 1,
+                        }}
+                      >
+                        <IconButton
+                          size="small"
+                          sx={{ color: "green", padding: "2px" }}
+                          onClick={() => handleQuantityChange(item.id, -1)}
+                        >
+                          <RemoveIcon fontSize="small" />
+                        </IconButton>
+
+                        {/* Quantity Input */}
+                        <TextField
+                          value={quantityInputs[item.id] ?? item.quantity}
+                          onChange={(e) =>
+                            handleInputChange(item.id, e.target.value)
+                          }
+                          onBlur={() => handleInputBlur(item.id)}
+                          type="number"
+                          inputProps={{ min: 1, max: 99999, maxLength: 5 }}
+                          variant="standard"
+                          size="small"
+                          sx={{
+                            width: "50px",
+                            textAlign: "center",
+                            mx: 0.5,
+                            padding: 0,
+                            "& .MuiInputBase-root": {
+                              borderBottom: "none !important",
+                              padding: "0 !important",
+                              minHeight: "auto",
+                            },
+                            "& .MuiInput-underline:before, & .MuiInput-underline:after":
+                              {
+                                display: "none",
+                              },
+                            "& .MuiInputBase-input": {
+                              textAlign: "center",
+                              padding: "0 !important",
+                              fontSize: "0.85rem",
+                              MozAppearance: "textfield",
+                              "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
+                                {
+                                  WebkitAppearance: "none",
+                                  margin: 0,
+                                },
+                            },
+                          }}
+                        />
+
+                        <IconButton
+                          size="small"
+                          sx={{ color: "green", padding: "2px" }}
+                          onClick={() => handleQuantityChange(item.id, 1)}
+                        >
+                          <AddIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
