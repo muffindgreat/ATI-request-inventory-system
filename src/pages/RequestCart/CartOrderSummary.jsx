@@ -49,7 +49,6 @@ export default function CartOrderSummary({
         sx={{
           backgroundColor: "#e0e0e0",
           borderRadius: 1.5,
-          m: 1.5,
           flexGrow: 1, // Allows the table to take available space
           overflowY: "auto",
           maxHeight: "250px",
@@ -62,7 +61,6 @@ export default function CartOrderSummary({
                 sx={{
                   fontWeight: "bold",
                   backgroundColor: "#ffffff",
-                  textAlign: "center",
                   color: "#1A854B",
                   whiteSpace: "normal",
                   wordBreak: "break-word",
