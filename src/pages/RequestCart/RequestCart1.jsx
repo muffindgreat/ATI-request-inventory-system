@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  Card,
-  Box,
-  Collapse,
-} from "@mui/material";
+import { Card, Box, Collapse } from "@mui/material";
 import CartItemList from "./CartItemList";
 import CartOrderSummary from "./CartOrderSummary";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
