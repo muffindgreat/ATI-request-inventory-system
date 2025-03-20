@@ -1,6 +1,6 @@
 export const userData = {
   id: 1,
-  name: "John Doe John Doe John Doe John Doe John Doe John Doe",
+  name: "John Doe",
   email: "johndoe@example.com",
   role: "Staff",
 };

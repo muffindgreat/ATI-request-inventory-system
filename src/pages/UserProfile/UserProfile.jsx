@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
 import {
   Box,
   Card,
@@ -9,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import { auth, db } from "../../config/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import ProfileAvatar from "./ProfileAvatar";
@@ -27,6 +26,8 @@ const UserProfile = () => {
     section: "",
     phoneNumber: "",
   });
+
+  const [originalData, setOriginalData] = useState({}); // Stores the original data before editing
   const [profilePic, setProfilePic] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [passwords, setPasswords] = useState({
@@ -58,6 +59,7 @@ const UserProfile = () => {
               section: fetchedData?.section || "",
               phoneNumber: fetchedData?.phoneNumber || "",
             });
+            setOriginalData(fetchedData); // Store original data for cancel action
           } else {
             console.log("No such user document in 'test' collection!");
           }
@@ -72,18 +74,36 @@ const UserProfile = () => {
     fetchUserData();
   }, []);
 
-  const handleInputChange = (e) =>
+  const handleInputChange = (e) => {
     setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) setProfilePic(URL.createObjectURL(file));
   };
-  const toggleVisibility = (field) =>
+
+  const toggleVisibility = (field) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
-  const handleSave = () => {
-    setIsEditing(false);
   };
+
+  const handleSave = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const userRef = doc(db, "test", user.uid);
+        await updateDoc(userRef, userData);
+        console.log("User data updated successfully!");
+        setOriginalData(userData); // Update original data after successful save
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating user data:", error);
+      }
+    }
+  };
+
   const handleCancel = () => {
+    setUserData(originalData); // Reset to original data
     setIsEditing(false);
   };
 
@@ -99,14 +119,7 @@ const UserProfile = () => {
       }}
     >
       <BackgroundImage />
-
-      <Container
-        maxWidth="md"
-        sx={{
-          pt: { xs: 12, sm: 14, md: 16 },
-          mb: 10,
-        }}
-      >
+      <Container maxWidth="md" sx={{ pt: { xs: 12, sm: 14, md: 16 }, mb: 10 }}>
         <Card elevation={3} sx={{ borderRadius: 2 }}>
           <CustomCardHeader title="Profile Information" showBackButton />
           <CardContent
@@ -123,15 +136,13 @@ const UserProfile = () => {
               handleFileChange={handleFileChange}
               setOpenModal={setOpenModal}
             />
-            {userData && (
-              <ProfileForm
-                userData={userData}
-                isEditing={isEditing}
-                handleInputChange={handleInputChange}
-              />
-            )}
+            <ProfileForm
+              userData={userData}
+              isEditing={isEditing}
+              handleInputChange={handleInputChange}
+            />
           </CardContent>
-          <Divider></Divider>
+          <Divider />
           <CardActions sx={{ justifyContent: "flex-end" }}>
             <ProfileActions
               isEditing={isEditing}
