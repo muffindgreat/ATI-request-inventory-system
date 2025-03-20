@@ -1,7 +1,15 @@
-import React from "react";
-import { Card, CardMedia, Grid, Container } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardMedia,
+  Grid,
+  Container,
+  CircularProgress,
+} from "@mui/material";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { db } from "../../config/firebaseConfig"; // Ensure correct Firebase config import
 
-// ImageCard Component with Hover Effect and Cursor Pointer
+// ImageCard Component
 const ImageCard = ({ src, alt }) => {
   return (
     <Card
@@ -12,38 +20,49 @@ const ImageCard = ({ src, alt }) => {
         borderRadius: 2,
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "scale(1.05)", // Slight zoom effect
-          boxShadow: 6, // Increased shadow on hover
-          cursor: "pointer", // Changes cursor to pointer
+          transform: "scale(1.05)",
+          boxShadow: 6,
+          cursor: "pointer",
         },
       }}
     >
       <CardMedia
         component="img"
-        image={src || "https://via.placeholder.com/150"}
+        image={src || "https://via.placeholder.com/150"} // Default placeholder
         alt={alt || "Image"}
-        sx={{ width: "100%", height: "100%", objectFit: "cover" }} // Ensures full coverage
+        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </Card>
   );
 };
 
-// ImageLibrary Component
+// ImageLibrary Component (Fetches images from Firestore)
 const ImageLibrary = ({ selectedCategory }) => {
-  const images = [
-    { src: "/ngulay.jpg", category: "Rice" },
-    { src: "/isda.jpg", category: "Corn" },
-    { src: "/broiler.jpg", category: "Coconut" },
-    { src: "/organic.jpg", category: "Rice" },
-    { src: "/vege.jpg", category: "Corn" },
-    { src: "/organic.jpg", category: "Rice" },
-    { src: "/broiler.jpg", category: "Coconut" },
-    { src: "/isda.jpg", category: "Corn" },
-    { src: "/ngulay.jpg", category: "Rice" },
-    { src: "/vege.jpg", category: "Corn" },
-  ];
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Show all images if "All" is selected, otherwise filter them
+  // Fetch images from Firestore on component mount
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "images"));
+        const imageList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          src: doc.data().url, // Cloudinary URL
+          category: doc.data().category,
+        }));
+        setImages(imageList);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  // Filter images based on category selection
   const filteredImages =
     selectedCategory === null
       ? images
@@ -51,13 +70,17 @@ const ImageLibrary = ({ selectedCategory }) => {
 
   return (
     <Container sx={{ pt: 3 }}>
-      <Grid container spacing={2} justifyContent="center">
-        {filteredImages.map((img, index) => (
-          <Grid item key={index} xs={10} sm={6} md={4} lg={3} xl={2.4}>
-            <ImageCard src={img.src} alt={img.category} />
-          </Grid>
-        ))}
-      </Grid>
+      {loading ? (
+        <CircularProgress /> // Show loading spinner
+      ) : (
+        <Grid container spacing={2} justifyContent="center">
+          {filteredImages.map((img) => (
+            <Grid item key={img.id} xs={10} sm={6} md={4} lg={3} xl={2.4}>
+              <ImageCard src={img.src} alt={img.category} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Container>
   );
 };
