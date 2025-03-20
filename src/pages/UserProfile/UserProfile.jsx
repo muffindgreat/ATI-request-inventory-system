@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { auth, db } from "../../config/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import ProfileAvatar from "./ProfileAvatar";
@@ -26,7 +27,6 @@ const UserProfile = () => {
     section: "",
     phoneNumber: "",
   });
-
   const [originalData, setOriginalData] = useState({});
   const [profilePic, setProfilePic] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -42,8 +42,7 @@ const UserProfile = () => {
   });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const user = auth.currentUser;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
           const userRef = doc(db, "test", user.uid);
@@ -59,7 +58,7 @@ const UserProfile = () => {
               section: fetchedData?.section || "",
               phoneNumber: fetchedData?.phoneNumber || "",
             });
-            setProfilePic(fetchedData?.profilePic || null); // Set profile pic from Firestore
+            setProfilePic(fetchedData?.profilePic || null);
             setOriginalData(fetchedData);
           } else {
             console.log("No such user document in 'test' collection!");
@@ -70,9 +69,9 @@ const UserProfile = () => {
       } else {
         console.log("No authenticated user found.");
       }
-    };
+    });
 
-    fetchUserData();
+    return () => unsubscribe();
   }, []);
 
   const handleInputChange = (e) => {
@@ -100,7 +99,7 @@ const UserProfile = () => {
 
   const handleCancel = () => {
     setUserData(originalData);
-    setProfilePic(originalData.profilePic); // Reset profile pic on cancel
+    setProfilePic(originalData.profilePic);
     setIsEditing(false);
   };
 
