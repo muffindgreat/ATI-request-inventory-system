@@ -32,10 +32,11 @@ function NavbarProfile() {
         if (userSnap.exists()) {
           const data = userSnap.data();
           setUserData({
-            name: `${data.fname} ${data.lname}`, // Combine first & last name
-            role: data.designation, // Use "designation" for role
-            email: data.email, // Store email
-            phoneNumber: data.phoneNumber, // Store phone number
+            name: `${data.fname} ${data.lname}`,
+            role: data.designation,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
+            profilePic: data.profilePic || null, // Store profile picture URL if available
           });
         } else {
           console.log("No user data found");
@@ -58,11 +59,13 @@ function NavbarProfile() {
 
   return (
     <>
+      {/* Static Icon in Navbar */}
       <Tooltip title="User Profile">
         <IconButton onClick={handleOpenUserMenu}>
           <AccountCircleIcon sx={{ color: "black", fontSize: "28px" }} />
         </IconButton>
       </Tooltip>
+
       <Menu
         anchorEl={anchorElUser}
         open={Boolean(anchorElUser)}
@@ -79,7 +82,7 @@ function NavbarProfile() {
           },
         }}
       >
-        {/* Profile Header */}
+        {/* Profile Header with Dynamic Avatar */}
         <Box
           sx={{
             display: "flex",
@@ -88,9 +91,16 @@ function NavbarProfile() {
             borderBottom: "1px solid #2e7d32",
           }}
         >
-          <AccountCircleIcon
-            sx={{ fontSize: "40px", marginRight: "10px", color: "#1A854B" }}
-          />
+          {userData?.profilePic ? (
+            <Avatar
+              src={userData.profilePic}
+              sx={{ width: 48, height: 48, marginRight: "10px" }}
+            />
+          ) : (
+            <AccountCircleIcon
+              sx={{ fontSize: "40px", marginRight: "10px", color: "#1A854B" }}
+            />
+          )}
           <Box>
             <Typography
               variant="subtitle1"
