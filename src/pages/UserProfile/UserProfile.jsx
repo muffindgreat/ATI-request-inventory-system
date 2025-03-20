@@ -27,7 +27,7 @@ const UserProfile = () => {
     phoneNumber: "",
   });
 
-  const [originalData, setOriginalData] = useState({}); // Stores the original data before editing
+  const [originalData, setOriginalData] = useState({});
   const [profilePic, setProfilePic] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [passwords, setPasswords] = useState({
@@ -59,7 +59,8 @@ const UserProfile = () => {
               section: fetchedData?.section || "",
               phoneNumber: fetchedData?.phoneNumber || "",
             });
-            setOriginalData(fetchedData); // Store original data for cancel action
+            setProfilePic(fetchedData?.profilePic || null); // Set profile pic from Firestore
+            setOriginalData(fetchedData);
           } else {
             console.log("No such user document in 'test' collection!");
           }
@@ -78,11 +79,6 @@ const UserProfile = () => {
     setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) setProfilePic(URL.createObjectURL(file));
-  };
-
   const toggleVisibility = (field) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
@@ -92,9 +88,9 @@ const UserProfile = () => {
     if (user) {
       try {
         const userRef = doc(db, "test", user.uid);
-        await updateDoc(userRef, userData);
+        await updateDoc(userRef, { ...userData, profilePic });
         console.log("User data updated successfully!");
-        setOriginalData(userData); // Update original data after successful save
+        setOriginalData({ ...userData, profilePic });
         setIsEditing(false);
       } catch (error) {
         console.error("Error updating user data:", error);
@@ -103,7 +99,8 @@ const UserProfile = () => {
   };
 
   const handleCancel = () => {
-    setUserData(originalData); // Reset to original data
+    setUserData(originalData);
+    setProfilePic(originalData.profilePic); // Reset profile pic on cancel
     setIsEditing(false);
   };
 
@@ -133,7 +130,7 @@ const UserProfile = () => {
           >
             <ProfileAvatar
               profilePic={profilePic}
-              handleFileChange={handleFileChange}
+              setProfilePic={setProfilePic}
               setOpenModal={setOpenModal}
             />
             <ProfileForm
