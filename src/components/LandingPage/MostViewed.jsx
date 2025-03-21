@@ -208,5 +208,4 @@ const MostViewed = () => {
     </>
   );
 };
-
 export default MostViewed;
