@@ -1,7 +1,7 @@
 import { Button, Stack, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 
-const categories = ["All", "Rice", "Corn", "Coconut"];
+const categories = ["All", "Rice", "Corn", "Coconut", "Livestock", "Fisheries", "Organic Agriculture"];
 
 const CategoryButtons = ({ onSelect }) => {
   const isMobile = useMediaQuery("(max-width:600px)");

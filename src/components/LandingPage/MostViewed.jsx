@@ -94,7 +94,7 @@ const MostViewed = () => {
             opacity: 0.6,
           },
           "& .slick-dots li.slick-active button:before": {
-            width: "24px",
+            width: "16px",
             height: "6px",
             background: "#1E874A",
             opacity: 1,
