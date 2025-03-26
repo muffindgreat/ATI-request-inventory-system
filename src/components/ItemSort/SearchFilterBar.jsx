@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Box, Stack, useMediaQuery, Container } from "@mui/material";
+import { db } from "../../config/firebaseConfig"; // Import db
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import CategoryButtons from "./CategoryButtons";
@@ -16,6 +17,8 @@ const SearchFilterBar = () => {
     const navbar = document.getElementById("navbar");
     if (navbar) {
       setNavbarHeight(navbar.offsetHeight);
+    } else {
+        setNavbarHeight(80);
     }
   }, []);
 
@@ -46,12 +49,12 @@ const SearchFilterBar = () => {
             display: "flex",
             justifyContent: "center",
             width: "100%",
-            maxWidth: isMobile ? "90%" : "1200px", // Mobile: 90% width, Desktop: max 1200px
+            maxWidth: isMobile ? "90%" : "1200px",
           }}
         >
           <Stack
             direction="row"
-            spacing={isMobile ? 1 : 2} // Reduce spacing on mobile
+            spacing={isMobile ? 1 : 2}
             alignItems="center"
             justifyContent="center"
             sx={{
@@ -68,13 +71,15 @@ const SearchFilterBar = () => {
         </Container>
 
         <Box sx={{ mt: isMobile ? 1 : 1.25 }}>
-          {" "}
-          {/* Adjust spacing for mobile */}
           <CategoryButtons onSelect={handleCategorySelect} />
         </Box>
       </Box>
 
-      <ImageLibrary selectedCategory={selectedCategory} />
+      <ImageLibrary
+        selectedCategory={selectedCategory}
+        searchTerm={searchTerm}
+        db={db} // Pass db as prop
+      />
     </>
   );
 };
