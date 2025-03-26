@@ -26,7 +26,7 @@ const MostViewed = () => {
 
         const imageList = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          src: doc.data().url,
+          src: doc.data().icon,
           views: doc.data().views || 0,
           category: doc.data().category,
         }));
