@@ -29,7 +29,7 @@ function Navbar() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user); // Set true if user is logged in, false otherwise
+      setIsAuthenticated(!!user); // True if user is logged in, false otherwise
     });
     return () => unsubscribe();
   }, []);
@@ -47,6 +47,7 @@ function Navbar() {
     >
       <Container maxWidth="xl">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          {/* Logo */}
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
             <img
               src={navLogo}
@@ -55,14 +56,25 @@ function Navbar() {
               onClick={() => navigate("/home")}
             />
           </Box>
+
+          {/* Navbar Home - Always Visible */}
           {!isTablet && <NavbarHome />}
+
+          {/* Right Side Controls */}
           <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
+            {/* If user is logged in, show Cart, Profile & Drawer */}
             {isAuthenticated ? (
               <>
                 <NavbarCart />
                 {!isTablet && <NavbarProfile />}
+                {isTablet && (
+                  <IconButton onClick={handleDrawerToggle}>
+                    <MenuIcon sx={{ color: "black", fontSize: "28px" }} />
+                  </IconButton>
+                )}
               </>
             ) : (
+              // If not logged in, show only Login button
               <Button
                 variant="contained"
                 color="primary"
@@ -72,18 +84,17 @@ function Navbar() {
                 Login
               </Button>
             )}
-            {isTablet && (
-              <IconButton onClick={handleDrawerToggle}>
-                <MenuIcon sx={{ color: "black", fontSize: "28px" }} />
-              </IconButton>
-            )}
           </Box>
         </Toolbar>
       </Container>
-      <NavbarDrawer
-        mobileOpen={mobileOpen}
-        handleDrawerToggle={handleDrawerToggle}
-      />
+
+      {/* Show drawer only if logged in */}
+      {isAuthenticated && (
+        <NavbarDrawer
+          mobileOpen={mobileOpen}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+      )}
     </AppBar>
   );
 }
