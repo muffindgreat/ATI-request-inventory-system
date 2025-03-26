@@ -31,9 +31,9 @@ function Layout() {
           <Route path="/request-cart" element={<RequestCart />} />
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/user-profile" element={<UserProfile />} />
-          <Route path="/item-info" element={<ItemInfo />} />
+          <Route path="/item-info/:id" element={<ItemInfo />} />{" "}
+          {/* Fixed route */}
           <Route path="/material-request-form" element={<MatsReq />} />
-
           {/* Redirect "/" and all unknown routes to /home */}
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="*" element={<Navigate to="/home" />} />
