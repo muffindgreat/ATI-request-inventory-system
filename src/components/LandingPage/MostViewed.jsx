@@ -5,33 +5,35 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "../NavBar/Navbar";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Skeleton from "@mui/material/Skeleton";
 import { db } from "../../config/firebaseConfig";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        // Fetch from "inventory" collection and order by views (descending)
-        const inventoryQuery = query(
+        const materialsQuery = query(
           collection(db, "inventory"),
           orderBy("views", "desc")
         );
-        const querySnapshot = await getDocs(inventoryQuery);
+        const querySnapshot = await getDocs(materialsQuery);
 
-        const materialList = querySnapshot.docs.map((doc) => ({
+        const imageList = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          src: doc.data().url, // Ensure this matches the field name in Firestore
+          src: doc.data().url,
           views: doc.data().views || 0,
-          category: doc.data().category || "Uncategorized",
+          category: doc.data().category,
         }));
 
-        setMaterials(materialList);
+        setMaterials(imageList);
       } catch (error) {
-        console.error("Error fetching most viewed inventory:", error);
+        console.error("Error fetching images:", error);
       } finally {
         setLoading(false);
       }
@@ -75,6 +77,43 @@ const MostViewed = () => {
           alignItems: "center",
           justifyContent: "center",
           margin: 0,
+          "& .slick-dots": {
+            position: "absolute",
+            bottom: "-40px",
+            display: "flex",
+            justifyContent: "center",
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+          },
+          "& .slick-dots li": {
+            margin: "0 5px",
+          },
+          "& .slick-dots li button": {
+            padding: 0,
+            border: "none",
+            background: "transparent",
+            width: "16px",
+            height: "6px",
+            borderRadius: "8px",
+          },
+          "& .slick-dots li button:before": {
+            content: '""',
+            display: "block",
+            width: "16px",
+            height: "6px",
+            background: "#fff",
+            transition: "all 0.3s ease",
+            borderRadius: "8px",
+            opacity: 0.6,
+          },
+          "& .slick-dots li.slick-active button:before": {
+            width: "16px",
+            height: "6px",
+            background: "#1E874A",
+            opacity: 1,
+            borderRadius: "8px",
+          },
         }}
       >
         <Box
