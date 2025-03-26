@@ -163,7 +163,7 @@ export default function CartOrderSummary({
             textTransform: "none",
             p: 1,
           }}
-          onClick={() => navigate("/material-request")}
+          onClick={() => navigate("/material-request-form")}
         >
           Check Out
         </Button>
