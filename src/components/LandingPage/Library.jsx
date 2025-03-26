@@ -70,7 +70,7 @@ const Library = ({ selectedCategory }) => {
           </Grid>
         ))}
       </Grid>
-      <MostViewed images={images} />
+      {/* <MostViewed images={images} /> */}
     </Container>
   );
 };
