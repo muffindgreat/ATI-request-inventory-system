@@ -5,32 +5,33 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "../NavBar/Navbar";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import Skeleton from '@mui/material/Skeleton';
 import { db } from "../../config/firebaseConfig";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 
 const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const materialsQuery = query(collection(db, "images"), orderBy("views", "desc"));
-        const querySnapshot = await getDocs(materialsQuery);
+        // Fetch from "inventory" collection and order by views (descending)
+        const inventoryQuery = query(
+          collection(db, "inventory"),
+          orderBy("views", "desc")
+        );
+        const querySnapshot = await getDocs(inventoryQuery);
 
-        const imageList = querySnapshot.docs.map((doc) => ({
+        const materialList = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          src: doc.data().url,
+          src: doc.data().url, // Ensure this matches the field name in Firestore
           views: doc.data().views || 0,
-          category: doc.data().category,
+          category: doc.data().category || "Uncategorized",
         }));
 
-        setMaterials(imageList);
+        setMaterials(materialList);
       } catch (error) {
-        console.error("Error fetching images:", error);
+        console.error("Error fetching most viewed inventory:", error);
       } finally {
         setLoading(false);
       }
@@ -57,8 +58,6 @@ const MostViewed = () => {
     ],
   };
 
-
-  
   return (
     <>
       <Navbar />
@@ -76,62 +75,52 @@ const MostViewed = () => {
           alignItems: "center",
           justifyContent: "center",
           margin: 0,
-          "& .slick-dots": {
-            position: "absolute",
-            bottom: "-40px",
-            display: "flex",
-            justifyContent: "center",
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-          },
-          "& .slick-dots li": {
-            margin: "0 5px",
-          },
-          "& .slick-dots li button": {
-            padding: 0,
-            border: "none",
-            background: "transparent",
-            width: "16px",
-            height: "6px",
-            borderRadius: "8px",
-          },
-          "& .slick-dots li button:before": {
-            content: '""',
-            display: "block",
-            width: "16px",
-            height: "6px",
-            background: "#fff",
-            transition: "all 0.3s ease",
-            borderRadius: "8px",
-            opacity: 0.6,
-          },
-          "& .slick-dots li.slick-active button:before": {
-            width: "16px",
-            height: "6px",
-            background: "#1E874A",
-            opacity: 1,
-            borderRadius: "8px",
-          },
         }}
       >
-        <Box sx={{ position: "absolute", width: "100%", height: "100%", backgroundColor: "rgba(0, 0, 0, 0.6)", zIndex: 1 }} />
+        <Box
+          sx={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            zIndex: 1,
+          }}
+        />
 
         <Typography
           variant="h3"
           component="h2"
-          sx={{ color: "#fff", textAlign: "center", fontWeight: "bold", position: "relative", zIndex: 2, mt: 4}}
+          sx={{
+            color: "#fff",
+            textAlign: "center",
+            fontWeight: "bold",
+            position: "relative",
+            zIndex: 2,
+            mt: 4,
+          }}
         >
           MOST VIEWED
         </Typography>
 
         {loading ? (
-          <Typography sx={{ color: "white", position: "relative", zIndex: 2 }}>Loading...</Typography>
+          <Typography sx={{ color: "white", position: "relative", zIndex: 2 }}>
+            Loading...
+          </Typography>
         ) : (
-          <Box sx={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
+          <Box
+            sx={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}
+          >
             <Slider {...settings}>
               {materials.map((material) => (
-                <Box key={material.id} sx={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "10px" }}>
+                <Box
+                  key={material.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "10px",
+                  }}
+                >
                   <a
                     href="#"
                     style={{
@@ -156,8 +145,13 @@ const MostViewed = () => {
                         gap: "4px",
                       }}
                     >
-                      <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
-                      <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
+                      <VisibilityIcon
+                        sx={{ fontSize: "16px", color: "white" }}
+                      />
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "#fff", fontWeight: "bold" }}
+                      >
                         {material.views}
                       </Typography>
                     </Box>
@@ -179,7 +173,12 @@ const MostViewed = () => {
                         id={material.id}
                         src={material.src}
                         alt={material.category}
-                        style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
                       />
                     </Box>
                   </a>
