@@ -12,38 +12,56 @@ import {
 } from "@mui/material";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import BackgroundImage from "../../components/UI/BackgroundImage";
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { db } from "../../config/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 
 const ItemInfo = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const hasUpdated = useRef(false); // Prevents duplicate updates
 
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchAndUpdateViews = async () => {
+      if (hasUpdated.current) return; // Prevent multiple updates in strict mode
+      hasUpdated.current = true;
+
       try {
         const docRef = doc(db, "inventory", id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setItem(docSnap.data());
+          const itemData = docSnap.data();
+
+          // Optimistically update state to show new views count
+          setItem((prev) => ({
+            ...itemData,
+            views: (itemData.views || 0) + 1, // Increase views count before Firestore update
+          }));
+
+          // Update Firestore views count
+          await updateDoc(docRef, { views: increment(1) });
+
+          // Fetch the latest data to ensure consistency
+          const updatedSnap = await getDoc(docRef);
+          if (updatedSnap.exists()) {
+            setItem(updatedSnap.data()); // Set the real updated data
+          }
         } else {
           setItem(null);
         }
       } catch (error) {
-        console.error("Error fetching item:", error);
+        console.error("Error fetching/updating item:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchItem();
+    fetchAndUpdateViews();
   }, [id]);
 
   if (loading) {
@@ -90,10 +108,8 @@ const ItemInfo = () => {
             borderRadius: 2,
           }}
         >
-          {/* Header using CustomCardHeader */}
           <CustomCardHeader title="Item Info" showBackButton />
 
-          {/* Main Content */}
           <Box
             sx={{
               display: "flex",
@@ -147,7 +163,6 @@ const ItemInfo = () => {
                 Downloads: {item.downloads || 0}
               </Typography>
 
-              {/* Banner Programs */}
               {item.bannerPrograms?.length > 0 && (
                 <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
                   {item.bannerPrograms.map((program, i) => (

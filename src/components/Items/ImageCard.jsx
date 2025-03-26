@@ -1,23 +1,14 @@
 import React from "react";
 import { Card, CardMedia } from "@mui/material";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../config/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 const ImageCard = ({ id, src, alt, views, category }) => {
   const navigate = useNavigate();
 
-  const handleClick = async () => {
-    try {
-      const imageRef = doc(db, "inventory", id);
-      await updateDoc(imageRef, { views: (views || 0) + 1 });
-
-      navigate(`/item-info/${id}`, {
-        state: { id, src, alt, views: views + 1, category },
-      });
-    } catch (error) {
-      console.error("Error updating views:", error);
-    }
+  const handleClick = () => {
+    navigate(`/item-info/${id}`, {
+      state: { id, src, alt, views, category },
+    });
   };
 
   return (
