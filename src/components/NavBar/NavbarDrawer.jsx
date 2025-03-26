@@ -10,6 +10,8 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../config/firebaseConfig"; // Import Firebase auth instance
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -17,6 +19,17 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
   const navigate = useNavigate();
+
+  // Handle Sign Out
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      navigate("/login"); // Redirect to login page
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -59,8 +72,9 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
               <ListItemText primary="My Requests" sx={{ color: "#2e7d32" }} />
             </ListItemButton>
           </ListItem>
+          <Divider sx={{ backgroundColor: "#2e7d32" }} />
           <ListItem disablePadding>
-            <ListItemButton onClick={() => console.log("Sign Out")}>
+            <ListItemButton onClick={handleSignOut}>
               <ListItemIcon>
                 <ExitToAppIcon sx={{ color: "#2e7d32" }} />
               </ListItemIcon>
