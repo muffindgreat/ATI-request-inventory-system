@@ -26,21 +26,22 @@ const CartItemList = ({
   const [quantityInputs, setQuantityInputs] = useState({});
 
   const handleInputChange = (id, value) => {
-    if (!isNaN(value) && value >= 1) {
-      setQuantityInputs((prev) => ({ ...prev, [id]: value }));
+    const numericValue = Number(value);
+
+    if (!isNaN(numericValue)) {
+      const clampedValue = Math.min(99999, Math.max(1, numericValue));
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, quantity: clampedValue } : item
+        )
+      );
     }
   };
 
   const handleInputBlur = (id) => {
-    const newQuantity = parseInt(
-      quantityInputs[id] || cartItems.find((item) => item.id)?.quantity,
-      10
-    );
-    if (newQuantity >= 1) {
-      handleQuantityChange(
-        id,
-        newQuantity - cartItems.find((item) => item.id)?.quantity
-      );
+    const item = cartItems.find((item) => item.id === id);
+    if (!item || isNaN(item.quantity) || item.quantity < 1) {
+      handleQuantityChange(id, 1);
     }
   };
 
@@ -81,7 +82,13 @@ const CartItemList = ({
                   )
                 }
               />
-              <Typography sx={{ fontWeight: "bold", color: "green" }}>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  color: "green",
+                  fontSize: "0.875rem",
+                }}
+              >
                 Select All
               </Typography>
             </Box>
@@ -108,43 +115,74 @@ const CartItemList = ({
                   setSelectedItems([]);
                 }}
               >
-                Delete
+                Remove
               </Button>
             </Box>
           </Box>
 
           {/* Cart Items List */}
           <Box sx={{ maxHeight: "500px", overflowY: "auto", pr: 1, p: 0 }}>
-            {cartItems.map((item, index) => {
-              return (
-                <Box
-                  key={item.id || index}
-                  display="grid"
-                  gridTemplateColumns="50px 1fr 50px"
-                  alignItems="center"
-                  gap={2}
-                  p={1}
-                >
-                  {/* Checkbox for Selection */}
-                  <Checkbox
-                    checked={selectedItems.includes(item.id)}
-                    onChange={() => toggleSelectItem(item.id)}
-                  />
+            {cartItems.map((item) => (
+              <Box
+                key={item.id}
+                display="grid"
+                gridTemplateColumns="50px 1fr 50px"
+                alignItems="center"
+                gap={1}
+                p={1}
+              >
+                {/* Checkbox for Selection */}
+                <Checkbox
+                  checked={selectedItems.includes(item.id)}
+                  onChange={() => toggleSelectItem(item.id)}
+                />
 
-                  {/* Item Details */}
+                {/* Item Details */}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  sx={{ width: "100%", justifyContent: "space-between" }}
+                >
                   <Box
-                    display="flex"
-                    alignItems="center"
-                    sx={{ overflow: "hidden", width: "100%" }}
+                    sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}
                   >
                     <CardMedia
                       component="img"
-                      sx={{ width: 60, height: 60, borderRadius: 1 }}
+                      sx={{
+                        width: 60,
+                        height: 90,
+                        minWidth: 60,
+                        minHeight: 90,
+                        borderRadius: 1,
+                        flexShrink: 0,
+                        objectFit: "cover",
+                      }}
                       image={item.image}
                       alt={item.name}
                     />
-                    <Box sx={{ ml: 2, width: "100%" }}>
-                      <Typography fontWeight="bold">{item.name}</Typography>
+
+                    <Box sx={{ ml: 2, flexGrow: 1 }}>
+                      <Typography
+                        fontWeight="bold"
+                        sx={{
+                          display: "-webkit-box",
+                          WebkitBoxOrient: "vertical",
+                          WebkitLineClamp: 2,
+                          overflow: "hidden",
+                        }}
+                      >
+                        {item.name}
+                      </Typography>
+
+                      {item?.type ? (
+                        <Typography variant="body2" color="textSecondary">
+                          {item.type}
+                        </Typography>
+                      ) : (
+                        <Typography variant="body2" color="error">
+                          No type available
+                        </Typography>
+                      )}
 
                       {/* Quantity Controls */}
                       <Box
@@ -154,6 +192,7 @@ const CartItemList = ({
                           backgroundColor: "#e0e0e0",
                           borderRadius: "6px",
                           padding: "1px 4px",
+                          mt: 1,
                         }}
                       >
                         <IconButton
@@ -164,7 +203,6 @@ const CartItemList = ({
                           <RemoveIcon fontSize="small" />
                         </IconButton>
 
-                        {/* Quantity Input */}
                         <TextField
                           value={quantityInputs[item.id] ?? item.quantity}
                           onChange={(e) =>
@@ -172,11 +210,11 @@ const CartItemList = ({
                           }
                           onBlur={() => handleInputBlur(item.id)}
                           type="number"
-                          inputProps={{ min: 1 }}
+                          inputProps={{ min: 1, max: 99999, maxLength: 5 }}
                           variant="standard"
                           size="small"
                           sx={{
-                            width: "30px",
+                            width: "50px",
                             textAlign: "center",
                             mx: 0.5,
                             padding: 0,
@@ -214,18 +252,26 @@ const CartItemList = ({
                     </Box>
                   </Box>
 
-                  {/* Remove Button */}
-                  <Box display="flex" justifyContent="center">
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </Box>
+                  {/* Delete Button aligned to flex-end */}
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    <CloseIcon />
+                  </IconButton>
                 </Box>
-              );
-            })}
+
+                {/* Remove Button */}
+                <Box display="flex" justifyContent="center">
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            ))}
           </Box>
         </>
       )}
