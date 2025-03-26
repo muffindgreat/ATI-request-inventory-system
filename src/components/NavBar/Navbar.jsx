@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -6,10 +6,13 @@ import {
   IconButton,
   Container,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../config/firebaseConfig"; // Import Firebase auth instance
 import NavbarHome from "./NavbarHome";
 import NavbarCart from "./NavbarCart";
 import NavbarProfile from "./NavbarProfile";
@@ -18,10 +21,18 @@ import navLogo from "/navlogs.png";
 
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user); // Set true if user is logged in, false otherwise
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
@@ -46,8 +57,21 @@ function Navbar() {
           </Box>
           {!isTablet && <NavbarHome />}
           <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <NavbarCart />
-            {!isTablet && <NavbarProfile />}
+            {isAuthenticated ? (
+              <>
+                <NavbarCart />
+                {!isTablet && <NavbarProfile />}
+              </>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate("/login")}
+                sx={{ textTransform: "none", fontWeight: "bold" }}
+              >
+                Login
+              </Button>
+            )}
             {isTablet && (
               <IconButton onClick={handleDrawerToggle}>
                 <MenuIcon sx={{ color: "black", fontSize: "28px" }} />
