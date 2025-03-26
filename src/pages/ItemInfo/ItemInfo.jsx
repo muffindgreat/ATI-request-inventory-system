@@ -2,29 +2,33 @@ import {
   Container,
   Paper,
   Box,
+  useMediaQuery,
+  useTheme,
   Typography,
   Button,
   Stack,
   Chip,
-  IconButton,
   CircularProgress,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CustomCardHeader from "../../components/UI/CustomCardHeader";
+import BackgroundImage from "../../components/UI/BackgroundImage";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { db } from "../../config/firebaseConfig"; // Ensure your Firebase config is correct
+import { db } from "../../config/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 const ItemInfo = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
-  const { id } = useParams(); // Get the item ID from the URL
+  const { id } = useParams();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const docRef = doc(db, "inventory", id); // Fetch from Firestore collection
+        const docRef = doc(db, "inventory", id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -61,104 +65,141 @@ const ItemInfo = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 6 }}>
-      {/* Header */}
-      <Paper
-        sx={{
-          backgroundColor: "#1A854B",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          p: 2,
-        }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <BackgroundImage />
+      <Container
+        maxWidth="md"
+        sx={{ alignContent: "center", pt: { xs: 12, sm: 14, md: 16 }, mb: 10 }}
       >
-        <IconButton onClick={() => navigate(-1)} sx={{ color: "white" }}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h6" sx={{ ml: 1 }}>
-          Item Info
-        </Typography>
-      </Paper>
-
-      {/* Content */}
-      <Paper
-        sx={{
-          p: 3,
-          mt: 2,
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          alignItems: { xs: "center", sm: "flex-start" },
-          gap: 3,
-        }}
-      >
-        {/* Image */}
-        <Box
+        <Paper
+          elevation={3}
           sx={{
-            width: { xs: "100%", sm: "30%" },
-            maxWidth: 250,
-            aspectRatio: "3/4",
-            borderRadius: 2,
+            width: "100%",
+            maxWidth: 900,
             overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "grey.300",
+            boxShadow: "-8px 8px 14px rgba(0, 0, 0, 0.2)",
+            borderRadius: 2,
           }}
         >
-          <img
-            src={item.imageUrl || "/default-image.jpg"} // Use default image if none
-            alt={item.itemName}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </Box>
+          {/* Header using CustomCardHeader */}
+          <CustomCardHeader title="Item Info" showBackButton />
 
-        {/* Info Section */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            {item.itemName} {/* Now displayed in large font */}
-          </Typography>
-          <Typography variant="h6" color="textSecondary" gutterBottom>
-            {item.title}
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            {item.type}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            Views: {item.views || 0}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            Downloads: {item.downloads || 0}
-          </Typography>
-
-          {/* Tags */}
-          {item.bannerPrograms?.length > 0 && (
-            <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
-              {item.bannerPrograms.map((program, i) => (
-                <Chip key={i} label={program} color="primary" size="small" />
-              ))}
-            </Stack>
-          )}
-
-          {/* Buttons */}
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={2}>
-            <Button
-              variant="contained"
-              sx={{ bgcolor: "#1A854B", color: "white", textTransform: "none" }}
-              onClick={() => window.open(item.pdfUrl, "_blank")}
-              disabled={!item.pdfUrl}
+          {/* Main Content */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: isSmallScreen ? "column" : "row",
+              p: 3,
+              gap: 2,
+            }}
+          >
+            {/* Image */}
+            <Box
+              sx={{
+                width: isSmallScreen ? "100%" : "30%",
+                height: isSmallScreen ? 240 : 360,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
+                aspectRatio: "3/4",
+                overflow: "hidden",
+                bgcolor: "grey.300",
+              }}
             >
-              Download PDF
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ bgcolor: "#1A854B", color: "white", textTransform: "none" }}
-            >
-              Add to Request Cart
-            </Button>
-          </Stack>
-        </Box>
-      </Paper>
-    </Container>
+              <img
+                src={item.imageUrl || "/default-image.jpg"}
+                alt={item.itemName}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  width: "auto",
+                  height: "auto",
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
+
+            {/* Item Details */}
+            <Box sx={{ flex: 1, p: isSmallScreen ? 2 : 5 }}>
+              <Typography variant="h4" fontWeight="bold" gutterBottom>
+                {item.itemName}
+              </Typography>
+              <Typography variant="h6" color="textSecondary" gutterBottom>
+                {item.title}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {item.type}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Views: {item.views || 0}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Downloads: {item.downloads || 0}
+              </Typography>
+
+              {/* Banner Programs */}
+              {item.bannerPrograms?.length > 0 && (
+                <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
+                  {item.bannerPrograms.map((program, i) => (
+                    <Chip
+                      key={i}
+                      label={program}
+                      color="primary"
+                      size="small"
+                    />
+                  ))}
+                </Stack>
+              )}
+
+              {/* Buttons */}
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  mt: 2,
+                  flexDirection: isSmallScreen ? "column" : "row",
+                  flexWrap: "wrap",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#1A854B",
+                    color: "white",
+                    textTransform: "none",
+                  }}
+                  onClick={() => window.open(item.pdfUrl, "_blank")}
+                  disabled={!item.pdfUrl}
+                >
+                  Download PDF
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#1A854B",
+                    color: "white",
+                    textTransform: "none",
+                  }}
+                >
+                  Add to Request Cart
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 
