@@ -28,7 +28,7 @@ const MostViewed = () => {
           id: doc.id,
           src: doc.data().icon,
           views: doc.data().views || 0,
-          category: doc.data().category,
+          itemName: doc.data().itemName,
         }));
 
         setMaterials(imageList);
@@ -41,6 +41,10 @@ const MostViewed = () => {
 
     fetchMaterials();
   }, []);
+
+  const handleClick = (id) => {
+    navigate(`/item-info/${id}`);
+  };
 
   const settings = {
     dots: true,
@@ -158,69 +162,56 @@ const MostViewed = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     padding: "10px",
+                    cursor: "pointer",
                   }}
+                  onClick={() => handleClick(material.id)}
                 >
-                  <a
-                    href="#"
-                    style={{
-                      textDecoration: "none",
-                      position: "relative",
-                      display: "block",
-                      maxWidth: "250px",
-                      width: "100%",
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      left: 10,
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      borderRadius: "4px",
+                      px: 1,
+                      py: 0.5,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
                     }}
                   >
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 10,
-                        left: 10,
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        borderRadius: "4px",
-                        px: 1,
-                        py: 0.5,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
+                    <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#fff", fontWeight: "bold" }}
                     >
-                      <VisibilityIcon
-                        sx={{ fontSize: "16px", color: "white" }}
-                      />
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#fff", fontWeight: "bold" }}
-                      >
-                        {material.views}
-                      </Typography>
-                    </Box>
-
-                    <Box
-                      sx={{
+                      {material.views}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      maxWidth: "250px",
+                      aspectRatio: "9 / 16",
+                      overflow: "hidden",
+                      borderRadius: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                    }}
+                  >
+                    <img
+                      src={material.src}
+                      alt={material.itemName}
+                      style={{
                         width: "100%",
-                        maxWidth: "250px",
-                        aspectRatio: "9 / 16",
-                        overflow: "hidden",
+                        height: "100%",
+                        objectFit: "cover",
                         borderRadius: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
                       }}
-                    >
-                      <img
-                        id={material.id}
-                        src={material.src}
-                        alt={material.category}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </Box>
-                  </a>
+                    />
+                  </Box>
                 </Box>
               ))}
             </Slider>
