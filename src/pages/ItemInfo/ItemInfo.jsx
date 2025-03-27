@@ -194,11 +194,20 @@ const ItemInfo = () => {
                     color: "white",
                     textTransform: "none",
                   }}
-                  onClick={() => window.open(item.pdfUrl, "_blank")}
-                  disabled={!item.pdfUrl}
+                  onClick={() => {
+                    if (item.pdfLink) {
+                      console.log("Downloading PDF from:", item.pdfLink);
+                      window.open(item.pdfLink, "_blank");
+                    } else {
+                      console.error("Error: No PDF link available.");
+                      alert("PDF is not available for download.");
+                    }
+                  }}
+                  // disabled={!item.pdfLink}
                 >
                   Download PDF
                 </Button>
+
                 <Button
                   variant="contained"
                   sx={{
