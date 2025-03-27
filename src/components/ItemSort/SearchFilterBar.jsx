@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Stack, useMediaQuery, Container } from "@mui/material";
+import { Box, Stack, useMediaQuery, Container, Typography } from "@mui/material";
 import { db } from "../../config/firebaseConfig";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
@@ -13,6 +13,7 @@ const SearchFilterBar = () => {
   const [sortOrder, setSortOrder] = useState("asc"); // Default sorting A-Z
   const isMobile = useMediaQuery("(max-width:600px)");
   const [navbarHeight, setNavbarHeight] = useState(80);
+  const [images, setImages] = useState([]); // Add images state
 
   useEffect(() => {
     const navbar = document.getElementById("navbar");
@@ -26,6 +27,11 @@ const SearchFilterBar = () => {
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleFilterChange = (order) => setSortOrder(order); // Update sorting order
   const handleCategorySelect = (category) => setSelectedCategory(category);
+
+  // Callback to get images from ImageLibrary
+  const handleImagesReceived = (imagesData) => {
+    setImages(imagesData);
+  };
 
   return (
     <>
@@ -81,7 +87,57 @@ const SearchFilterBar = () => {
         searchTerm={searchTerm}
         sortOrder={sortOrder} // ✅ Pass sort order to Library
         db={db}
+        onImagesReceived={handleImagesReceived} // pass callback
       />
+
+      {images.length === 0 || searchTerm && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            padding: 2,
+          }}
+        >
+          <Typography variant="body1" color="textSecondary">
+            No images found matching your search.
+          </Typography>
+        </Box>
+      )}
+
+      {images.length === 0 && selectedCategory && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            padding: 2,
+          }}
+        >
+          {/* <Typography variant="body1" color="textSecondary">
+            No images found in this category.
+          </Typography> */}
+        </Box>
+      )}
+
+      {images.length === 0 && !searchTerm && !selectedCategory && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            padding: 2,
+          }}
+        >
+          {/* <Typography variant="body1" color="textSecondary">
+            No images available.
+          </Typography> */}
+        </Box>
+      )}
+
     </>
   );
 };
