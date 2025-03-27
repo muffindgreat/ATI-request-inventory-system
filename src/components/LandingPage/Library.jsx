@@ -19,6 +19,7 @@ const Library = ({ selectedCategory }) => {
             id: doc.id,
             src: data.icon || "",
             views: data.views || 0,
+            name: data.itemName || "Unknown",
             category: data.category || "Unknown",
           };
         });
@@ -63,7 +64,7 @@ const Library = ({ selectedCategory }) => {
             <ImageCard
               id={img.id}
               src={img.src}
-              alt={img.category}
+              alt={img.name}
               views={img.views}
               category={img.category}
             />
