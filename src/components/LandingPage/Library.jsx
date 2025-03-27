@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Container, CircularProgress } from "@mui/material";
+import { Grid, Container, CircularProgress, Typography } from "@mui/material";
 import { collection, getDocs } from "firebase/firestore";
 import ImageCard from "../Items/ImageCard";
 
-const Library = ({ selectedCategory, searchTerm, db }) => {
-  // Receive db as prop
+const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // Added error state
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "inventory")); // Use db from props
+        const querySnapshot = await getDocs(collection(db, "inventory"));
         const imageList = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           return {
@@ -24,15 +24,17 @@ const Library = ({ selectedCategory, searchTerm, db }) => {
         });
 
         setImages(imageList);
+        setError(null); // Clear any previous errors
       } catch (error) {
         console.error("Error fetching images:", error);
+        setError("Failed to load images. Please try again."); // Set the error message
       } finally {
         setLoading(false);
       }
     };
 
     fetchImages();
-  }, [db]); // add db to the dependency array.
+  }, [db]);
 
   if (loading) {
     return (
@@ -42,7 +44,16 @@ const Library = ({ selectedCategory, searchTerm, db }) => {
     );
   }
 
-  const filteredImages = images.filter((img) => {
+  if (error) {
+    return (
+      <Container sx={{ pt: 3, textAlign: "center" }}>
+        <Typography color="error">{error}</Typography>
+      </Container>
+    );
+  }
+
+  // ✅ Apply filtering
+  let filteredImages = images.filter((img) => {
     const categoryMatch =
       selectedCategory === null || img.category === selectedCategory;
     const searchMatch =
@@ -51,21 +62,33 @@ const Library = ({ selectedCategory, searchTerm, db }) => {
     return categoryMatch && searchMatch;
   });
 
+  // ✅ Apply Sorting (A-Z or Z-A)
+  filteredImages.sort((a, b) =>
+    sortOrder === "asc"
+      ? a.itemName.localeCompare(b.itemName) // Sort A-Z
+      : b.itemName.localeCompare(a.itemName) // Sort Z-A
+  );
+
   return (
     <Container sx={{ pt: 3 }}>
-      <Grid container spacing={2} justifyContent="center">
-        {filteredImages.map((img) => (
-          <Grid item key={img.id} xs={10} sm={6} md={4} lg={3} xl={2.4}>
-            <ImageCard
-              id={img.id}
-              src={img.src}
-              alt={img.itemName}
-              views={img.views}
-              category={img.category}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {filteredImages.length === 0 ? (
+        // ✅ Show only when there are **zero** filtered results
+        <Typography sx={{ textAlign: "center", mt: 2 }}>No images found.</Typography>
+      ) : (
+        <Grid container spacing={2} justifyContent="center">
+          {filteredImages.map((img) => (
+            <Grid item key={img.id} xs={10} sm={6} md={4} lg={3} xl={2.4}>
+              <ImageCard
+                id={img.id}
+                src={img.src}
+                alt={img.itemName}
+                views={img.views}
+                category={img.category}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Container>
   );
 };

@@ -8,8 +8,9 @@ const FilterButton = ({ onFilter }) => {
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
+
   const handleFilter = (order) => {
-    onFilter(order);
+    onFilter(order); // Pass sorting order up
     handleClose();
   };
 
@@ -20,7 +21,7 @@ const FilterButton = ({ onFilter }) => {
         sx={{
           bgcolor: "white",
           borderRadius: "50%",
-          width: isMobile ? "32px" : "40px", // Adjust size
+          width: isMobile ? "32px" : "40px",
           height: isMobile ? "32px" : "40px",
           ml: isMobile ? 0 : 1,
         }}

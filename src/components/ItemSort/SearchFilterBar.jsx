@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Box, Stack, useMediaQuery, Container } from "@mui/material";
-import { db } from "../../config/firebaseConfig"; // Import db
+import { db } from "../../config/firebaseConfig";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import CategoryButtons from "./CategoryButtons";
@@ -10,6 +10,7 @@ const SearchFilterBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc"); // Default sorting A-Z
   const isMobile = useMediaQuery("(max-width:600px)");
   const [navbarHeight, setNavbarHeight] = useState(80);
 
@@ -18,12 +19,12 @@ const SearchFilterBar = () => {
     if (navbar) {
       setNavbarHeight(navbar.offsetHeight);
     } else {
-        setNavbarHeight(80);
+      setNavbarHeight(80);
     }
   }, []);
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
-  const handleFilterChange = (order) => setFilter(order);
+  const handleFilterChange = (order) => setSortOrder(order); // Update sorting order
   const handleCategorySelect = (category) => setSelectedCategory(category);
 
   return (
@@ -78,7 +79,8 @@ const SearchFilterBar = () => {
       <ImageLibrary
         selectedCategory={selectedCategory}
         searchTerm={searchTerm}
-        db={db} // Pass db as prop
+        sortOrder={sortOrder} // ✅ Pass sort order to Library
+        db={db}
       />
     </>
   );
