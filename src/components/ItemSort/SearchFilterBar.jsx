@@ -90,7 +90,7 @@ const SearchFilterBar = () => {
         onImagesReceived={handleImagesReceived} // pass callback
       />
 
-      {images.length === 0 && searchTerm && (
+      {images.length === 0 || searchTerm && (
         <Box
           sx={{
             display: "flex",
