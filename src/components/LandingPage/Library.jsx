@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Container, CircularProgress } from "@mui/material";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../config/firebaseConfig"; // Adjusted path
-import MostViewed from "./MostViewed"; // Assuming this is a related component
-import ImageCard from "../Items/ImageCard"; // Adjusted to where it fits
+import ImageCard from "../Items/ImageCard";
 
-const Library = ({ selectedCategory }) => {
+const Library = ({ selectedCategory, searchTerm, db }) => { // Receive db as prop
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "inventory"));
+        const querySnapshot = await getDocs(collection(db, "inventory")); // Use db from props
         const imageList = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           return {
@@ -21,6 +19,7 @@ const Library = ({ selectedCategory }) => {
             views: data.views || 0,
             name: data.itemName || "Unknown",
             category: data.category || "Unknown",
+            itemName: data.itemName || "",
           };
         });
 
@@ -33,7 +32,7 @@ const Library = ({ selectedCategory }) => {
     };
 
     fetchImages();
-  }, []);
+  }, [db]); // add db to the dependency array.
 
   if (loading) {
     return (
@@ -43,18 +42,11 @@ const Library = ({ selectedCategory }) => {
     );
   }
 
-  if (images.length === 0) {
-    return (
-      <Container sx={{ pt: 3, textAlign: "center" }}>
-        <p>No images found.</p>
-      </Container>
-    );
-  }
-
-  const filteredImages =
-    selectedCategory === null
-      ? images
-      : images.filter((img) => img.category === selectedCategory);
+  const filteredImages = images.filter((img) => {
+    const categoryMatch = selectedCategory === null || img.category === selectedCategory;
+    const searchMatch = searchTerm === "" || img.itemName?.toLowerCase().includes(searchTerm.toLowerCase());
+    return categoryMatch && searchMatch;
+  });
 
   return (
     <Container sx={{ pt: 3 }}>
@@ -71,7 +63,6 @@ const Library = ({ selectedCategory }) => {
           </Grid>
         ))}
       </Grid>
-      {/* <MostViewed images={images} /> */}
     </Container>
   );
 };
