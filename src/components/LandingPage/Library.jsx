@@ -3,7 +3,8 @@ import { Grid, Container, CircularProgress } from "@mui/material";
 import { collection, getDocs } from "firebase/firestore";
 import ImageCard from "../Items/ImageCard";
 
-const Library = ({ selectedCategory, searchTerm, db }) => { // Receive db as prop
+const Library = ({ selectedCategory, searchTerm, db }) => {
+  // Receive db as prop
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +18,6 @@ const Library = ({ selectedCategory, searchTerm, db }) => { // Receive db as pro
             id: doc.id,
             src: data.icon || "",
             views: data.views || 0,
-            name: data.itemName || "Unknown",
             category: data.category || "Unknown",
             itemName: data.itemName || "",
           };
@@ -43,8 +43,11 @@ const Library = ({ selectedCategory, searchTerm, db }) => { // Receive db as pro
   }
 
   const filteredImages = images.filter((img) => {
-    const categoryMatch = selectedCategory === null || img.category === selectedCategory;
-    const searchMatch = searchTerm === "" || img.itemName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const categoryMatch =
+      selectedCategory === null || img.category === selectedCategory;
+    const searchMatch =
+      searchTerm === "" ||
+      img.itemName?.toLowerCase().includes(searchTerm.toLowerCase());
     return categoryMatch && searchMatch;
   });
 
@@ -56,7 +59,7 @@ const Library = ({ selectedCategory, searchTerm, db }) => { // Receive db as pro
             <ImageCard
               id={img.id}
               src={img.src}
-              alt={img.name}
+              alt={img.itemName}
               views={img.views}
               category={img.category}
             />
