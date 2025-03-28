@@ -10,12 +10,18 @@ export default function RequestTabs({ tabIndex, handleChange }) {
       variant="fullWidth"
       sx={{
         ".MuiTabs-indicator": { backgroundColor: "#1A854B" },
-        ".MuiTab-root": { backgroundColor: "white", color: "#1A854B", textTransform: "none", fontSize: "1rem" },
-        ".Mui-selected": { backgroundColor: "#78B99E", color: "#1A854B" }
+        ".MuiTab-root": {
+          backgroundColor: "white",
+          color: "#1A854B",
+          textTransform: "none",
+          fontSize: "1rem",
+        },
+        ".Mui-selected": { backgroundColor: "#78B99E", color: "#1A854B" },
       }}
     >
       <Tab label="All" />
       <Tab label="Pending" />
+      <Tab label="Processed" />
       <Tab label="Completed" />
     </Tabs>
   );
