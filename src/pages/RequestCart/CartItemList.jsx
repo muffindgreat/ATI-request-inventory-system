@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
+import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
 const CartItemList = ({
@@ -20,28 +21,49 @@ const CartItemList = ({
   setSelectedItems,
   toggleSelectItem,
   handleQuantityChange,
+  handleConfirmQuantityChange,
   handleDelete,
-  setCartItems,
 }) => {
   const [quantityInputs, setQuantityInputs] = useState({});
+  const [pendingUpdates, setPendingUpdates] = useState({});
 
   const handleInputChange = (id, value) => {
     const numericValue = Number(value);
-
     if (!isNaN(numericValue)) {
       const clampedValue = Math.min(99999, Math.max(1, numericValue));
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, quantity: clampedValue } : item
-        )
-      );
+
+      setQuantityInputs((prev) => ({ ...prev, [id]: clampedValue }));
+      setPendingUpdates((prev) => ({ ...prev, [id]: true }));
     }
   };
 
-  const handleInputBlur = (id) => {
-    const item = cartItems.find((item) => item.id === id);
-    if (!item || isNaN(item.quantity) || item.quantity < 1) {
-      handleQuantityChange(id, 1);
+  const handleHoldStart = (id, change) => {
+    handleInputChange(
+      id,
+      (quantityInputs[id] ??
+        cartItems.find((item) => item.id === id).quantity) + change
+    );
+
+    const interval = setInterval(() => {
+      setQuantityInputs((prev) => {
+        const currentQuantity =
+          prev[id] ?? cartItems.find((item) => item.id === id).quantity;
+        return { ...prev, [id]: Math.max(1, currentQuantity + change) };
+      });
+      setPendingUpdates((prev) => ({ ...prev, [id]: true }));
+    }, 150); // Adjust speed as needed
+
+    return interval;
+  };
+
+  const handleHoldEnd = (interval) => {
+    clearInterval(interval);
+  };
+
+  const handleConfirmChange = async (id) => {
+    if (quantityInputs[id] !== undefined) {
+      await handleConfirmQuantityChange(id, quantityInputs[id]);
+      setPendingUpdates((prev) => ({ ...prev, [id]: false }));
     }
   };
 
@@ -53,7 +75,7 @@ const CartItemList = ({
         </Typography>
       ) : (
         <>
-          {/* Sticky Select All & Delete Options */}
+          {/* Sticky Select All & Remove Buttons */}
           <Box
             display="flex"
             alignItems="center"
@@ -74,13 +96,13 @@ const CartItemList = ({
                   selectedItems.length === cartItems.length &&
                   cartItems.length > 0
                 }
-                onChange={() =>
-                  setSelectedItems(
-                    selectedItems.length === cartItems.length
-                      ? []
-                      : cartItems.map((item) => item.id)
-                  )
-                }
+                onChange={() => {
+                  if (selectedItems.length === cartItems.length) {
+                    setSelectedItems([]); // Deselect all
+                  } else {
+                    setSelectedItems(cartItems.map((item) => item.id)); // Select all
+                  }
+                }}
               />
               <Typography
                 sx={{
@@ -93,13 +115,7 @@ const CartItemList = ({
               </Typography>
             </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                p: 1,
-              }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
               <Button
                 color="error"
                 sx={{
@@ -109,10 +125,8 @@ const CartItemList = ({
                 }}
                 disabled={selectedItems.length === 0}
                 onClick={() => {
-                  setCartItems((prev) =>
-                    prev.filter((item) => !selectedItems.includes(item.id))
-                  );
-                  setSelectedItems([]);
+                  selectedItems.forEach((id) => handleDelete(id)); // ✅ Remove from Firestore
+                  setSelectedItems([]); // ✅ Clear selection after deletion
                 }}
               >
                 Remove
@@ -163,27 +177,10 @@ const CartItemList = ({
                     />
 
                     <Box sx={{ ml: 2, flexGrow: 1 }}>
-                      <Typography
-                        fontWeight="bold"
-                        sx={{
-                          display: "-webkit-box",
-                          WebkitBoxOrient: "vertical",
-                          WebkitLineClamp: 2,
-                          overflow: "hidden",
-                        }}
-                      >
-                        {item.name}
+                      <Typography fontWeight="bold">{item.name}</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {item.type || "Unknown"}
                       </Typography>
-
-                      {item?.type ? (
-                        <Typography variant="body2" color="textSecondary">
-                          {item.type}
-                        </Typography>
-                      ) : (
-                        <Typography variant="body2" color="error">
-                          No type available
-                        </Typography>
-                      )}
 
                       {/* Quantity Controls */}
                       <Box
@@ -199,18 +196,25 @@ const CartItemList = ({
                         <IconButton
                           size="small"
                           sx={{ color: "green", padding: "2px" }}
-                          onClick={() => handleQuantityChange(item.id, -1)}
+                          onMouseDown={(e) => {
+                            const interval = handleHoldStart(item.id, -1);
+                            e.currentTarget.interval = interval;
+                          }}
+                          onMouseUp={(e) =>
+                            handleHoldEnd(e.currentTarget.interval)
+                          }
+                          onMouseLeave={(e) =>
+                            handleHoldEnd(e.currentTarget.interval)
+                          }
                         >
                           <RemoveIcon fontSize="small" />
                         </IconButton>
 
-                        {/* Quantity Input */}
                         <TextField
                           value={quantityInputs[item.id] ?? item.quantity}
                           onChange={(e) =>
                             handleInputChange(item.id, e.target.value)
                           }
-                          onBlur={() => handleInputBlur(item.id)}
                           type="number"
                           inputProps={{ min: 1, max: 99999, maxLength: 5 }}
                           variant="standard"
@@ -246,24 +250,39 @@ const CartItemList = ({
                         <IconButton
                           size="small"
                           sx={{ color: "green", padding: "2px" }}
-                          onClick={() => handleQuantityChange(item.id, 1)}
+                          onMouseDown={(e) => {
+                            const interval = handleHoldStart(item.id, 1);
+                            e.currentTarget.interval = interval;
+                          }}
+                          onMouseUp={(e) =>
+                            handleHoldEnd(e.currentTarget.interval)
+                          }
+                          onMouseLeave={(e) =>
+                            handleHoldEnd(e.currentTarget.interval)
+                          }
                         >
                           <AddIcon fontSize="small" />
                         </IconButton>
+
+                        {/* Confirmation Check Button */}
+                        {pendingUpdates[item.id] && (
+                          <IconButton
+                            size="small"
+                            sx={{ color: "blue", padding: "2px", ml: 1 }}
+                            onClick={() => handleConfirmChange(item.id)}
+                          >
+                            <CheckIcon fontSize="small" />
+                          </IconButton>
+                        )}
                       </Box>
                     </Box>
                   </Box>
                 </Box>
 
                 {/* Remove Button */}
-                <Box display="flex" justifyContent="center">
-                  <IconButton
-                    color="error"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </Box>
+                <IconButton color="error" onClick={() => handleDelete(item.id)}>
+                  <CloseIcon />
+                </IconButton>
               </Box>
             ))}
           </Box>

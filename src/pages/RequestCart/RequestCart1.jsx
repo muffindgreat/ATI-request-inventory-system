@@ -1,84 +1,159 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Box, Collapse } from "@mui/material";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../config/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 import CartItemList from "./CartItemList";
 import CartOrderSummary from "./CartOrderSummary";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import BackgroundImage from "../../components/UI/BackgroundImage";
-import { allMaterials } from "../../components/UI/sample_data";
 
-export default function ReqCart() {
-  const [cartItems, setCartItems] = useState(
-    allMaterials.map(({ id, name, image, type }) => ({
-      id,
-      name,
-      image,
-      quantity: 1,
-      type,
-    }))
-  );
+export default function ReqCart1() {
+  const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [pendingUpdates, setPendingUpdates] = useState({});
 
-  // Toggle item selection in the cart
-  const toggleSelectItem = (id) => {
-    setSelectedItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userRef = doc(db, "test", user.uid);
+          const userSnap = await getDoc(userRef);
 
-  // Handle quantity change for items
-  const handleQuantityChange = (id, change) => {
-    setCartItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          let newQuantity = item.quantity + change;
-          if (newQuantity < 1) newQuantity = 1;
-          if (newQuantity > 99999) newQuantity = 99999;
-          return { ...item, quantity: newQuantity };
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+            if (Array.isArray(userData.cart) && userData.cart.length > 0) {
+              const itemIds = userData.cart
+                .map((item) => item.itemId)
+                .filter(Boolean);
+
+              let fetchedItems = [];
+
+              for (const itemId of itemIds) {
+                const itemRef = doc(db, "inventory", itemId);
+                const itemSnap = await getDoc(itemRef);
+
+                if (itemSnap.exists()) {
+                  const itemData = itemSnap.data();
+                  const matchingCartItem = userData.cart.find(
+                    (cartItem) => cartItem.itemId === itemSnap.id
+                  );
+
+                  fetchedItems.push({
+                    id: itemSnap.id,
+                    name: itemData.itemName || "Unknown",
+                    image: itemData.icon || "https://via.placeholder.com/150",
+                    quantity: matchingCartItem ? matchingCartItem.quantity : 1,
+                    type: itemData.type || "Unknown",
+                  });
+                }
+              }
+
+              console.log("Fetched Inventory Items:", fetchedItems);
+              setCartItems(fetchedItems);
+            } else {
+              console.log("Cart is empty.");
+              setCartItems([]);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching cart items:", error);
         }
-        return item;
-      })
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleQuantityChange = (id, newQuantity) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
+      )
     );
+    setPendingUpdates((prev) => ({ ...prev, [id]: true }));
   };
 
-  // Remove an item from the cart
-  const handleDelete = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-    setSelectedItems((prev) => prev.filter((item) => item !== id));
+  const handleConfirmQuantityChange = async (id, newQuantity) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("No authenticated user.");
+        return;
+      }
+
+      const userRef = doc(db, "test", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        let userData = userSnap.data();
+        const updatedCart = userData.cart.map((cartItem) =>
+          cartItem.itemId === id
+            ? { ...cartItem, quantity: newQuantity }
+            : cartItem
+        );
+
+        await updateDoc(userRef, { cart: updatedCart });
+        console.log("Quantity updated in Firestore");
+
+        setCartItems((prev) =>
+          prev.map((item) =>
+            item.id === id ? { ...item, quantity: newQuantity } : item
+          )
+        );
+
+        setPendingUpdates((prev) => {
+          const newUpdates = { ...prev };
+          delete newUpdates[id];
+          return newUpdates;
+        });
+      }
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
   };
 
-  // Calculate total items and total quantity for selected items
-  const totalItems = selectedItems.length;
-  const totalQuantity = cartItems
-    .filter((item) => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + item.quantity, 0);
+  const handleDelete = async (id) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("No authenticated user.");
+        return;
+      }
+
+      const userRef = doc(db, "test", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        let userData = userSnap.data();
+        const updatedCart = userData.cart.filter(
+          (cartItem) => cartItem.itemId !== id
+        );
+
+        await updateDoc(userRef, { cart: updatedCart });
+        console.log("Item removed from Firestore");
+
+        setCartItems((prev) => prev.filter((item) => item.id !== id));
+        setSelectedItems((prev) => prev.filter((item) => item !== id));
+      }
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
+  };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        position: "relative",
-        overflow: "hidden",
-        px: 3,
-      }}
-    >
+    <Box sx={{ display: "flex", flexDirection: "column", px: 3 }}>
       <BackgroundImage />
-
       <Box
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           gap: 2,
-          "@media (min-width: 900px)": {
-            flexDirection: "row",
-          },
           pt: { xs: 12, sm: 14, md: 16 },
           mb: 10,
           mx: { xs: 0, sm: 0, md: 10, lg: 20 },
         }}
       >
-        {/* Cart Item List (Full width if no items selected) */}
         <Card
           sx={{
             borderRadius: 2,
@@ -101,15 +176,20 @@ export default function ReqCart() {
           <CartItemList
             cartItems={cartItems}
             selectedItems={selectedItems}
-            toggleSelectItem={toggleSelectItem}
-            handleQuantityChange={handleQuantityChange}
-            handleDelete={handleDelete}
             setSelectedItems={setSelectedItems}
-            setCartItems={setCartItems}
+            toggleSelectItem={(id) =>
+              setSelectedItems((prev) =>
+                prev.includes(id)
+                  ? prev.filter((item) => item !== id)
+                  : [...prev, id]
+              )
+            }
+            handleQuantityChange={handleQuantityChange}
+            handleConfirmQuantityChange={handleConfirmQuantityChange}
+            pendingUpdates={pendingUpdates}
+            handleDelete={handleDelete} // ✅ Now updates Firestore too
           />
         </Card>
-
-        {/* Cart Order Summary (with Collapse Animation) */}
         <Collapse
           in={selectedItems.length > 0}
           timeout={300}
@@ -122,8 +202,6 @@ export default function ReqCart() {
             <CartOrderSummary
               cartItems={cartItems}
               selectedItems={selectedItems}
-              totalItems={totalItems}
-              totalQuantity={totalQuantity}
             />
           )}
         </Collapse>
