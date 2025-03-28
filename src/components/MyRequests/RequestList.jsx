@@ -5,10 +5,14 @@ import {
   Box,
   Stack,
   Chip,
+  Divider,
 } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"; // ✅ Import Expand Icon
-import { Divider } from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DoneIcon from "@mui/icons-material/Done";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
 export default function RequestList({ items }) {
@@ -44,6 +48,7 @@ export default function RequestList({ items }) {
 
 function RequestItemSummary({ item }) {
   const firstMaterial = item.materials[0];
+  const additionalCount = item.materials.length - 1; // Calculate additional items
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", p: 2, width: "100%" }}>
@@ -59,19 +64,39 @@ function RequestItemSummary({ item }) {
 
       {/* Material Info */}
       <Box sx={{ flexGrow: 1 }}>
-        <Typography
-          variant="body1"
-          sx={{
-            fontWeight: "bold",
-            mb: 0.5,
-            display: "-webkit-box",
-            WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 2,
-            overflow: "hidden", // Truncate after 2 lines
-          }}
-        >
-          {firstMaterial ? firstMaterial.name : "No materials"}
-        </Typography>
+        <Box>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: "bold",
+              mb: 0.5,
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              overflow: "hidden", // Truncate after 2 lines
+            }}
+          >
+            {firstMaterial ? firstMaterial.name : "No materials"}
+          </Typography>
+
+          {/* Ensure "+X more" appears below item name on small screens */}
+          {additionalCount > 0 && (
+            <Typography
+              component="span"
+              sx={{
+                color: "gray",
+                fontSize: 14,
+                display: "block", // Ensures it's on a new line
+                "@media (min-width:600px)": {
+                  display: "inline", // Stays inline on larger screens
+                  ml: 1,
+                },
+              }}
+            >
+              (+{additionalCount} more)
+            </Typography>
+          )}
+        </Box>
         <Typography variant="body2" color="textSecondary">
           {firstMaterial.type}
         </Typography>
@@ -82,9 +107,9 @@ function RequestItemSummary({ item }) {
             direction="row"
             sx={{
               mt: 1,
-              flexWrap: "wrap", // ✅ Allow wrapping on small screens
-              gap: 1, // ✅ Consistent spacing between chips
-              alignItems: "center", // ✅ Align wrapped items properly
+              flexWrap: "wrap",
+              gap: 1,
+              alignItems: "center",
             }}
           >
             {firstMaterial.bannerPrograms.map((program, i) => (
@@ -94,7 +119,7 @@ function RequestItemSummary({ item }) {
                 color="primary"
                 size="small"
                 sx={{ m: 0 }}
-              /> // ✅ Remove extra margins
+              />
             ))}
           </Stack>
         )}
@@ -127,6 +152,7 @@ function RequestItemSummary({ item }) {
     </Box>
   );
 }
+
 function RequestMaterials({ materials }) {
   return (
     <>
@@ -189,50 +215,99 @@ function RequestMaterials({ materials }) {
   );
 }
 
+function getStatusColor(status) {
+  switch (status) {
+    case "Pending":
+      return "warning";
+    case "Accepted":
+      return "info";
+    case "Approved":
+      return "info";
+    case "Completed":
+      return "success";
+    default:
+      return "default";
+  }
+}
+
 function RequestDetails({ item }) {
+  const statusStages = [
+    {
+      key: "requestedTime",
+      label: "Requested",
+      icon: (
+        <AccessTimeIcon sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }} />
+      ),
+    },
+    {
+      key: "acceptedTime",
+      label: "Accepted",
+      icon: (
+        <HourglassEmptyIcon
+          sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }}
+        />
+      ),
+      condition: item.status !== "Pending",
+    },
+    {
+      key: "approvedTime",
+      label: "Approved",
+      icon: (
+        <CheckCircleIcon
+          sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }}
+        />
+      ),
+      condition: ["Approved", "Completed"].includes(item.status),
+    },
+    {
+      key: "completedTime",
+      label: "Completed",
+      icon: <DoneIcon sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }} />,
+      condition: item.status === "Completed",
+    },
+  ];
+
   return (
-    <Box sx={{ my: 1 }}>
+    <Box sx={{ my: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6">Request Details</Typography>
+        <Chip
+          label={item.status}
+          color={getStatusColor(item.status)}
+          size="small"
+          sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
+        />
+      </Box>
       <Divider sx={{ my: 1 }} />
-
-      {/* Always show Requested Time */}
-      <Typography variant="body2" color="textSecondary">
-        <strong>Requested:</strong> {item.requestedTime || "No date available"}
-      </Typography>
-
-      {/* Show Accepted Time if status is Accepted or beyond */}
-      {["Accepted", "Approved", "Completed"].includes(item.status) && (
-        <Typography variant="body2" color="textSecondary">
-          <strong>Accepted:</strong> {item.acceptedTime || "Not yet accepted"}
-        </Typography>
-      )}
-
-      {/* Show Approved Time if status is Approved or beyond */}
-      {["Approved", "Completed"].includes(item.status) && (
-        <Typography variant="body2" color="textSecondary">
-          <strong>Approved:</strong> {item.approvedTime || "Not yet approved"}
-        </Typography>
-      )}
-
-      {/* Show Completed Time only if status is Completed */}
-      {item.status === "Completed" && (
-        <Typography variant="body2" color="textSecondary">
-          <strong>Completed:</strong>{" "}
-          {item.completedTime || "Not yet completed"}
-        </Typography>
-      )}
-
-      {/* Additional Details */}
-      <Typography variant="body2" color="textSecondary">
-        <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
-      </Typography>
-      <Typography variant="body2" color="textSecondary">
-        <strong>Date Needed:</strong> {item.dateNeeded || "No date specified"}
-      </Typography>
-      <Typography variant="body2" color="textSecondary">
-        <strong>Program:</strong> {item.program || "No program specified"}
-      </Typography>
-
-      <Box sx={{ mt: 2, borderBottom: "1px solid #ddd" }} />
+      <Stack spacing={1}>
+        {statusStages.map(({ key, label, icon, condition }) =>
+          condition !== false ? (
+            <Typography key={key} variant="body2" color="textSecondary">
+              {icon} <strong>{label}:</strong>{" "}
+              {item[key] || `Not yet ${label.toLowerCase()}`}
+            </Typography>
+          ) : null
+        )}
+      </Stack>
+      <Divider sx={{ my: 2 }} />
+      <Box>
+        {[
+          { label: "Purpose", value: item.purpose },
+          { label: "Date Needed", value: item.dateNeeded },
+          { label: "Program", value: item.program },
+        ].map(({ label, value }) => (
+          <Typography key={label} variant="body2">
+            <strong>{label}:</strong>{" "}
+            {value || `No ${label.toLowerCase()} provided`}
+          </Typography>
+        ))}
+      </Box>
     </Box>
   );
 }
