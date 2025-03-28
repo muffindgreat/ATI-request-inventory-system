@@ -37,29 +37,6 @@ const CartItemList = ({
     }
   };
 
-  const handleHoldStart = (id, change) => {
-    handleInputChange(
-      id,
-      (quantityInputs[id] ??
-        cartItems.find((item) => item.id === id).quantity) + change
-    );
-
-    const interval = setInterval(() => {
-      setQuantityInputs((prev) => {
-        const currentQuantity =
-          prev[id] ?? cartItems.find((item) => item.id === id).quantity;
-        return { ...prev, [id]: Math.max(1, currentQuantity + change) };
-      });
-      setPendingUpdates((prev) => ({ ...prev, [id]: true }));
-    }, 150); // Adjust speed as needed
-
-    return interval;
-  };
-
-  const handleHoldEnd = (interval) => {
-    clearInterval(interval);
-  };
-
   const handleConfirmChange = async (id) => {
     if (quantityInputs[id] !== undefined) {
       await handleConfirmQuantityChange(id, quantityInputs[id]);
@@ -124,10 +101,7 @@ const CartItemList = ({
                   textTransform: "none",
                 }}
                 disabled={selectedItems.length === 0}
-                onClick={() => {
-                  selectedItems.forEach((id) => handleDelete(id)); // ✅ Remove from Firestore
-                  setSelectedItems([]); // ✅ Clear selection after deletion
-                }}
+                onClick={() => handleDelete(selectedItems)}
               >
                 Remove
               </Button>
@@ -196,20 +170,17 @@ const CartItemList = ({
                         <IconButton
                           size="small"
                           sx={{ color: "green", padding: "2px" }}
-                          onMouseDown={(e) => {
-                            const interval = handleHoldStart(item.id, -1);
-                            e.currentTarget.interval = interval;
-                          }}
-                          onMouseUp={(e) =>
-                            handleHoldEnd(e.currentTarget.interval)
-                          }
-                          onMouseLeave={(e) =>
-                            handleHoldEnd(e.currentTarget.interval)
+                          onClick={() =>
+                            handleInputChange(
+                              item.id,
+                              (quantityInputs[item.id] ?? item.quantity) - 1
+                            )
                           }
                         >
                           <RemoveIcon fontSize="small" />
                         </IconButton>
 
+                        {/* Quantity Input */}
                         <TextField
                           value={quantityInputs[item.id] ?? item.quantity}
                           onChange={(e) =>
@@ -250,15 +221,11 @@ const CartItemList = ({
                         <IconButton
                           size="small"
                           sx={{ color: "green", padding: "2px" }}
-                          onMouseDown={(e) => {
-                            const interval = handleHoldStart(item.id, 1);
-                            e.currentTarget.interval = interval;
-                          }}
-                          onMouseUp={(e) =>
-                            handleHoldEnd(e.currentTarget.interval)
-                          }
-                          onMouseLeave={(e) =>
-                            handleHoldEnd(e.currentTarget.interval)
+                          onClick={() =>
+                            handleInputChange(
+                              item.id,
+                              (quantityInputs[item.id] ?? item.quantity) + 1
+                            )
                           }
                         >
                           <AddIcon fontSize="small" />
