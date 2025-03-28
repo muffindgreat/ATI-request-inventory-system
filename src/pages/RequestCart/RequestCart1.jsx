@@ -113,7 +113,7 @@ export default function ReqCart1() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (ids) => {
     try {
       const user = auth.currentUser;
       if (!user) {
@@ -127,17 +127,18 @@ export default function ReqCart1() {
       if (userSnap.exists()) {
         let userData = userSnap.data();
         const updatedCart = userData.cart.filter(
-          (cartItem) => cartItem.itemId !== id
+          (cartItem) => !ids.includes(cartItem.itemId)
         );
 
         await updateDoc(userRef, { cart: updatedCart });
-        console.log("Item removed from Firestore");
+        console.log("Items removed from Firestore");
 
-        setCartItems((prev) => prev.filter((item) => item.id !== id));
-        setSelectedItems((prev) => prev.filter((item) => item !== id));
+        // Update local state
+        setCartItems((prev) => prev.filter((item) => !ids.includes(item.id)));
+        setSelectedItems([]); // Clear selection
       }
     } catch (error) {
-      console.error("Error removing item:", error);
+      console.error("Error removing items:", error);
     }
   };
 
@@ -187,7 +188,7 @@ export default function ReqCart1() {
             handleQuantityChange={handleQuantityChange}
             handleConfirmQuantityChange={handleConfirmQuantityChange}
             pendingUpdates={pendingUpdates}
-            handleDelete={handleDelete} // ✅ Now updates Firestore too
+            handleDelete={handleDelete}
           />
         </Card>
         <Collapse
