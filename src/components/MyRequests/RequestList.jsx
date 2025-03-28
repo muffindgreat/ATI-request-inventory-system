@@ -104,7 +104,15 @@ function RequestItemSummary({ item }) {
       <Stack spacing={0.5} alignItems="flex-end">
         <Chip
           label={item.status}
-          color={item.status === "Pending" ? "warning" : "success"}
+          color={
+            item.status === "Pending"
+              ? "warning"
+              : item.status === "Accepted" || item.status === "Approved"
+              ? "info"
+              : item.status === "Completed"
+              ? "success"
+              : "default"
+          }
           size="small"
           sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
         />
@@ -185,19 +193,35 @@ function RequestDetails({ item }) {
   return (
     <Box sx={{ my: 1 }}>
       <Divider sx={{ my: 1 }} />
+
+      {/* Always show Requested Time */}
       <Typography variant="body2" color="textSecondary">
         <strong>Requested:</strong> {item.requestedTime || "No date available"}
       </Typography>
-      <Typography variant="body2" color="textSecondary">
-        <strong>Acknowledged:</strong>{" "}
-        {item.acknowledgedTime || "Not yet acknowledged"}
-      </Typography>
-      {item.status === "Completed" && (
+
+      {/* Show Accepted Time if status is Accepted or beyond */}
+      {["Accepted", "Approved", "Completed"].includes(item.status) && (
         <Typography variant="body2" color="textSecondary">
-          <strong>Completed:</strong> {item.completedTime}
+          <strong>Accepted:</strong> {item.acceptedTime || "Not yet accepted"}
         </Typography>
       )}
-      {/* Add Purpose, Date Needed, and Program */}
+
+      {/* Show Approved Time if status is Approved or beyond */}
+      {["Approved", "Completed"].includes(item.status) && (
+        <Typography variant="body2" color="textSecondary">
+          <strong>Approved:</strong> {item.approvedTime || "Not yet approved"}
+        </Typography>
+      )}
+
+      {/* Show Completed Time only if status is Completed */}
+      {item.status === "Completed" && (
+        <Typography variant="body2" color="textSecondary">
+          <strong>Completed:</strong>{" "}
+          {item.completedTime || "Not yet completed"}
+        </Typography>
+      )}
+
+      {/* Additional Details */}
       <Typography variant="body2" color="textSecondary">
         <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
       </Typography>

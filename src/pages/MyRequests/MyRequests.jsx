@@ -10,6 +10,9 @@ export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
 
   const pendingRequests = allRequests.filter((req) => req.status === "Pending");
+  const processedRequests = allRequests.filter(
+    (req) => req.status === "Accepted" || req.status === "Approved"
+  );
   const completedRequests = allRequests.filter(
     (req) => req.status === "Completed"
   );
@@ -45,7 +48,8 @@ export default function MyRequests() {
             <Box sx={{ mt: 2 }}>
               {tabIndex === 0 && <RequestList items={allRequests} />}
               {tabIndex === 1 && <RequestList items={pendingRequests} />}
-              {tabIndex === 2 && <RequestList items={completedRequests} />}
+              {tabIndex === 2 && <RequestList items={processedRequests} />}
+              {tabIndex === 3 && <RequestList items={completedRequests} />}
             </Box>
           </CardContent>
         </Card>
