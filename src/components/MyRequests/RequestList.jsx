@@ -16,8 +16,6 @@ import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
 export default function RequestList({ items }) {
-  console.log("RequestList Items:", items); // ✅ Debugging output
-
   return (
     <Box sx={{ mt: 2, width: "100%", overflow: "hidden" }}>
       {items.length > 0 ? (
