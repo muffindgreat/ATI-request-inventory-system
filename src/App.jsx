@@ -15,6 +15,7 @@ import RequestCart from "./pages/RequestCart/RequestCart1";
 import MatsReq from "./pages/MaterialRequisition/MatsReq";
 import Home from "./pages/Home/Home";
 import Footer from "./components/Footer/Footer";
+import { AuthProvider } from "./context/AuthContext"; // Import AuthProvider
 
 function Layout() {
   const location = useLocation();
@@ -31,10 +32,8 @@ function Layout() {
           <Route path="/request-cart" element={<RequestCart />} />
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/user-profile" element={<UserProfile />} />
-          <Route path="/item-info/:id" element={<ItemInfo />} />{" "}
-          {/* Fixed route */}
+          <Route path="/item-info/:id" element={<ItemInfo />} />
           <Route path="/material-request-form" element={<MatsReq />} />
-          {/* Redirect "/" and all unknown routes to /home */}
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
@@ -46,9 +45,13 @@ function Layout() {
 
 function App() {
   return (
-    <Router>
-      <Layout />
-    </Router>
+    <AuthProvider>
+      {" "}
+      {/* Wrap the entire app inside AuthProvider */}
+      <Router>
+        <Layout />
+      </Router>
+    </AuthProvider>
   );
 }
 
