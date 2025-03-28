@@ -15,19 +15,29 @@ import BackgroundImage from "../../components/UI/BackgroundImage";
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../config/firebaseConfig";
-import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  increment,
+  arrayUnion,
+} from "firebase/firestore";
+import { useAuth } from "../../context/AuthContext"; // ✅ Import useAuth
 
 const ItemInfo = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const { id } = useParams();
+  const { currentUser } = useAuth(); // ✅ Use currentUser from AuthContext
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const hasUpdated = useRef(false); // Prevents duplicate updates
 
   useEffect(() => {
+    console.log("Current User from AuthContext:", currentUser); // ✅ Debugging user state
+
     const fetchAndUpdateViews = async () => {
-      if (hasUpdated.current) return; // Prevent multiple updates in strict mode
+      if (hasUpdated.current) return;
       hasUpdated.current = true;
 
       try {
@@ -38,18 +48,18 @@ const ItemInfo = () => {
           const itemData = docSnap.data();
 
           // Optimistically update state to show new views count
-          setItem((prev) => ({
+          setItem({
             ...itemData,
-            views: (itemData.views || 0) + 1, // Increase views count before Firestore update
-          }));
+            views: (itemData.views || 0) + 1,
+          });
 
           // Update Firestore views count
           await updateDoc(docRef, { views: increment(1) });
 
-          // Fetch the latest data to ensure consistency
+          // Fetch updated data
           const updatedSnap = await getDoc(docRef);
           if (updatedSnap.exists()) {
-            setItem(updatedSnap.data()); // Set the real updated data
+            setItem(updatedSnap.data());
           }
         } else {
           setItem(null);
@@ -62,7 +72,35 @@ const ItemInfo = () => {
     };
 
     fetchAndUpdateViews();
-  }, [id]);
+  }, [id, currentUser]);
+
+  const addToCart = async () => {
+    console.log("Current User in addToCart:", currentUser); // ✅ Debugging user state
+
+    if (!currentUser) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
+
+    try {
+      const userDocRef = doc(db, "test", currentUser.uid); // ✅ Use correct user UID
+
+      await updateDoc(userDocRef, {
+        cart: arrayUnion({ itemId: id, quantity: 1 }),
+      });
+
+      alert("Item added to request cart!");
+    } catch (error) {
+      console.error("Error adding item to cart:", {
+        message: error.message,
+        code: error.code,
+        stack: error.stack,
+        userUID: currentUser?.uid,
+        itemId: id,
+      });
+      alert(`Failed to add item to cart. Error: ${error.message}`);
+    }
+  };
 
   if (loading) {
     return (
@@ -118,7 +156,6 @@ const ItemInfo = () => {
               gap: 2,
             }}
           >
-            {/* Image */}
             <Box
               sx={{
                 width: isSmallScreen ? "100%" : "30%",
@@ -145,7 +182,6 @@ const ItemInfo = () => {
               />
             </Box>
 
-            {/* Item Details */}
             <Box sx={{ flex: 1, p: isSmallScreen ? 2 : 5 }}>
               <Typography variant="h4" fontWeight="bold" gutterBottom>
                 {item.itemName}
@@ -176,7 +212,6 @@ const ItemInfo = () => {
                 </Stack>
               )}
 
-              {/* Buttons */}
               <Box
                 sx={{
                   display: "flex",
@@ -203,7 +238,6 @@ const ItemInfo = () => {
                       alert("PDF is not available for download.");
                     }
                   }}
-                  // disabled={!item.pdfLink}
                 >
                   Download PDF
                 </Button>
@@ -215,6 +249,7 @@ const ItemInfo = () => {
                     color: "white",
                     textTransform: "none",
                   }}
+                  onClick={addToCart}
                 >
                   Add to Request Cart
                 </Button>
