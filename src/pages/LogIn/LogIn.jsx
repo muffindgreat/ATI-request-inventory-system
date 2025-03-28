@@ -8,6 +8,7 @@ import {
   Card,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -27,6 +28,7 @@ export default function LogIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function LogIn() {
       return;
     }
     setError("");
+    setLoading(true);
     try {
       await setPersistence(auth, browserLocalPersistence);
       const userCredential = await signInWithEmailAndPassword(
@@ -53,8 +56,29 @@ export default function LogIn() {
       console.log("Login successful:", userCredential.user);
       navigate("/home"); // Redirect to home after successful login
     } catch (err) {
-      setError("Invalid email or password");
-      console.error("Login failed:", err.message);
+      console.error("Firebase Error:", err);
+      if (typeof err.code === "string") {
+        switch (err.code) {
+          case "auth/invalid-credential":
+            setError("Incorrect email or password.");
+            break;
+          case "auth/user-not-found":
+            setError("No account found with this email.");
+            break;
+          case "auth/too-many-requests":
+            setError("Too many failed login attempts. Try again later.");
+            break;
+          case "auth/network-request-failed":
+            setError("Network error. Check your internet connection.");
+            break;
+          default:
+            setError(`Login failed: ${err.message}`);
+        }
+      } else {
+        setError("An unknown error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +134,7 @@ export default function LogIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               sx={{ mb: 2 }}
+              disabled={loading}
             />
             <TextField
               label="Password"
@@ -125,20 +150,27 @@ export default function LogIn() {
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
+                      disabled={loading}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
+              disabled={loading}
             />
             <Button
               type="submit"
               variant="contained"
               fullWidth
               sx={{ backgroundColor: "green", color: "white", mb: 2 }}
+              disabled={loading}
             >
-              LOG IN
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "LOG IN"
+              )}
             </Button>
           </form>
           <Typography variant="body2">
