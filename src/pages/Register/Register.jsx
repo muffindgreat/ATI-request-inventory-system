@@ -8,12 +8,17 @@ import {
   Card,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { auth, db } from "../../config/firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
@@ -24,7 +29,10 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -35,60 +43,69 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!firstName || !lastName || !email || !password) {
-      setError("All fields are required");
+    let errors = {};
+    if (!firstName) errors.firstName = "First name is required.";
+    if (!lastName) errors.lastName = "Last name is required.";
+    if (!email) errors.email = "Email is required.";
+    if (!password) errors.password = "Password is required.";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       return;
     }
+    setFieldErrors({});
     setError("");
+    setIsLoading(true);
 
     try {
-      // Create user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const user = userCredential.user;
-
-      // Save user data in Firestore under "test" collection
       await setDoc(doc(db, "test", user.uid), {
         fname: firstName,
         lname: lastName,
         email: user.email,
         createdAt: new Date(),
       });
-
-      console.log("User registered and data saved in Firestore!");
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/home");
     } catch (error) {
-      console.error("Error registering user:", error);
-      setError(error.message);
+      let errorMessage = "Something went wrong. Please try again.";
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage =
+          "This email is already registered. Please use another one.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Please enter a valid email address.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password must be at least 6 characters.";
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      position="relative"
+      overflow="hidden"
     >
       <BackgroundImage imageUrl={bgImage} />
-
       <Box
-        sx={{
-          position: "absolute",
-          top: 1,
-          left: { xs: "50%", md: "-100px" },
-          transform: { xs: "translateX(-50%)", md: "none" },
-        }}
+        position="absolute"
+        top={1}
+        left={{ xs: "50%", md: "-100px" }}
+        transform={{ xs: "translateX(-50%)", md: "none" }}
       >
         <img src={logo} alt="Logo" style={{ width: 350 }} />
       </Box>
-
       <Container
         maxWidth="xs"
         sx={{ display: "flex", justifyContent: "center", mt: 20, mb: 10 }}
@@ -100,7 +117,6 @@ export default function Register() {
             boxShadow: 3,
             borderRadius: 4,
             textAlign: "center",
-            marginX: "auto",
             width: "100%",
           }}
         >
@@ -115,6 +131,8 @@ export default function Register() {
               variant="outlined"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              error={!!fieldErrors.firstName}
+              helperText={fieldErrors.firstName}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -123,6 +141,8 @@ export default function Register() {
               variant="outlined"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              error={!!fieldErrors.lastName}
+              helperText={fieldErrors.lastName}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -132,6 +152,8 @@ export default function Register() {
               variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={!!fieldErrors.email}
+              helperText={fieldErrors.email}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -141,6 +163,8 @@ export default function Register() {
               variant="outlined"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              error={!!fieldErrors.password}
+              helperText={fieldErrors.password}
               sx={{ mb: 2 }}
               InputProps={{
                 endAdornment: (
@@ -160,8 +184,13 @@ export default function Register() {
               variant="contained"
               fullWidth
               sx={{ backgroundColor: "green", color: "white", mb: 2 }}
+              disabled={isLoading}
             >
-              Register
+              {isLoading ? (
+                <CircularProgress size={24} sx={{ color: "white" }} />
+              ) : (
+                "Register"
+              )}
             </Button>
           </form>
           <Typography variant="body2">
