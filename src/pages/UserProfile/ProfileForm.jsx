@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Box, Typography, TextField, FormHelperText } from "@mui/material";
 
 const fieldLabels = {
-  fname: "First Name",
-  lname: "Last Name",
+  firstName: "First Name",
+  lastName: "Last Name",
   email: "Email",
   designation: "Designation",
   section: "Section",
@@ -12,8 +12,8 @@ const fieldLabels = {
 
 // Define the correct field order
 const fieldOrder = [
-  "fname",
-  "lname",
+  "firstName",
+  "lastName",
   "email",
   "designation",
   "section",
@@ -27,7 +27,7 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => {
   const handlePhoneNumberChange = (e) => {
     const { name, value } = e.target;
 
-    if (!/^\d*$/.test(value)) {
+    if (!/^\d*$/.User(value)) {
       setPhoneError("Only numbers are allowed.");
       return;
     }

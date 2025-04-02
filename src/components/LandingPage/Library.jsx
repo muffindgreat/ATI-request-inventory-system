@@ -10,15 +10,15 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "inventory"));
+        const querySnapshot = await getDocs(collection(db, "Inventory"));
         const imageList = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
-            src: data.icon || "",
+            src: data.imageUrl || "",
             views: data.views || 0,
-            category: data.category || "Unknown",
-            itemName: data.itemName || "",
+            category: data.bannerProgram[0] || "Unknown",
+            itemName: data.title || "",
           };
         });
 
@@ -52,10 +52,11 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
   });
 
   // ✅ Apply Sorting (A-Z or Z-A)
-  filteredImages.sort((a, b) =>
-    sortOrder === "asc"
-      ? a.itemName.localeCompare(b.itemName) // Sort A-Z
-      : b.itemName.localeCompare(a.itemName) // Sort Z-A
+  filteredImages.sort(
+    (a, b) =>
+      sortOrder === "asc"
+        ? a.itemName.localeCompare(b.itemName) // Sort A-Z
+        : b.itemName.localeCompare(a.itemName) // Sort Z-A
   );
 
   return (

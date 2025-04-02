@@ -1,11 +1,26 @@
 import { Button, Stack, useMediaQuery } from "@mui/material";
-import { useState } from "react";
-
-const categories = ["All", "Rice", "Corn", "Coconut", "Livestock", "Fisheries", "Organic Agriculture"];
+import { collection, onSnapshot } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { db } from "../../config/firebaseConfig";
 
 const CategoryButtons = ({ onSelect }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Real-time listener for the "Category" collection
+    const unsubscribe = onSnapshot(collection(db, "Category"), (snapshot) => {
+      const categoryList = [
+        "All",
+        ...snapshot.docs.map((doc) => doc.data().bannerProgram),
+      ]; // Add "All" as default
+      setCategories(categoryList);
+    });
+
+    // Cleanup function to remove the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
 
   const handleClick = (category) => {
     setActiveCategory(category);

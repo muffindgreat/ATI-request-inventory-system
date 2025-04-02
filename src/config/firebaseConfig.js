@@ -1,19 +1,29 @@
-// Import the functions you need from the SDKs
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // Import Firestore
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getDatabase } from "firebase/database";
+// import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAmLsIQV3w7NLCc29gOhgPy3XsIlq9k6Zk",
-  authDomain: "cartest-da432.firebaseapp.com",
-  projectId: "cartest-da432",
-  storageBucket: "cartest-da432.appspot.com",
-  messagingSenderId: "729144303070",
-  appId: "1:729144303070:web:e461d55f5e2c311b5b514f",
+  apiKey: "AIzaSyDFgdctaGDqyphLoM3_HJf0adKeeSrEqIo",
+  authDomain: "da-ati-iec.firebaseapp.com",
+  projectId: "da-ati-iec",
+  storageBucket: "da-ati-iec.firebasestorage.app",
+  messagingSenderId: "716861296457",
+  appId: "1:716861296457:web:b6b6f4dd3f3a9fabb15498",
+  measurementId: "G-E98YG9FZ8T",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app); // Ensure Firestore is initialized and exported
+export const auth = getAuth();
+export const db = getFirestore(app);
+export const storage = getStorage();
+export const database = getDatabase(app);
+// const analytics = getAnalytics(app);

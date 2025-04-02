@@ -19,17 +19,19 @@ const MostViewed = () => {
     const fetchMaterials = async () => {
       try {
         const materialsQuery = query(
-          collection(db, "inventory"),
+          collection(db, "Inventory"),
           orderBy("views", "desc")
         );
         const querySnapshot = await getDocs(materialsQuery);
 
         const imageList = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          src: doc.data().icon,
+          src: doc.data().imageUrl,
           views: doc.data().views || 0,
-          itemName: doc.data().itemName,
+          itemName: doc.data().title,
         }));
+
+        console.log(imageList);
 
         setMaterials(imageList);
       } catch (error) {

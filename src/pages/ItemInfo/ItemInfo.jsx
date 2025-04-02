@@ -41,7 +41,7 @@ const ItemInfo = () => {
       hasUpdated.current = true;
 
       try {
-        const docRef = doc(db, "inventory", id);
+        const docRef = doc(db, "Inventory", id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -83,7 +83,7 @@ const ItemInfo = () => {
     }
 
     try {
-      const userDocRef = doc(db, "test", currentUser.uid); // ✅ Use correct user UID
+      const userDocRef = doc(db, "User", currentUser.uid); // ✅ Use correct user UID
 
       await updateDoc(userDocRef, {
         cart: arrayUnion({ itemId: id, quantity: 1 }),

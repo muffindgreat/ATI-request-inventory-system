@@ -14,7 +14,7 @@ const NavbarCart = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const userDocRef = doc(db, "test", currentUser.uid);
+    const userDocRef = doc(db, "User", currentUser.uid);
 
     const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {

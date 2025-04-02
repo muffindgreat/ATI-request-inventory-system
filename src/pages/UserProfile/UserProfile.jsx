@@ -20,8 +20,8 @@ import ProfileActions from "./ProfileActions";
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
-    fname: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     designation: "",
     section: "",
@@ -45,14 +45,14 @@ const UserProfile = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          const userRef = doc(db, "test", user.uid);
+          const userRef = doc(db, "User", user.uid);
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             console.log("User Data Found:", userSnap.data());
             const fetchedData = userSnap.data();
             setUserData({
-              fname: fetchedData?.fname || "",
-              lname: fetchedData?.lname || "",
+              firstName: fetchedData?.firstName || "",
+              lastName: fetchedData?.lastName || "",
               email: fetchedData?.email || user.email || "",
               designation: fetchedData?.designation || "",
               section: fetchedData?.section || "",
@@ -61,7 +61,7 @@ const UserProfile = () => {
             setProfilePic(fetchedData?.profilePic || null);
             setOriginalData(fetchedData);
           } else {
-            console.log("No such user document in 'test' collection!");
+            console.log("No such user document in 'User' collection!");
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -86,7 +86,7 @@ const UserProfile = () => {
     const user = auth.currentUser;
     if (user) {
       try {
-        const userRef = doc(db, "test", user.uid);
+        const userRef = doc(db, "User", user.uid);
         await updateDoc(userRef, { ...userData, profilePic });
         console.log("User data updated successfully!");
         setOriginalData({ ...userData, profilePic });

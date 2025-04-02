@@ -54,7 +54,7 @@ const ProfileAvatar = ({ profilePic, setProfilePic, setOpenModal }) => {
       }
 
       console.log("Updating Firestore for user:", user.uid);
-      const userRef = doc(db, "test", user.uid);
+      const userRef = doc(db, "User", user.uid);
       await updateDoc(userRef, { profilePic: imageUrl });
 
       setProfilePic(imageUrl);

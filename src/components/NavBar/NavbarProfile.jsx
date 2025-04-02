@@ -26,13 +26,13 @@ function NavbarProfile() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userRef = doc(db, "test", user.uid);
+        const userRef = doc(db, "User", user.uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
           const data = userSnap.data();
           setUserData({
-            name: `${data.fname} ${data.lname}`,
+            name: `${data.firstName} ${data.lastName}`,
             role: data.designation,
             email: data.email,
             phoneNumber: data.phoneNumber,

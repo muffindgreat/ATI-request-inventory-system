@@ -64,9 +64,9 @@ export default function Register() {
         password
       );
       const user = userCredential.user;
-      await setDoc(doc(db, "test", user.uid), {
-        fname: firstName,
-        lname: lastName,
+      await setDoc(doc(db, "User", user.uid), {
+        firstName: firstName,
+        lastName: lastName,
         email: user.email,
         createdAt: new Date(),
       });

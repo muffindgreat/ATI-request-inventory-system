@@ -17,7 +17,7 @@ export default function ReqCart1() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          const userRef = doc(db, "test", user.uid);
+          const userRef = doc(db, "User", user.uid);
           const userSnap = await getDoc(userRef);
 
           if (userSnap.exists()) {
@@ -30,7 +30,7 @@ export default function ReqCart1() {
               let fetchedItems = [];
 
               for (const itemId of itemIds) {
-                const itemRef = doc(db, "inventory", itemId);
+                const itemRef = doc(db, "Inventory", itemId);
                 const itemSnap = await getDoc(itemRef);
 
                 if (itemSnap.exists()) {
@@ -41,8 +41,9 @@ export default function ReqCart1() {
 
                   fetchedItems.push({
                     id: itemSnap.id,
-                    name: itemData.itemName || "Unknown",
-                    image: itemData.icon || "https://via.placeholder.com/150",
+                    name: itemData.title || "Unknown",
+                    image:
+                      itemData.imageUrl || "https://via.placeholder.com/150",
                     quantity: matchingCartItem ? matchingCartItem.quantity : 1,
                     type: itemData.type || "Unknown",
                   });
@@ -82,7 +83,7 @@ export default function ReqCart1() {
         return;
       }
 
-      const userRef = doc(db, "test", user.uid);
+      const userRef = doc(db, "User", user.uid);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
@@ -121,7 +122,7 @@ export default function ReqCart1() {
         return;
       }
 
-      const userRef = doc(db, "test", user.uid);
+      const userRef = doc(db, "User", user.uid);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
