@@ -12,7 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../config/firebaseConfig"; // Import Firebase auth instance
+import { auth } from "../../config/firebaseConfig";
 import NavbarHome from "./NavbarHome";
 import NavbarCart from "./NavbarCart";
 import NavbarProfile from "./NavbarProfile";
@@ -29,7 +29,7 @@ function Navbar() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user); // True if user is logged in, false otherwise
+      setIsAuthenticated(!!user);
     });
     return () => unsubscribe();
   }, []);
@@ -47,12 +47,16 @@ function Navbar() {
     >
       <Container maxWidth="xl">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          {/* Logo */}
+          {/* Responsive Logo */}
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
             <img
               src={navLogo}
               alt="Logo"
-              style={{ height: "50px", width: "auto", cursor: "pointer" }}
+              style={{
+                height: isMobile ? "35px" : isTablet ? "45px" : "50px",
+                width: "auto",
+                cursor: "pointer",
+              }}
               onClick={() => navigate("/home")}
             />
           </Box>
@@ -62,7 +66,6 @@ function Navbar() {
 
           {/* Right Side Controls */}
           <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            {/* If user is logged in, show Cart, Profile & Drawer */}
             {isAuthenticated ? (
               <>
                 <NavbarCart />
@@ -74,7 +77,6 @@ function Navbar() {
                 )}
               </>
             ) : (
-              // If not logged in, show only Login button
               <Button
                 variant="contained"
                 color="primary"
