@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CardHeaderCenter from "../../components/UI/CardHeaderCenter";
 
 export default function CartOrderSummary({
@@ -28,6 +28,13 @@ export default function CartOrderSummary({
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
   };
+
+  // Calculate the total quantity by summing up the quantity of selected items
+  const calculatedTotalQuantity = useMemo(() => {
+    return cartItems
+      .filter((item) => selectedItems.includes(item.id))
+      .reduce((sum, item) => sum + item.quantity, 0); // Sum all selected item quantities
+  }, [cartItems, selectedItems]);
 
   return (
     <Card
@@ -152,7 +159,7 @@ export default function CartOrderSummary({
         }}
       >
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-          Total {totalItems} items: {totalQuantity} pcs
+          Total {totalItems} items: {calculatedTotalQuantity} pcs
         </Typography>
 
         <Button
