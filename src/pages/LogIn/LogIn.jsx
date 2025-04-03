@@ -91,6 +91,7 @@ export default function LogIn() {
         justifyContent: "center",
         position: "relative",
         overflow: "hidden",
+        height: "100vh",
       }}
     >
       <BackgroundImage imageUrl={bgImage} />
@@ -108,7 +109,12 @@ export default function LogIn() {
 
       <Container
         maxWidth="xs"
-        sx={{ display: "flex", justifyContent: "center", mt: 20, mb: 10 }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
       >
         <Card
           elevation={3}
