@@ -19,7 +19,7 @@ const MostViewed = () => {
         const materialsQuery = query(
           collection(db, "Inventory"),
           orderBy("views", "desc"),
-          limit(6)
+          limit(5) //Limit to how many cards to display
         );
         const querySnapshot = await getDocs(materialsQuery);
 
@@ -55,6 +55,7 @@ const MostViewed = () => {
     autoplaySpeed: 2500,
     cssEase: "linear",
     arrows: false,
+    centerMode: true,
     responsive: [
       {
         breakpoint: 1200,
