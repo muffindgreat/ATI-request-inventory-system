@@ -66,16 +66,17 @@ const SearchFilterBar = () => {
           }}
         >
           <Stack
-            direction={isMobile ? "column" : "row"}
+            direction={isMobile ?"column" : "row"}
             spacing={isMobile ? 1 : 2}
             alignItems={isMobile ? "stretch" : "center"}
             justifyContent="space-between"
             sx={{
+              flexWrap: "nowrap",
               width: "100%",
-              maxWidth: isMobile ? "100%" : "1200px",
+              maxWidth: isMobile ? "100%" : "1200px", // Ensure there's space for all elements
             }}
           >
-            <Box sx={{ width: isMobile ? "100%" : "auto", flexGrow: 1 }}>
+             <Box sx={{ width: isMobile ? "100%" : "auto", flexGrow: 1 }}>
               <SearchBar value={searchTerm} onChange={handleSearchChange} />
             </Box>
             <Stack
@@ -83,13 +84,13 @@ const SearchFilterBar = () => {
               spacing={1}
               sx={{
                 width: isMobile ? "100%" : "auto",
-                justifyContent: "center", // Center the group
-                alignItems: "center", // Align items vertically
-                flexGrow: 1, // Allow the stack to grow
+                justifyContent: "center", // Center the group of Category and Filter buttons
+                alignItems: "center", // Align items vertically within the group
+                flexShrink: 0, // Allow the stack to grow to fill available space
               }}
             >
               <CategoryButtons onSelect={handleCategorySelect} />
-              <Box sx={{ marginLeft: 1 }}> {/* Add margin to separate filter button */}
+              <Box sx={{ marginLeft: 1 }}> {/* Add margin to separate filter button from category buttons */}
                 <FilterButton onFilter={handleFilterChange} />
               </Box>
             </Stack>
@@ -100,28 +101,29 @@ const SearchFilterBar = () => {
       <ImageLibrary
         selectedCategory={selectedCategory}
         searchTerm={searchTerm}
-        sortOrder={sortOrder}
+        sortOrder={sortOrder} // ✅ Pass sort order to Library
         db={db}
-        onImagesReceived={handleImagesReceived}
+        onImagesReceived={handleImagesReceived} // pass callback
       />
 
-      {images.length === 0 && searchTerm && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            padding: 2,
-          }}
-        >
-          <Typography variant="body1" color="textSecondary">
-            No images found matching your search.
-          </Typography>
-        </Box>
-      )}
+      {images.length === 0 ||
+        (searchTerm && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              padding: 2,
+            }}
+          >
+            <Typography variant="body1" color="textSecondary">
+              No images found matching your search.
+            </Typography>
+          </Box>
+        ))}
 
-      {images.length === 0 && selectedCategory && !searchTerm && (
+      {images.length === 0 && selectedCategory && (
         <Box
           sx={{
             display: "flex",
@@ -131,9 +133,9 @@ const SearchFilterBar = () => {
             padding: 2,
           }}
         >
-          <Typography variant="body1" color="textSecondary">
+          {/* <Typography variant="body1" color="textSecondary">
             No images found in this category.
-          </Typography>
+          </Typography> */}
         </Box>
       )}
 
@@ -147,9 +149,9 @@ const SearchFilterBar = () => {
             padding: 2,
           }}
         >
-          <Typography variant="body1" color="textSecondary">
+          {/* <Typography variant="body1" color="textSecondary">
             No images available.
-          </Typography>
+          </Typography> */}
         </Box>
       )}
     </>
