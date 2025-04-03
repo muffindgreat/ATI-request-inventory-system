@@ -23,11 +23,23 @@ const fieldOrder = [
 const ProfileForm = ({ userData, isEditing, handleInputChange }) => {
   const [phoneError, setPhoneError] = useState("");
 
+  // Ensure userData has default values for all fields
+  const defaultUserData = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    designation: "",
+    section: "",
+    phoneNumber: "",
+  };
+
+  const finalUserData = { ...defaultUserData, ...userData };
+
   // Function to allow only numeric input for the phone number field
   const handlePhoneNumberChange = (e) => {
     const { name, value } = e.target;
 
-    if (!/^\d*$/.User(value)) {
+    if (!/^\d*$/.test(value)) {
       setPhoneError("Only numbers are allowed.");
       return;
     }
@@ -50,34 +62,32 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => {
         width: "100%",
       }}
     >
-      {fieldOrder
-        .filter((key) => userData[key] !== undefined) // Ensure only existing fields are shown
-        .map((key) => (
-          <Box key={key} sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography variant="caption" fontWeight="medium" sx={{ mb: 0.5 }}>
-              {fieldLabels[key]}
-            </Typography>
-            <TextField
-              name={key}
-              value={userData[key]}
-              onChange={
-                key === "phoneNumber"
-                  ? handlePhoneNumberChange
-                  : handleInputChange
-              }
-              variant="outlined"
-              size="small"
-              fullWidth
-              disabled={!isEditing || key === "email"} // Email is always disabled
-              error={key === "phoneNumber" && Boolean(phoneError)}
-            />
-            {key === "phoneNumber" && (
-              <FormHelperText sx={{ color: "red", minHeight: "20px", mt: 0.5 }}>
-                {phoneError || " "}
-              </FormHelperText>
-            )}
-          </Box>
-        ))}
+      {fieldOrder.map((key) => (
+        <Box key={key} sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography variant="caption" fontWeight="medium" sx={{ mb: 0.5 }}>
+            {fieldLabels[key]}
+          </Typography>
+          <TextField
+            name={key}
+            value={finalUserData[key]}
+            onChange={
+              key === "phoneNumber"
+                ? handlePhoneNumberChange
+                : handleInputChange
+            }
+            variant="outlined"
+            size="small"
+            fullWidth
+            disabled={!isEditing || key === "email"} // Email is always disabled
+            error={key === "phoneNumber" && Boolean(phoneError)}
+          />
+          {key === "phoneNumber" && (
+            <FormHelperText sx={{ color: "red", minHeight: "20px", mt: 0.5 }}>
+              {phoneError || " "}
+            </FormHelperText>
+          )}
+        </Box>
+      ))}
     </Box>
   );
 };
