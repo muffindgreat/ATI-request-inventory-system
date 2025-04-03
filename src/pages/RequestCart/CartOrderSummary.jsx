@@ -29,6 +29,17 @@ export default function CartOrderSummary({
     );
   };
 
+  const getSelectedCartItems = () => {
+    return cartItems
+      .filter((item) => selectedItems.includes(item.id)) // Filter selected items
+      .map(({ id, name, quantity, type }) => ({
+        itemID: id,
+        quantity,
+        title: name,
+        type,
+      }));
+  };
+
   return (
     <Card
       sx={{
@@ -163,7 +174,11 @@ export default function CartOrderSummary({
             textTransform: "none",
             p: 1,
           }}
-          onClick={() => navigate("/material-request-form")}
+          onClick={() =>
+            navigate("/material-request-form", {
+              state: { selectedItems: getSelectedCartItems() },
+            })
+          }
         >
           Check Out
         </Button>
