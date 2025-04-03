@@ -19,7 +19,6 @@ export default function CartOrderSummary({
   cartItems,
   selectedItems,
   totalItems,
-  totalQuantity,
 }) {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState([]);
@@ -27,6 +26,7 @@ export default function CartOrderSummary({
     designation: null,
     section: null,
   });
+  const [totalQuantity, setTotalQuantity] = useState(0);
 
   // Fetch user data to check designation and section
   useEffect(() => {
@@ -51,6 +51,24 @@ export default function CartOrderSummary({
 
     fetchUserData();
   }, []);
+
+  // Recalculate total quantity whenever selectedItems or cartItems change
+  useEffect(() => {
+    const total = cartItems
+      .filter((item) => selectedItems.includes(item.id))
+      .reduce((sum, item) => sum + item.quantity, 0);
+    setTotalQuantity(total);
+  }, [cartItems, selectedItems]);
+
+  const handleCheckout = () => {
+    if (!userData.designation || !userData.section) {
+      alert(
+        "Please complete your profile with designation and section to proceed."
+      );
+    } else {
+      navigate("/material-request-form");
+    }
+  };
 
   return (
     <Card
@@ -187,14 +205,12 @@ export default function CartOrderSummary({
         <Button
           variant="contained"
           sx={{
-            backgroundColor:
-              userData.designation && userData.section ? "#1A854B" : "#A5A5A5",
+            backgroundColor: "#1A854B",
             color: "white",
             textTransform: "none",
             p: 1,
           }}
-          onClick={() => navigate("/material-request-form")}
-          disabled={!userData.designation || !userData.section}
+          onClick={handleCheckout}
         >
           Check Out
         </Button>
