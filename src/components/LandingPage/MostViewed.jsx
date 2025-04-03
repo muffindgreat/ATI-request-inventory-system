@@ -55,7 +55,7 @@ const MostViewed = () => {
     autoplaySpeed: 2500,
     cssEase: "linear",
     arrows: false,
-    centerMode: true,
+    centerMode: false,
     responsive: [
       {
         breakpoint: 1200,
