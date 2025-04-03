@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Card,
   Box,
@@ -10,7 +11,8 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { auth, db } from "../../config/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 import CardHeaderCenter from "../../components/UI/CardHeaderCenter";
 
 export default function CartOrderSummary({
@@ -21,31 +23,34 @@ export default function CartOrderSummary({
 }) {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState([]);
+  const [userData, setUserData] = useState({
+    designation: null,
+    section: null,
+  });
 
-  // Toggle row expansion
-  const toggleRowExpansion = (id) => {
-    setExpandedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-    );
-  };
+  // Fetch user data to check designation and section
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userRef = doc(db, "User", user.uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            setUserData({
+              designation: data.designation || null,
+              section: data.section || null,
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
 
-  const getSelectedCartItems = () => {
-    return cartItems
-      .filter((item) => selectedItems.includes(item.id)) // Filter selected items
-      .map(({ id, name, quantity, type }) => ({
-        itemID: id,
-        quantity,
-        title: name,
-        type,
-      }));
-  };
-
-  // Calculate the total quantity by summing up the quantity of selected items
-  const calculatedTotalQuantity = useMemo(() => {
-    return cartItems
-      .filter((item) => selectedItems.includes(item.id))
-      .reduce((sum, item) => sum + item.quantity, 0); // Sum all selected item quantities
-  }, [cartItems, selectedItems]);
+    fetchUserData();
+  }, []);
 
   return (
     <Card
@@ -124,7 +129,13 @@ export default function CartOrderSummary({
                       maxHeight: isExpanded ? "100px" : "50px",
                       overflow: "hidden",
                     }}
-                    onClick={() => toggleRowExpansion(item.id)}
+                    onClick={() =>
+                      setExpandedRows((prev) =>
+                        prev.includes(item.id)
+                          ? prev.filter((rowId) => rowId !== item.id)
+                          : [...prev, item.id]
+                      )
+                    }
                   >
                     <TableCell
                       sx={{
@@ -157,7 +168,7 @@ export default function CartOrderSummary({
         </Table>
       </Box>
 
-      {/* Footer Section: Always Stays at Bottom */}
+      {/* Footer Section */}
       <Box
         sx={{
           p: 2,
@@ -170,22 +181,20 @@ export default function CartOrderSummary({
         }}
       >
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-          Total {totalItems} items: {calculatedTotalQuantity} pcs
+          Total {totalItems} items: {totalQuantity} pcs
         </Typography>
 
         <Button
           variant="contained"
           sx={{
-            backgroundColor: "#1A854B",
+            backgroundColor:
+              userData.designation && userData.section ? "#1A854B" : "#A5A5A5",
             color: "white",
             textTransform: "none",
             p: 1,
           }}
-          onClick={() =>
-            navigate("/material-request-form", {
-              state: { selectedItems: getSelectedCartItems() },
-            })
-          }
+          onClick={() => navigate("/material-request-form")}
+          disabled={!userData.designation || !userData.section}
         >
           Check Out
         </Button>
