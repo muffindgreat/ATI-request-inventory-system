@@ -24,6 +24,10 @@ const FilterButton = ({ onFilter }) => {
           width: isMobile ? "32px" : "40px",
           height: isMobile ? "32px" : "40px",
           ml: isMobile ? 0 : 1,
+          transition: "background-color 0.3s",
+          "&:hover": {
+            bgcolor: "#9ACD32", // ✅ Yellow-green hover effect
+          },
         }}
       >
         <FilterListIcon fontSize={isMobile ? "small" : "medium"} />

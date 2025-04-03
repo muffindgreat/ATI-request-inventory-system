@@ -7,19 +7,22 @@ const SearchBar = ({ value, onChange }) => {
   return (
     <TextField
       variant="outlined"
-      placeholder="Search by..."
+      placeholder="Search item..."
       size="small"
       value={value}
       onChange={onChange}
-      fullWidth={isMobile} // Make full width on mobile
+      fullWidth={isMobile}
       sx={{
         bgcolor: "white",
         borderRadius: "15px",
-        maxWidth: isMobile ? "100%" : "800px", // Wider search bar on desktop
+        maxWidth: isMobile ? "100%" : "100%",
         width: "100%",
         "& .MuiOutlinedInput-root": {
+          height: isMobile ? "40px" : "45px",
           borderRadius: "15px",
-          height: isMobile ? "40px" : "45px", // Slightly smaller on mobile
+          "& fieldset": {
+            border: "none", // ✅ Removes the outline border
+          },
         },
       }}
       InputProps={{
