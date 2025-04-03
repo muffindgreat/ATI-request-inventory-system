@@ -59,10 +59,14 @@ function NavbarProfile() {
 
   return (
     <>
-      {/* Static Icon in Navbar */}
+      {/* Dynamic Profile Icon in Navbar */}
       <Tooltip title="User Profile">
         <IconButton onClick={handleOpenUserMenu}>
-          <AccountCircleIcon sx={{ color: "black", fontSize: "28px" }} />
+          {userData?.profilePic ? (
+            <Avatar src={userData.profilePic} sx={{ width: 32, height: 32 }} />
+          ) : (
+            <AccountCircleIcon sx={{ color: "black", fontSize: "28px" }} />
+          )}
         </IconButton>
       </Tooltip>
 
