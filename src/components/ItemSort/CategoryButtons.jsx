@@ -11,10 +11,14 @@ const CategoryDropdown = ({ onSelect }) => {
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "Category"), (snapshot) => {
       const categoryList = [
-        "All Categories",
+        "All",
         ...snapshot.docs.map((doc) => doc.data().bannerProgram),
       ];
-      setCategories(categoryList);
+      // Sort the categoryList alphabetically
+      const sortedCategoryList = categoryList.sort((a, b) =>
+        a.localeCompare(b)
+      );
+      setCategories(sortedCategoryList);
     });
     return () => unsubscribe();
   }, []);
