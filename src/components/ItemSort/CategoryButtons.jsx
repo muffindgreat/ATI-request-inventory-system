@@ -14,11 +14,7 @@ const CategoryDropdown = ({ onSelect }) => {
         "All",
         ...snapshot.docs.map((doc) => doc.data().bannerProgram),
       ];
-      // Sort the categoryList alphabetically
-      const sortedCategoryList = categoryList.sort((a, b) =>
-        a.localeCompare(b)
-      );
-      setCategories(sortedCategoryList);
+      setCategories(categoryList);
     });
     return () => unsubscribe();
   }, []);
