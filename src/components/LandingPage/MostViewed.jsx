@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css"; // Correct import
+import "slick-carousel/slick/slick-theme.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { db } from "../../config/firebaseConfig";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, limit } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const MostViewed = () => {
@@ -18,7 +18,8 @@ const MostViewed = () => {
       try {
         const materialsQuery = query(
           collection(db, "Inventory"),
-          orderBy("views", "desc")
+          orderBy("views", "desc"),
+          limit(6)
         );
         const querySnapshot = await getDocs(materialsQuery);
 
@@ -49,16 +50,28 @@ const MostViewed = () => {
     infinite: true,
     speed: 800,
     slidesToShow: 5,
-    slidesToScroll: 1,
+    slideToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2500,
     cssEase: "linear",
     arrows: false,
     responsive: [
-      { breakpoint: 1200, settings: { slidesToShow: 4, centerMode: true } },
-      { breakpoint: 992, settings: { slidesToShow: 3, centerMode: true } },
-      { breakpoint: 768, settings: { slidesToShow: 2, centerMode: true } },
-      { breakpoint: 480, settings: { slidesToShow: 1, centerMode: true } },
+      {
+        breakpoint: 1200,
+        settings: { slidesToShow: 5 },
+      },
+      {
+        breakpoint: 992,
+        settings: { slidesToShow: 5 },
+      },
+      {
+        breakpoint: 768,
+        settings: { slidesToShow: 3 },
+      },
+      {
+        breakpoint: 480,
+        settings: { slidesToShow: 1 },
+      },
     ],
   };
 
@@ -67,7 +80,7 @@ const MostViewed = () => {
       sx={{
         position: "relative",
         maxWidth: "100%",
-        minHeight: "100vh",
+        minHeight: "90vh",
         backgroundImage: "url('/image.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -76,6 +89,7 @@ const MostViewed = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        boxSizing: "border-box",
         "& .slick-dots": {
           position: "absolute",
           bottom: "-40px",
@@ -125,105 +139,110 @@ const MostViewed = () => {
         }}
       />
 
-      <Typography
-        variant="h3"
-        component="h2"
-        sx={{
-          color: "#fff",
-          textAlign: "center",
-          fontWeight: "bold",
-          position: "relative",
-          zIndex: 2,
-          padding: "0 10px",
-        }}
-      >
-        MOST VIEWED
-      </Typography>
+      <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <Typography
+            variant="h3"
+            component="h2"
+            sx={{
+              color: "#fff",
+              textAlign: "center",
+              fontWeight: "bold",
+              position: "relative",
+              zIndex: 2,
+              padding: "0 10px",
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              marginBottom: "20px",
+            }}
+          >
+            MOST VIEWED
+          </Typography>
+        </Box>
 
-      {loading ? (
-        <Typography sx={{ color: "white", position: "relative", zIndex: 2 }}>
-          Loading...
-        </Typography>
-      ) : (
-        <Box sx={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
-          <Slider {...settings}>
-            {materials.map((material) => (
-              <Box
-                key={material.id}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: "10px",
-                  boxSizing: "border-box",
-                }}
-              >
-                <a
-                  onClick={() => handleClick(material.id)}
-                  style={{
-                    textDecoration: "none",
-                    position: "relative",
-                    display: "block",
-                    width: "100%",
-                    maxWidth: "250px",
-                    cursor: "pointer",
+        {loading ? (
+          <Typography sx={{ color: "white", position: "relative", zIndex: 2 }}>
+            Loading...
+          </Typography>
+        ) : (
+          <Box sx={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
+            <Slider {...settings}>
+              {materials.map((material) => (
+                <Box
+                  key={material.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "10px",
+                    boxSizing: "border-box",
+                    margin: "0",
                   }}
                 >
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 10,
-                      left: 10,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      borderRadius: "4px",
-                      px: 1,
-                      py: 0.5,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "#fff", fontWeight: "bold" }}
-                    >
-                      {material.views}
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      height: "100%",
+                  <a
+                    onClick={() => handleClick(material.id)}
+                    style={{
+                      textDecoration: "none",
+                      position: "relative",
+                      display: "block",
                       width: "100%",
-                      maxWidth: "250px",
-                      aspectRatio: "9 / 16",
-                      overflow: "hidden",
-                      borderRadius: "8px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                      cursor: "pointer",
                     }}
                   >
-                    <img
-                      id={material.id}
-                      src={material.src}
-                      alt={material.itemName}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        borderRadius: "8px",
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        borderRadius: "4px",
+                        px: 1,
+                        py: 0.5,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
                       }}
-                    />
-                  </Box>
-                </a>
-              </Box>
-            ))}
-          </Slider>
-        </Box>
-      )}
+                    >
+                      <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "#fff", fontWeight: "bold" }}
+                      >
+                        {material.views}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        height: "100%",
+                        width: "100%",
+                        aspectRatio: "9 / 16",
+                        overflow: "hidden",
+                        borderRadius: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                      }}
+                    >
+                      <img
+                        id={material.id}
+                        src={material.src}
+                        alt={material.itemName}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </Box>
+                  </a>
+                </Box>
+              ))}
+            </Slider>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };
