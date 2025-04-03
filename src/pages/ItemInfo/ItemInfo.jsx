@@ -249,9 +249,9 @@ const ItemInfo = () => {
                     textTransform: "none",
                   }}
                   onClick={() => {
-                    if (item.pdfLink) {
-                      console.log("Downloading PDF from:", item.pdfLink);
-                      window.open(item.pdfLink, "_blank");
+                    if (item.pdfUrl) {
+                      console.log("Downloading PDF from:", item.pdfUrl);
+                      window.open(item.pdfUrl, "_blank");
                     } else {
                       console.error("Error: No PDF link available.");
                       alert("PDF is not available for download.");
@@ -268,6 +268,7 @@ const ItemInfo = () => {
                     color: "white",
                     textTransform: "none",
                   }}
+                  disabled={item.status === "Unavailable"}
                   onClick={addToCart}
                 >
                   Add to Request Cart
