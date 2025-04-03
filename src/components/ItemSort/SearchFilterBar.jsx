@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Box, Stack, useMediaQuery, Container, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  useMediaQuery,
+  Container,
+  Typography,
+} from "@mui/material";
 import { db } from "../../config/firebaseConfig";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
@@ -63,23 +69,24 @@ const SearchFilterBar = () => {
             direction="row"
             spacing={isMobile ? 1 : 2}
             alignItems="center"
-            justifyContent="center"
+            justifyContent="space-between"
             sx={{
               flexWrap: "nowrap",
               width: "100%",
-              maxWidth: isMobile ? "100%" : "600px",
+              maxWidth: isMobile ? "100%" : "1200px", // Ensure there's space for all elements
             }}
           >
             <Box sx={{ flexGrow: 1 }}>
               <SearchBar value={searchTerm} onChange={handleSearchChange} />
             </Box>
-            <FilterButton onFilter={handleFilterChange} />
+            <Box sx={{ flexShrink: 0 }}>
+              <CategoryButtons onSelect={handleCategorySelect} />
+            </Box>
+            <Box sx={{ flexShrink: 0 }}>
+              <FilterButton onFilter={handleFilterChange} />
+            </Box>
           </Stack>
         </Container>
-
-        <Box sx={{ mt: isMobile ? 1 : 1.25 }}>
-          <CategoryButtons onSelect={handleCategorySelect} />
-        </Box>
       </Box>
 
       <ImageLibrary
@@ -90,21 +97,22 @@ const SearchFilterBar = () => {
         onImagesReceived={handleImagesReceived} // pass callback
       />
 
-      {images.length === 0 || searchTerm && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            padding: 2,
-          }}
-        >
-          <Typography variant="body1" color="textSecondary">
-            No images found matching your search.
-          </Typography>
-        </Box>
-      )}
+      {images.length === 0 ||
+        (searchTerm && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              padding: 2,
+            }}
+          >
+            <Typography variant="body1" color="textSecondary">
+              No images found matching your search.
+            </Typography>
+          </Box>
+        ))}
 
       {images.length === 0 && selectedCategory && (
         <Box
@@ -137,7 +145,6 @@ const SearchFilterBar = () => {
           </Typography> */}
         </Box>
       )}
-
     </>
   );
 };

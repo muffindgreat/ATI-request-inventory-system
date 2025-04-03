@@ -1,62 +1,68 @@
-import { Button, Stack, useMediaQuery } from "@mui/material";
-import { collection, onSnapshot } from "firebase/firestore";
 import { useState, useEffect } from "react";
+import { MenuItem, Select, FormControl, useMediaQuery } from "@mui/material";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 
-const CategoryButtons = ({ onSelect }) => {
+const CategoryDropdown = ({ onSelect }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
-  const [activeCategory, setActiveCategory] = useState("All");
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
   useEffect(() => {
-    // Real-time listener for the "Category" collection
     const unsubscribe = onSnapshot(collection(db, "Category"), (snapshot) => {
       const categoryList = [
-        "All",
+        "All Categories",
         ...snapshot.docs.map((doc) => doc.data().bannerProgram),
-      ]; // Add "All" as default
-      setCategories(categoryList);
+      ];
+      // Sort the categoryList alphabetically
+      const sortedCategoryList = categoryList.sort((a, b) =>
+        a.localeCompare(b)
+      );
+      setCategories(sortedCategoryList);
     });
-
-    // Cleanup function to remove the listener when the component unmounts
     return () => unsubscribe();
   }, []);
 
-  const handleClick = (category) => {
-    setActiveCategory(category);
-    onSelect(category === "All" ? null : category); // Reset filter if "All" is selected
+  const handleChange = (event) => {
+    const category = event.target.value;
+    setSelectedCategory(category);
+    onSelect(category === "All Categories" ? null : category);
   };
 
   return (
-    <Stack
-      direction="row"
-      spacing={isMobile ? 1 : 2} // Adjust spacing for mobile
-      mt={isMobile ? 0.5 : 1}
-      flexWrap="wrap"
-      justifyContent="center"
-    >
-      {categories.map((category) => (
-        <Button
-          key={category}
-          variant={activeCategory === category ? "contained" : "outlined"}
-          sx={{
-            bgcolor: activeCategory === category ? "#FFB603" : "white",
-            color: activeCategory === category ? "white" : "black",
-            borderRadius: "14px",
-            textTransform: "none",
-            fontWeight: "bold",
-            minWidth: isMobile ? "80px" : "140px", // Adjust button width
-            fontSize: isMobile ? "12px" : "14px",
-            mx: isMobile ? "5px" : "10px", // Adjust horizontal margin
-            "&:hover": { bgcolor: "lightgray" },
-          }}
-          onClick={() => handleClick(category)}
-        >
-          {category}
-        </Button>
-      ))}
-    </Stack>
+    <FormControl sx={{ width: "250px", height: "45px" }}>
+      <Select
+        value={selectedCategory}
+        onChange={handleChange}
+        displayEmpty
+        sx={{
+          backgroundColor: "white",
+          height: "45px", // Match search bar height
+          borderRadius: "15px",
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgba(0, 0, 0, 0.23)",
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#9ACD32",
+          },
+        }}
+        MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: 200,
+              overflowY: "auto",
+            },
+          },
+        }}
+      >
+        {categories.map((category, index) => (
+          <MenuItem key={index} value={category}>
+            {category}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 };
 
-export default CategoryButtons;
+export default CategoryDropdown;

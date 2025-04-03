@@ -84,12 +84,31 @@ const ItemInfo = () => {
 
     try {
       const userDocRef = doc(db, "User", currentUser.uid); // ✅ Use correct user UID
+      const userDocSnap = await getDoc(userDocRef);
 
-      await updateDoc(userDocRef, {
-        cart: arrayUnion({ itemId: id, quantity: 1 }),
-      });
+      if (userDocSnap.exists()) {
+        const userCart = userDocSnap.data().cart || [];
 
-      alert("Item added to request cart!");
+        // Check if the item is already in the cart
+        const isItemInCart = userCart.some(
+          (cartItem) => cartItem.itemId === id
+        );
+
+        if (isItemInCart) {
+          alert("Item is already in the cart.");
+          return; // Don't add if the item is already in the cart
+        }
+
+        // Add the item to the cart if not already present
+        await updateDoc(userDocRef, {
+          cart: arrayUnion({ itemId: id, quantity: 1 }),
+        });
+
+        alert("Item added to request cart!");
+      } else {
+        console.log("User document does not exist.");
+        alert("User document not found.");
+      }
     } catch (error) {
       console.error("Error adding item to cart:", {
         message: error.message,

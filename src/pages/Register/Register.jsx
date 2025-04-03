@@ -96,6 +96,7 @@ export default function Register() {
       justifyContent="center"
       position="relative"
       overflow="hidden"
+      minHeight="100vh"
     >
       <BackgroundImage imageUrl={bgImage} />
       <Box
@@ -108,7 +109,12 @@ export default function Register() {
       </Box>
       <Container
         maxWidth="xs"
-        sx={{ display: "flex", justifyContent: "center", mt: 20, mb: 10 }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
       >
         <Card
           elevation={3}

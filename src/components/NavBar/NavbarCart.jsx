@@ -39,7 +39,15 @@ const NavbarCart = () => {
 
   return (
     <IconButton onClick={() => navigate("/request-cart")}>
-      <Badge badgeContent={cartCount} color="secondary">
+      <Badge
+        badgeContent={cartCount}
+        sx={{
+          "& .MuiBadge-badge": {
+            backgroundColor: "#1E874A", // Updated green color
+            color: "white",
+          },
+        }}
+      >
         <ShoppingCartIcon sx={{ color: "black", fontSize: "24px" }} />
       </Badge>
     </IconButton>
