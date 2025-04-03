@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
@@ -12,6 +12,8 @@ const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [isDragging, setIsDragging] = useState(false);
+  const clickTimeout = useRef(null);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -19,7 +21,7 @@ const MostViewed = () => {
         const materialsQuery = query(
           collection(db, "Inventory"),
           orderBy("views", "desc"),
-          limit(6)
+          limit(5)
         );
         const querySnapshot = await getDocs(materialsQuery);
 
@@ -42,7 +44,22 @@ const MostViewed = () => {
   }, []);
 
   const handleClick = (id) => {
-    navigate(`/item-info/${id}`);
+    if (!isDragging) {
+      navigate(`/item-info/${id}`);
+    }
+  };
+
+  const handleSlideChange = () => {
+    setIsDragging(true);
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+    }
+  };
+
+  const handleSlideAfterChange = () => {
+    clickTimeout.current = setTimeout(() => {
+      setIsDragging(false);
+    }, 200); // 200ms delay before allowing click
   };
 
   const settings = {
@@ -55,23 +72,14 @@ const MostViewed = () => {
     autoplaySpeed: 2500,
     cssEase: "linear",
     arrows: false,
+    centerMode: false,
+    beforeChange: handleSlideChange,
+    afterChange: handleSlideAfterChange,
     responsive: [
-      {
-        breakpoint: 1200,
-        settings: { slidesToShow: 5 },
-      },
-      {
-        breakpoint: 992,
-        settings: { slidesToShow: 5 },
-      },
-      {
-        breakpoint: 768,
-        settings: { slidesToShow: 3 },
-      },
-      {
-        breakpoint: 480,
-        settings: { slidesToShow: 1 },
-      },
+      { breakpoint: 1200, settings: { slidesToShow: 5 } },
+      { breakpoint: 992, settings: { slidesToShow: 5 } },
+      { breakpoint: 768, settings: { slidesToShow: 3 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
     ],
   };
 
@@ -138,9 +146,19 @@ const MostViewed = () => {
           zIndex: 1,
         }}
       />
-
+      {isDragging && (
+        <Box
+          sx={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            zIndex: 3, // Ensure it's on top of the content
+            pointerEvents: 'none', // Prevent interaction
+          }}
+        />
+      )}
       <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <Typography
             variant="h3"
             component="h2"
@@ -203,10 +221,7 @@ const MostViewed = () => {
                       }}
                     >
                       <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#fff", fontWeight: "bold" }}
-                      >
+                      <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
                         {material.views}
                       </Typography>
                     </Box>
