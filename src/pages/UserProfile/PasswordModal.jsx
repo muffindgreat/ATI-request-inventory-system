@@ -16,6 +16,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
 } from "firebase/auth";
+import useToast from "../../components/Toastify/useToast";
 
 const PasswordModal = ({ openModal, setOpenModal }) => {
   const [passwords, setPasswords] = useState({
@@ -37,6 +38,8 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
   const handleChange = (e) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
+
+  const showToast = useToast();
 
   const handleChangePassword = async () => {
     const auth = getAuth();
@@ -67,9 +70,10 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
 
       // Update password
       await updatePassword(user, passwords.newPassword);
-      alert("Password updated successfully!");
+      showToast("Password updated successfully!", "success");
       setOpenModal(false);
     } catch (err) {
+      showToast("Network Error", "error");
       setError(err.message);
     }
   };

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../config/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import CardHeaderCenter from "../../components/UI/CardHeaderCenter";
+import useToast from "../../components/Toastify/useToast";
 
 export default function CartOrderSummary({
   cartItems,
@@ -27,6 +28,8 @@ export default function CartOrderSummary({
     section: null,
   });
   const [totalQuantity, setTotalQuantity] = useState(0);
+
+  const showToast = useToast();
 
   // Fetch user data to check designation and section
   useEffect(() => {
@@ -62,12 +65,26 @@ export default function CartOrderSummary({
 
   const handleCheckout = () => {
     if (!userData.designation || !userData.section) {
-      alert(
-        "Please complete your profile with designation and section to proceed."
+      showToast(
+        "Please complete your profile with designation and section to proceed.",
+        "error"
       );
     } else {
-      navigate("/material-request-form");
+      navigate("/material-request-form", {
+        state: { selectedItems: getSelectedCartItems() },
+      });
     }
+  };
+
+  const getSelectedCartItems = () => {
+    return cartItems
+      .filter((item) => selectedItems.includes(item.id)) // Filter selected items
+      .map(({ id, name, quantity, type }) => ({
+        itemID: id,
+        quantity,
+        title: name,
+        type,
+      }));
   };
 
   return (

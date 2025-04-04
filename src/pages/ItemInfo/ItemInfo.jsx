@@ -22,7 +22,8 @@ import {
   increment,
   arrayUnion,
 } from "firebase/firestore";
-import { useAuth } from "../../context/AuthContext"; // ✅ Import useAuth
+import { useAuth } from "../../context/AuthContext";
+import useToast from "../../components/Toastify/useToast";
 
 const ItemInfo = () => {
   const theme = useTheme();
@@ -32,6 +33,8 @@ const ItemInfo = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const hasUpdated = useRef(false); // Prevents duplicate updates
+
+  const showToast = useToast();
 
   useEffect(() => {
     console.log("Current User from AuthContext:", currentUser); // ✅ Debugging user state
@@ -78,7 +81,7 @@ const ItemInfo = () => {
     console.log("Current User in addToCart:", currentUser); // ✅ Debugging user state
 
     if (!currentUser) {
-      alert("Please log in to add items to your cart.");
+      showToast("Please log in to add items to your cart.", "error");
       return;
     }
 
@@ -95,7 +98,7 @@ const ItemInfo = () => {
         );
 
         if (isItemInCart) {
-          alert("Item is already in the cart.");
+          showToast("Item is already in the cart.", "error");
           return; // Don't add if the item is already in the cart
         }
 
@@ -104,10 +107,10 @@ const ItemInfo = () => {
           cart: arrayUnion({ itemId: id, quantity: 1 }),
         });
 
-        alert("Item added to request cart!");
+        showToast("Item added to request cart!", "success");
       } else {
         console.log("User document does not exist.");
-        alert("User document not found.");
+        showToast("Network Error", "error");
       }
     } catch (error) {
       console.error("Error adding item to cart:", {
@@ -117,7 +120,7 @@ const ItemInfo = () => {
         userUID: currentUser?.uid,
         itemId: id,
       });
-      alert(`Failed to add item to cart. Error: ${error.message}`);
+      showToast("Network Error", "error");
     }
   };
 
@@ -248,13 +251,46 @@ const ItemInfo = () => {
                     color: "white",
                     textTransform: "none",
                   }}
-                  onClick={() => {
-                    if (item.pdfLink) {
-                      console.log("Downloading PDF from:", item.pdfLink);
-                      window.open(item.pdfLink, "_blank");
-                    } else {
+                  onClick={async () => {
+                    if (!item.pdfUrl) {
                       console.error("Error: No PDF link available.");
                       alert("PDF is not available for download.");
+                      return;
+                    }
+
+                    try {
+                      // 1. Fetch the PDF as blob
+                      const response = await fetch(item.pdfUrl);
+                      const blob = await response.blob();
+                      const blobUrl = window.URL.createObjectURL(blob);
+
+                      // 2. Extract filename from URL
+                      const urlParts = item.pdfUrl.split("/");
+                      const filename = `${item.title}.pdf`;
+
+                      // 3. Trigger download
+                      const link = document.createElement("a");
+                      link.href = blobUrl;
+                      link.setAttribute("download", filename);
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+
+                      // 4. Clean up memory
+                      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+
+                      // 5. Increment downloads in Firestore
+                      const docRef = doc(db, "Inventory", id);
+                      await updateDoc(docRef, { downloads: increment(1) });
+
+                      // 6. Optional: update local state so UI reflects new download count immediately
+                      setItem((prev) => ({
+                        ...prev,
+                        downloads: (prev.downloads || 0) + 1,
+                      }));
+                    } catch (error) {
+                      console.error("Error downloading the PDF:", error);
+                      showToast("PDF is not available for download.", "error");
                     }
                   }}
                 >
@@ -268,6 +304,7 @@ const ItemInfo = () => {
                     color: "white",
                     textTransform: "none",
                   }}
+                  disabled={item.status === "Unavailable"}
                   onClick={addToCart}
                 >
                   Add to Request Cart

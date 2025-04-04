@@ -18,7 +18,11 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
             id: doc.id,
             src: data.imageUrl || "",
             views: data.views || 0,
-            category: data.bannerProgram[0] || "Unknown",
+            category:
+              Array.isArray(data.bannerProgram) && data.bannerProgram.length > 0
+                ? data.bannerProgram[0]
+                : "Unknown",
+
             itemName: data.title || "",
           };
         });

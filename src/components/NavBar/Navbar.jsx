@@ -84,10 +84,10 @@ function Navbar() {
               </>
             ) : (
               <Button
-                variant="contained"
-                color="primary"
+                variant="text"
+                color="success"
                 onClick={() => navigate("/login")}
-                sx={{ textTransform: "none", fontWeight: "bold" }}
+                sx={{ fontWeight: "bold" }}
               >
                 Login
               </Button>
