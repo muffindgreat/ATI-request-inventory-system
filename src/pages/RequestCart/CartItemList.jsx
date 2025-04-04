@@ -75,7 +75,7 @@ const CartItemList = ({
               padding: 0,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", ml: 0.5, p: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
               <Checkbox
                 checked={
                   selectedItems.length === cartItems.length &&
