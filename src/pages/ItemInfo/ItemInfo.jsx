@@ -218,9 +218,9 @@ const ItemInfo = () => {
                 Downloads: {item.downloads || 0}
               </Typography>
 
-              {item.bannerPrograms?.length > 0 && (
+              {item.bannerProgram?.length > 0 && (
                 <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
-                  {item.bannerPrograms.map((program, i) => (
+                  {item.bannerProgram.map((program, i) => (
                     <Chip
                       key={i}
                       label={program}
