@@ -68,9 +68,7 @@ export default function MyRequests() {
                 date: data.date?.toDate
                   ? data.date.toDate().toLocaleString()
                   : "No Date",
-                dateNeeded: data.dateNeeded?.toDate
-                  ? data.dateNeeded.toDate().toLocaleString()
-                  : "No Date",
+                dateNeeded: data.dateNeeded || "",
                 acceptedDate: data.acceptedDate?.toDate
                   ? data.acceptedDate.toDate().toLocaleString()
                   : "",

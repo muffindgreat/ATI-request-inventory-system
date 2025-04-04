@@ -275,6 +275,15 @@ function getStatusColor(status) {
   }
 }
 
+function formatDate(dateString) {
+  const date = new Date(dateString); // Parse the string into a Date object
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short", // "Mon", "Tue", etc.
+    year: "numeric", // 2025
+    month: "short", // "Apr"
+    day: "numeric", // 18
+  }).format(date);
+}
 function RequestDetails({ item }) {
   const statusStages = [
     {
@@ -318,7 +327,8 @@ function RequestDetails({ item }) {
         <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
       </Typography>
       <Typography variant="body2">
-        <strong>Date Needed:</strong> {item.dateNeeded || "Not specified"}
+        <strong>Date Needed:</strong>{" "}
+        {item.dateNeeded ? formatDate(item.dateNeeded) : "Not specified"}
       </Typography>
       <Typography variant="body2">
         <strong>Program:</strong> {item.program || "Not specified"}
