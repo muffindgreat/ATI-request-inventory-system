@@ -6,7 +6,7 @@ import { db } from "../../config/firebaseConfig";
 const CategoryDropdown = ({ onSelect }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "Category"), (snapshot) => {
@@ -14,11 +14,15 @@ const CategoryDropdown = ({ onSelect }) => {
         "All Categories",
         ...snapshot.docs.map((doc) => doc.data().bannerProgram),
       ];
-      // Sort the categoryList alphabetically
       const sortedCategoryList = categoryList.sort((a, b) =>
         a.localeCompare(b)
       );
       setCategories(sortedCategoryList);
+
+      // Ensure selected category is valid
+      setSelectedCategory((prev) =>
+        sortedCategoryList.includes(prev) ? prev : "All Categories"
+      );
     });
     return () => unsubscribe();
   }, []);
@@ -32,12 +36,12 @@ const CategoryDropdown = ({ onSelect }) => {
   return (
     <FormControl sx={{ width: "250px", height: "45px" }}>
       <Select
-        value={selectedCategory}
+        value={categories.includes(selectedCategory) ? selectedCategory : ""}
         onChange={handleChange}
         displayEmpty
         sx={{
           backgroundColor: "white",
-          height: "45px", // Match search bar height
+          height: "45px",
           borderRadius: "15px",
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: "rgba(0, 0, 0, 0.23)",

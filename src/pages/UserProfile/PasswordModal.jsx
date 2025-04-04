@@ -16,6 +16,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
 } from "firebase/auth";
+import useToast from "../../components/Toastify/useToast";
 
 const PasswordModal = ({ openModal, setOpenModal }) => {
   const [passwords, setPasswords] = useState({
@@ -38,22 +39,25 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
 
+  const showToast = useToast();
+
   const handleChangePassword = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
 
     if (!user) {
-      setError("No user is logged in.");
+      showToast("No user is logged in.", "error");
+
       return;
     }
 
     if (passwords.newPassword !== passwords.confirmPassword) {
-      setError("New passwords do not match.");
+      showToast("New passwords do not match.", "error");
       return;
     }
 
     if (passwords.newPassword.length < 6) {
-      setError("Password must be at least 6 characters.");
+      showToast("Password must be at least 6 characters.", "error");
       return;
     }
 
@@ -67,9 +71,10 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
 
       // Update password
       await updatePassword(user, passwords.newPassword);
-      alert("Password updated successfully!");
+      showToast("Password updated successfully!", "success");
       setOpenModal(false);
     } catch (err) {
+      showToast("Network Error", "error");
       setError(err.message);
     }
   };
@@ -107,9 +112,11 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
             error={!!error}
             helperText={
               field === "confirmPassword" &&
-              passwords.newPassword !== passwords.confirmPassword
-                ? "Passwords do not match."
-                : ""
+              passwords.newPassword !== passwords.confirmPassword ? (
+                <span style={{ color: "red" }}>Passwords do not match.</span>
+              ) : (
+                ""
+              )
             }
             InputProps={{
               endAdornment: (
@@ -133,7 +140,15 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
           <Button
             variant="outlined"
             sx={{ textTransform: "none" }}
-            onClick={() => setOpenModal(false)}
+            onClick={() => {
+              setOpenModal(false);
+              setPasswords({
+                currentPassword: "",
+                newPassword: "",
+                confirmPassword: "",
+              });
+              setError("");
+            }}
           >
             Cancel
           </Button>

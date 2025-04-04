@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Container, CircularProgress } from "@mui/material";
+import { Grid, Container, CircularProgress, Button } from "@mui/material";
 import { collection, getDocs } from "firebase/firestore";
 import ImageCard from "../Items/ImageCard";
 
 const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(8); // Show 8 initially
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -17,7 +18,11 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
             id: doc.id,
             src: data.imageUrl || "",
             views: data.views || 0,
-            category: data.bannerProgram[0] || "Unknown",
+            category:
+              Array.isArray(data.bannerProgram) && data.bannerProgram.length > 0
+                ? data.bannerProgram[0]
+                : "Unknown",
+
             itemName: data.title || "",
           };
         });
@@ -59,10 +64,13 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
         : b.itemName.localeCompare(a.itemName) // Sort Z-A
   );
 
+  // ✅ Limit the visible images to `visibleCount`
+  const visibleImages = filteredImages.slice(0, visibleCount);
+
   return (
-    <Container sx={{ pt: 3 }}>
+    <Container sx={{ pt: 3, textAlign: "center" }}>
       <Grid container spacing={2} justifyContent="center">
-        {filteredImages.map((img) => (
+        {visibleImages.map((img) => (
           <Grid item key={img.id} xs={10} sm={6} md={4} lg={3} xl={2.4}>
             <ImageCard
               id={img.id}
@@ -74,6 +82,21 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Show More Button */}
+      {visibleCount < filteredImages.length && (
+        <Button
+          onClick={() => setVisibleCount((prev) => prev + 8)}
+          variant="contained"
+          sx={{
+            mt: 3,
+            bgcolor: "#9ACD32", // Yellow-green color
+            "&:hover": { bgcolor: "#7DAF28" }, // Darker yellow-green on hover
+          }}
+        >
+          Show More
+        </Button>
+      )}
     </Container>
   );
 };

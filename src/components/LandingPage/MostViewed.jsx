@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
@@ -7,11 +7,16 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { db } from "../../config/firebaseConfig";
 import { collection, getDocs, orderBy, query, limit } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [isDragging, setIsDragging] = useState(false);
+  const clickTimeout = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -19,7 +24,7 @@ const MostViewed = () => {
         const materialsQuery = query(
           collection(db, "Inventory"),
           orderBy("views", "desc"),
-          limit(6)
+          limit(5)
         );
         const querySnapshot = await getDocs(materialsQuery);
 
@@ -42,36 +47,50 @@ const MostViewed = () => {
   }, []);
 
   const handleClick = (id) => {
-    navigate(`/item-info/${id}`);
+    if (!isDragging) {
+      navigate(`/item-info/${id}`);
+    }
+  };
+
+  const handleSlideChange = () => {
+    setIsDragging(true);
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+    }
+  };
+
+  const handleSlideAfterChange = () => {
+    clickTimeout.current = setTimeout(() => {
+      setIsDragging(false);
+    }, 200);
   };
 
   const settings = {
     dots: true,
     infinite: true,
-    speed: 800,
-    slidesToShow: 5,
-    slideToScroll: 1,
+    speed: 300,
+    slidesToShow: isMobile ? 1 : 5,
     autoplay: true,
-    autoplaySpeed: 2500,
-    cssEase: "linear",
+    autoplaySpeed: 4000,
+    cssEase: "cubic-bezier(0.25, 0.1, 0.25, 1.0)",
     arrows: false,
+    centerMode: false,
+    variableWidth: false,
+    swipeToSlide: true,
+    beforeChange: handleSlideChange,
+    afterChange: handleSlideAfterChange,
     responsive: [
-      {
-        breakpoint: 1200,
-        settings: { slidesToShow: 5 },
-      },
-      {
-        breakpoint: 992,
-        settings: { slidesToShow: 5 },
-      },
-      {
-        breakpoint: 768,
-        settings: { slidesToShow: 3 },
-      },
-      {
-        breakpoint: 480,
-        settings: { slidesToShow: 1 },
-      },
+      { breakpoint: 1920, settings: { slidesToShow: 5 } },
+      { breakpoint: 1600, settings: { slidesToShow: 4 } },
+      { breakpoint: 1440, settings: { slidesToShow: 4 } },
+      { breakpoint: 1200, settings: { slidesToShow: 3 } },
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 992, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 600, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
+      { breakpoint: 375, settings: { slidesToShow: 1 } },
+      { breakpoint: 320, settings: { slidesToShow: 1 } },
     ],
   };
 
@@ -80,7 +99,7 @@ const MostViewed = () => {
       sx={{
         position: "relative",
         maxWidth: "100%",
-        minHeight: "90vh",
+        minHeight: "100vh",
         backgroundImage: "url('/image.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -90,39 +109,48 @@ const MostViewed = () => {
         alignItems: "center",
         justifyContent: "center",
         boxSizing: "border-box",
+        padding: "20px 0",
+        "@media (max-width: 1920px)": { padding: "20px 0" },
+        "@media (max-width: 1600px)": { padding: "25px 0" },
+        "@media (max-width: 1440px)": { padding: "30px 0" },
+        "@media (max-width: 1200px)": { padding: "35px 0" },
+        "@media (max-width: 1024px)": { padding: "40px 0" },
+        "@media (max-width: 768px)": { padding: "45px 0" },
+        "@media (max-width: 480px)": { padding: "50px 0" },
+        "@media (max-width: 375px)": { padding: "55px 0" },
+        "@media (max-width: 320px)": { padding: "60px 0" },
         "& .slick-dots": {
           position: "absolute",
-          bottom: "-40px",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           listStyle: "none",
           padding: 0,
           margin: 0,
         },
         "& .slick-dots li": {
-          margin: "0 5px",
+          margin: "0px 16px",
         },
         "& .slick-dots li button": {
           padding: 0,
           border: "none",
           background: "transparent",
-          width: "16px",
-          height: "6px",
+          width: "32px",
+          height: "8px",
           borderRadius: "8px",
         },
         "& .slick-dots li button:before": {
           content: '""',
           display: "block",
-          width: "16px",
-          height: "6px",
+          width: "32px",
+          height: "8px",
           background: "#fff",
           transition: "all 0.3s ease",
           borderRadius: "8px",
           opacity: 0.6,
         },
         "& .slick-dots li.slick-active button:before": {
-          width: "16px",
-          height: "6px",
+          width: "32px",
+          height: "8px",
           background: "#1E874A",
           opacity: 1,
           borderRadius: "8px",
@@ -138,9 +166,19 @@ const MostViewed = () => {
           zIndex: 1,
         }}
       />
-
+      {isDragging && (
+        <Box
+          sx={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            zIndex: 3,
+            pointerEvents: "none",
+          }}
+        />
+      )}
       <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
           <Typography
             variant="h3"
             component="h2"
@@ -150,9 +188,10 @@ const MostViewed = () => {
               fontWeight: "bold",
               position: "relative",
               zIndex: 2,
-              padding: "0 10px",
               fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-              marginBottom: "20px",
+              "@media (max-width: 600px)": {
+                fontSize: "2rem",
+              },
             }}
           >
             MOST VIEWED
@@ -164,7 +203,21 @@ const MostViewed = () => {
             Loading...
           </Typography>
         ) : (
-          <Box sx={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
+          <Box sx={{//Sizes for screens showing image carousel
+              width: "80%", // Default width
+              position: "relative",
+              zIndex: 2,
+              "@media (max-width: 1920px)": { width: "80%", },
+              "@media (max-width: 1600px)": { width: "90%", },
+              "@media (max-width: 1440px)": { width: "90%", },
+              "@media (max-width: 1200px)": { width: "90%", },
+              "@media (max-width: 1024px)": { width: "90%", },
+              "@media (max-width: 768px)": { width: "90%", },
+              "@media (max-width: 600px)": { width: "78%", },
+              "@media (max-width: 480px)": { width: "78%", },
+              "@media (max-width: 375px)": { width: "80%", },
+              "@media (max-width: 320px)": { width: "90%", },
+            }}>
             <Slider {...settings}>
               {materials.map((material) => (
                 <Box
@@ -203,19 +256,16 @@ const MostViewed = () => {
                       }}
                     >
                       <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#fff", fontWeight: "bold" }}
-                      >
+                      <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
                         {material.views}
                       </Typography>
                     </Box>
 
                     <Box
                       sx={{
-                        height: "100%",
+                        height: isMobile ? "" : "100%",
                         width: "100%",
-                        aspectRatio: "9 / 16",
+                        aspectRatio: isMobile ? "9 / 16" : "9 / 16",
                         overflow: "hidden",
                         borderRadius: "8px",
                         display: "flex",

@@ -16,6 +16,7 @@ import ProfileAvatar from "./ProfileAvatar";
 import ProfileForm from "./ProfileForm";
 import PasswordModal from "./PasswordModal";
 import ProfileActions from "./ProfileActions";
+import useToast from "../../components/Toastify/useToast";
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -40,6 +41,8 @@ const UserProfile = () => {
     new: false,
     confirm: false,
   });
+
+  const showToast = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -85,14 +88,27 @@ const UserProfile = () => {
   const handleSave = async () => {
     const user = auth.currentUser;
     if (user) {
+      // Check if firstName and lastName are valid strings
+      const { firstName, lastName } = userData;
+      if (
+        typeof firstName !== "string" ||
+        !firstName.trim() ||
+        typeof lastName !== "string" ||
+        !lastName.trim()
+      ) {
+        showToast("First and Last names cannot be empty", "error");
+        return;
+      }
+
       try {
         const userRef = doc(db, "User", user.uid);
         await updateDoc(userRef, { ...userData, profilePic });
-        console.log("User data updated successfully!");
+        showToast("User data updated successfully!", "success");
         setOriginalData({ ...userData, profilePic });
         setIsEditing(false);
       } catch (error) {
         console.error("Error updating user data:", error);
+        showToast("Network Error", "error");
       }
     }
   };
