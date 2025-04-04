@@ -21,12 +21,14 @@ import {
   doc,
   getDoc,
   updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "../../config/firebaseConfig";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import useToast from "../../components/Toastify/useToast";
 
 const MatsReq = () => {
   const navigate = useNavigate();
@@ -45,6 +47,8 @@ const MatsReq = () => {
     status: "Pending",
   });
   const [loading, setLoading] = useState(false);
+
+  const showToast = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -83,21 +87,38 @@ const MatsReq = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!selectedItems || selectedItems.length === 0) {
+      showToast("No items selected in the cart", "error");
+      navigate("/request-cart");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { userID, ...formDataWithoutUserID } = formData;
+
+      // Ensure materialRequested is defined and valid
+      if (!Array.isArray(formData.materialRequested)) {
+        console.error("Error: materialRequested must be an array.");
+        return;
+      }
 
       const trimmedData = {
         ...formDataWithoutUserID,
         program: formData.program.trim(),
         purpose: formData.purpose.trim(),
         remarks: formData.remarks ? formData.remarks.trim() : "",
+        materialRequested: formData.materialRequested || [],
+        date: serverTimestamp(),
       };
+
+      console.log("Submitting request:", trimmedData); // Debugging line
 
       // Add new request to "Request" collection and get the new document ID
       const requestRef = await addDoc(collection(db, "Request"), trimmedData);
-      const reqID = requestRef.id; // Ensure reqID is available
+      const reqID = requestRef.id;
 
       // Reference to the user document
       const userRef = doc(db, "User", userID);
@@ -107,10 +128,19 @@ const MatsReq = () => {
       // Ensure `myOrders` is an array before updating
       const updatedMyOrders = userData.myOrders ? arrayUnion(reqID) : [reqID];
 
-      // Update the user document with the new `myOrders` array
-      await updateDoc(userRef, { myOrders: updatedMyOrders });
+      // Remove selected items from the cart
+      const updatedCart = (userData.cart || []).filter(
+        (cartItem) =>
+          !selectedItems.some((selected) => selected.itemID === cartItem.itemId)
+      );
 
-      console.log("Request successfully created and added to user's myOrders!");
+      // Update user document with new cart and myOrders
+      await updateDoc(userRef, {
+        myOrders: updatedMyOrders,
+        cart: updatedCart,
+      });
+
+      console.log("Request successfully created and updated user's cart!");
     } catch (error) {
       console.error("Error processing request:", error);
     } finally {

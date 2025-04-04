@@ -19,6 +19,7 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // Import AuthContext
 import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
@@ -29,7 +30,14 @@ export default function LogIn() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { currentUser } = useAuth(); // Get currentUser from AuthContext
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/home", { replace: true }); // Redirect if already logged in
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -48,13 +56,7 @@ export default function LogIn() {
     setLoading(true);
     try {
       await setPersistence(auth, browserLocalPersistence);
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log("Login successful:", userCredential.user);
-      navigate("/home"); // Redirect to home after successful login
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
       console.error("Firebase Error:", err);
       if (typeof err.code === "string") {
