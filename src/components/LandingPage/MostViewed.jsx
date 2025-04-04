@@ -62,35 +62,35 @@ const MostViewed = () => {
   const handleSlideAfterChange = () => {
     clickTimeout.current = setTimeout(() => {
       setIsDragging(false);
-    }, 200); // 200ms delay before allowing click
+    }, 200);
   };
 
   const settings = {
     dots: true,
     infinite: true,
-    speed: 300, // speed for smoother transition
+    speed: 300,
     slidesToShow: isMobile ? 1 : 5,
     autoplay: true,
-    autoplaySpeed: 4000, // speed of autoplay
-    cssEase: "cubic-bezier(0.25, 0.1, 0.25, 1.0)", // Added easing for smoother transition
+    autoplaySpeed: 4000,
+    cssEase: "cubic-bezier(0.25, 0.1, 0.25, 1.0)",
     arrows: false,
     centerMode: false,
     variableWidth: false,
-    swipeToSlide: true, // Enable swipe to slide
+    swipeToSlide: true,
     beforeChange: handleSlideChange,
     afterChange: handleSlideAfterChange,
     responsive: [
-      { breakpoint: 1920, settings: { slidesToShow: 5, } },
-      { breakpoint: 1600, settings: { slidesToShow: 4, } },
-      { breakpoint: 1440, settings: { slidesToShow: 4, } },
-      { breakpoint: 1200, settings: { slidesToShow: 3, } },
-      { breakpoint: 1024, settings: { slidesToShow: 3, } },
-      { breakpoint: 992, settings: { slidesToShow: 3, } },
-      { breakpoint: 768, settings: { slidesToShow: 2, } },
-      { breakpoint: 600, settings: { slidesToShow: 2, } },
-      { breakpoint: 480, settings: { slidesToShow: 1, } },
-      { breakpoint: 375, settings: { slidesToShow: 1, } },
-      { breakpoint: 320, settings: { slidesToShow: 1, } },
+      { breakpoint: 1920, settings: { slidesToShow: 5 } },
+      { breakpoint: 1600, settings: { slidesToShow: 4 } },
+      { breakpoint: 1440, settings: { slidesToShow: 4 } },
+      { breakpoint: 1200, settings: { slidesToShow: 3 } },
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 992, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 600, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
+      { breakpoint: 375, settings: { slidesToShow: 1 } },
+      { breakpoint: 320, settings: { slidesToShow: 1 } },
     ],
   };
 
@@ -109,15 +109,16 @@ const MostViewed = () => {
         alignItems: "center",
         justifyContent: "center",
         boxSizing: "border-box",
-        padding: "20px 0", // Added padding top and bottom
-        "@media (max-width: 1600px)": { padding: "25px 0",},
-        "@media (max-width: 1440px)": { padding: "30px 0",},
-        "@media (max-width: 1200px)": { padding: "35px 0",},
-        "@media (max-width: 1024px)": { padding: "40px 0",},
-        "@media (max-width: 768px)": { padding: "45px 0",},
-        "@media (max-width: 480px)": { padding: "50px 0",},
-        "@media (max-width: 375px)": { padding: "55px 0",},
-        "@media (max-width: 320px)": { padding: "60px 0",},
+        padding: "20px 0",
+        "@media (max-width: 1920px)": { padding: "20px 0" },
+        "@media (max-width: 1600px)": { padding: "25px 0" },
+        "@media (max-width: 1440px)": { padding: "30px 0" },
+        "@media (max-width: 1200px)": { padding: "35px 0" },
+        "@media (max-width: 1024px)": { padding: "40px 0" },
+        "@media (max-width: 768px)": { padding: "45px 0" },
+        "@media (max-width: 480px)": { padding: "50px 0" },
+        "@media (max-width: 375px)": { padding: "55px 0" },
+        "@media (max-width: 320px)": { padding: "60px 0" },
         "& .slick-dots": {
           position: "absolute",
           display: "flex",
@@ -202,7 +203,21 @@ const MostViewed = () => {
             Loading...
           </Typography>
         ) : (
-          <div style={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
+          <Box sx={{
+              width: "80%", // Default width
+              position: "relative",
+              zIndex: 2,
+              "@media (max-width: 1920px)": { width: "80%", },
+              "@media (max-width: 1600px)": { width: "90%", },
+              "@media (max-width: 1440px)": { width: "90%", },
+              "@media (max-width: 1200px)": { width: "90%", },
+              "@media (max-width: 1024px)": { width: "90%", },
+              "@media (max-width: 768px)": { width: "90%", },
+              "@media (max-width: 600px)": { width: "78%", },
+              "@media (max-width: 480px)": { width: "78%", },
+              "@media (max-width: 375px)": { width: "80%", },
+              "@media (max-width: 320px)": { width: "90%", },
+            }}>
             <Slider {...settings}>
               {materials.map((material) => (
                 <Box
@@ -275,7 +290,7 @@ const MostViewed = () => {
                 </Box>
               ))}
             </Slider>
-          </div>
+          </Box>
         )}
       </Box>
     </Box>
