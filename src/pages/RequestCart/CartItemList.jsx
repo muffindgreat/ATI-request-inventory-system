@@ -75,7 +75,7 @@ const CartItemList = ({
               padding: 0,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", ml: 0.5, p: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
               <Checkbox
                 checked={
                   selectedItems.length === cartItems.length &&
@@ -121,10 +121,9 @@ const CartItemList = ({
             {cartItems.map((item) => (
               <Box
                 key={item.id}
-                display="grid"
+                display="flex"
                 gridTemplateColumns="50px 1fr 50px"
                 alignItems="center"
-                gap={1}
                 p={1}
                 sx={{ borderBottom: "1px solid #ddd" }}
               >
@@ -153,12 +152,13 @@ const CartItemList = ({
                         borderRadius: 1,
                         flexShrink: 0,
                         objectFit: "cover",
+                        padding: 1,
                       }}
                       image={item.image}
                       alt={item.name}
                     />
 
-                    <Box sx={{ ml: 2, flexGrow: 1 }}>
+                    <Box sx={{ ml: 1, flexGrow: 1 }}>
                       <Typography fontWeight="bold">{item.name}</Typography>
                       <Typography variant="body2" color="textSecondary">
                         {item.type || "Unknown"}
@@ -201,7 +201,6 @@ const CartItemList = ({
                           sx={{
                             width: "50px",
                             textAlign: "center",
-                            mx: 0.5,
                             padding: 0,
                             "& .MuiInputBase-root": {
                               borderBottom: "none !important",

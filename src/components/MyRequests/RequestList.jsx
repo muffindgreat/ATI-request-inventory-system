@@ -13,6 +13,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneIcon from "@mui/icons-material/Done";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import Tooltip from "@mui/material/Tooltip";
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
 export default function RequestList({ items }) {
@@ -54,14 +55,24 @@ function RequestItemSummary({ item }) {
       {firstMaterial && (
         <Box
           component="img"
-          sx={{ width: 64, height: 64, borderRadius: 1, mr: 2 }}
-          src={firstMaterial.image}
+          sx={{
+            borderRadius: 1,
+            mr: 1,
+            width: 60,
+            height: 90,
+            minWidth: 60,
+            minHeight: 90,
+            borderRadius: 1,
+            flexShrink: 0,
+            objectFit: "cover",
+          }}
+          src={firstMaterial.imageUrl} // ✅ Fix: Use imageUrl instead of image
           alt={firstMaterial.name}
         />
       )}
 
       {/* Material Info */}
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, ml: 1 }}>
         <Box>
           <Typography
             variant="body1"
@@ -77,16 +88,15 @@ function RequestItemSummary({ item }) {
             {firstMaterial ? firstMaterial.name : "No materials"}
           </Typography>
 
-          {/* Ensure "+X more" appears below item name on small screens */}
           {additionalCount > 0 && (
             <Typography
               component="span"
               sx={{
                 color: "gray",
                 fontSize: 14,
-                display: "block", // Ensures it's on a new line
+                display: "block",
                 "@media (min-width:600px)": {
-                  display: "inline", // Stays inline on larger screens
+                  display: "inline",
                   ml: 1,
                 },
               }}
@@ -100,7 +110,7 @@ function RequestItemSummary({ item }) {
         </Typography>
 
         {/* Programs (if available) */}
-        {firstMaterial.bannerPrograms?.length > 0 && (
+        {firstMaterial.bannerProgram?.length > 0 && (
           <Stack
             direction="row"
             sx={{
@@ -110,14 +120,32 @@ function RequestItemSummary({ item }) {
               alignItems: "center",
             }}
           >
-            {firstMaterial.bannerPrograms.map((program, i) => (
-              <Chip
-                key={i}
-                label={program}
-                color="primary"
-                size="small"
-                sx={{ m: 0 }}
-              />
+            {firstMaterial.bannerProgram.map((program, i) => (
+              <Tooltip key={i} title={program}>
+                <Chip
+                  label={program}
+                  color="primary"
+                  size="small"
+                  sx={{
+                    maxWidth: {
+                      xs: 90, // ellipsis on small screens
+                      sm: "none", // full width on medium and up
+                    },
+                    textOverflow: {
+                      xs: "ellipsis",
+                      sm: "initial",
+                    },
+                    overflow: {
+                      xs: "hidden",
+                      sm: "visible",
+                    },
+                    whiteSpace: {
+                      xs: "nowrap",
+                      sm: "normal",
+                    },
+                  }}
+                />
+              </Tooltip>
             ))}
           </Stack>
         )}
@@ -126,16 +154,8 @@ function RequestItemSummary({ item }) {
       {/* Status & Quantity */}
       <Stack spacing={0.5} alignItems="flex-end">
         <Chip
-          label={item.status}
-          color={
-            item.status === "Pending"
-              ? "warning"
-              : item.status === "Accepted" || item.status === "Approved"
-              ? "info"
-              : item.status === "Completed"
-              ? "success"
-              : "default"
-          }
+          label={getStatusLabel(item.status)}
+          color={getStatusColor(item.status)}
           size="small"
           sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
         />
@@ -156,14 +176,23 @@ function RequestMaterials({ materials }) {
     <>
       {materials.map((material, index) => (
         <Box key={index}>
-          {/* Divider sa pagitan ng bawat item, maliban sa unang item */}
           {index > 0 && <Divider sx={{ my: 1 }} />}
 
           <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 2 }}>
             <Box
               component="img"
-              sx={{ width: 64, height: 64, borderRadius: 1, mr: 2 }}
-              src={material.image}
+              sx={{
+                borderRadius: 1,
+                mr: 2,
+                width: 60,
+                height: 90,
+                minWidth: 60,
+                minHeight: 90,
+                borderRadius: 1,
+                flexShrink: 0,
+                objectFit: "cover",
+              }}
+              src={material.imageUrl} // ✅ Fix: Use imageUrl
               alt={material.name}
             />
             <Box sx={{ flexGrow: 1 }}>
@@ -173,24 +202,42 @@ function RequestMaterials({ materials }) {
               <Typography variant="body2" color="textSecondary">
                 {material.type}
               </Typography>
-              {material.bannerPrograms?.length > 0 && (
+              {material.bannerProgram?.length > 0 && ( // ✅ Fix: Use bannerProgram (not bannerPrograms)
                 <Stack
                   direction="row"
                   sx={{
                     mt: 1,
-                    flexWrap: "wrap", // ✅ Allow wrapping
-                    gap: 1, // ✅ Controlled spacing (instead of spacing={1})
-                    alignItems: "center", // ✅ Align items properly
+                    flexWrap: "wrap",
+                    gap: 1,
+                    alignItems: "center",
                   }}
                 >
-                  {material.bannerPrograms.map((program, i) => (
-                    <Chip
-                      key={i}
-                      label={program}
-                      color="primary"
-                      size="small"
-                      sx={{ m: 0 }}
-                    /> // ✅ Remove extra margins
+                  {material.bannerProgram.map((program, i) => (
+                    <Tooltip key={i} title={program}>
+                      <Chip
+                        label={program}
+                        color="primary"
+                        size="small"
+                        sx={{
+                          maxWidth: {
+                            xs: 90, // ellipsis on small screens
+                            sm: "none", // full width on medium and up
+                          },
+                          textOverflow: {
+                            xs: "ellipsis",
+                            sm: "initial",
+                          },
+                          overflow: {
+                            xs: "hidden",
+                            sm: "visible",
+                          },
+                          whiteSpace: {
+                            xs: "nowrap",
+                            sm: "normal",
+                          },
+                        }}
+                      />
+                    </Tooltip>
                   ))}
                 </Stack>
               )}
@@ -198,11 +245,7 @@ function RequestMaterials({ materials }) {
             <Typography
               variant="body2"
               color="textSecondary"
-              sx={{
-                fontWeight: "bold",
-                px: 1,
-                borderRadius: 1,
-              }}
+              sx={{ fontWeight: "bold", px: 1, borderRadius: 1 }}
             >
               Qty: {formatQuantity(material.quantity)}
             </Typography>
@@ -213,99 +256,83 @@ function RequestMaterials({ materials }) {
   );
 }
 
+function getStatusLabel(status) {
+  return status === "Received" ? "Completed" : status;
+}
+
 function getStatusColor(status) {
   switch (status) {
     case "Pending":
       return "warning";
     case "Accepted":
-      return "info";
     case "Approved":
       return "info";
     case "Completed":
+    case "Received":
       return "success";
     default:
       return "default";
   }
 }
 
+function formatDate(dateString) {
+  const date = new Date(dateString); // Parse the string into a Date object
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short", // "Mon", "Tue", etc.
+    year: "numeric", // 2025
+    month: "short", // "Apr"
+    day: "numeric", // 18
+  }).format(date);
+}
 function RequestDetails({ item }) {
   const statusStages = [
     {
-      key: "requestedTime",
+      key: "date",
       label: "Requested",
-      icon: (
-        <AccessTimeIcon sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }} />
-      ),
+      icon: <AccessTimeIcon sx={{ fontSize: 18, mr: 1 }} />,
     },
     {
-      key: "acceptedTime",
+      key: "acceptedDate",
       label: "Accepted",
-      icon: (
-        <HourglassEmptyIcon
-          sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }}
-        />
-      ),
-      condition: item.status !== "Pending",
+      icon: <HourglassEmptyIcon sx={{ fontSize: 18, mr: 1 }} />,
+      show: item.status !== "Pending",
     },
     {
-      key: "approvedTime",
+      key: "approvedDate",
       label: "Approved",
-      icon: (
-        <CheckCircleIcon
-          sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }}
-        />
-      ),
-      condition: ["Approved", "Completed"].includes(item.status),
+      icon: <CheckCircleIcon sx={{ fontSize: 18, mr: 1 }} />,
+      show: ["Approved", "Completed", "Received"].includes(item.status),
     },
     {
-      key: "completedTime",
-      label: "Completed",
-      icon: <DoneIcon sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }} />,
-      condition: item.status === "Completed",
+      key: "receivedDate",
+      label: "Received",
+      icon: <DoneIcon sx={{ fontSize: 18, mr: 1 }} />,
+      show: item.status === "Received",
     },
   ];
 
   return (
     <Box sx={{ my: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h6">Request Details</Typography>
-        <Chip
-          label={item.status}
-          color={getStatusColor(item.status)}
-          size="small"
-          sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
-        />
-      </Box>
-      <Divider sx={{ my: 1 }} />
       <Stack spacing={1}>
-        {statusStages.map(({ key, label, icon, condition }) =>
-          condition !== false ? (
+        {statusStages.map(({ key, label, icon, show }) =>
+          show !== false ? (
             <Typography key={key} variant="body2" color="textSecondary">
-              {icon} <strong>{label}:</strong>{" "}
-              {item[key] || `Not yet ${label.toLowerCase()}`}
+              {icon} <strong>{label}:</strong> {item[key] || "Not yet recorded"}
             </Typography>
           ) : null
         )}
       </Stack>
       <Divider sx={{ my: 2 }} />
-      <Box>
-        {[
-          { label: "Purpose", value: item.purpose },
-          { label: "Date Needed", value: item.dateNeeded },
-          { label: "Program", value: item.program },
-        ].map(({ label, value }) => (
-          <Typography key={label} variant="body2">
-            <strong>{label}:</strong>{" "}
-            {value || `No ${label.toLowerCase()} provided`}
-          </Typography>
-        ))}
-      </Box>
+      <Typography variant="body2">
+        <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
+      </Typography>
+      <Typography variant="body2">
+        <strong>Date Needed:</strong>{" "}
+        {item.dateNeeded ? formatDate(item.dateNeeded) : "Not specified"}
+      </Typography>
+      <Typography variant="body2">
+        <strong>Program:</strong> {item.program || "Not specified"}
+      </Typography>
     </Box>
   );
 }

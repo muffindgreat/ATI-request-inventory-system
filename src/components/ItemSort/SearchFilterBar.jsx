@@ -18,7 +18,7 @@ const SearchFilterBar = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc"); // Default sorting A-Z
   const isMobile = useMediaQuery("(max-width:600px)");
-  const [navbarHeight, setNavbarHeight] = useState(80);
+  const [navbarHeight, setNavbarHeight] = useState(70);
   const [images, setImages] = useState([]); // Add images state
 
   useEffect(() => {
@@ -26,9 +26,9 @@ const SearchFilterBar = () => {
     if (navbar) {
       setNavbarHeight(navbar.offsetHeight);
     } else {
-      setNavbarHeight(80);
+      setNavbarHeight(isMobile ? 70 : 90); // If navbar not found, adjust based on screen size
     }
-  }, []);
+  }, [isMobile]);
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleFilterChange = (order) => setSortOrder(order); // Update sorting order
@@ -66,7 +66,7 @@ const SearchFilterBar = () => {
           }}
         >
           <Stack
-            direction={isMobile ?"column" : "row"}
+            direction={isMobile ? "column" : "row"}
             spacing={isMobile ? 1 : 2}
             alignItems={isMobile ? "stretch" : "center"}
             justifyContent="space-between"
@@ -76,7 +76,7 @@ const SearchFilterBar = () => {
               maxWidth: isMobile ? "100%" : "1200px", // Ensure there's space for all elements
             }}
           >
-             <Box sx={{ width: isMobile ? "100%" : "auto", flexGrow: 1 }}>
+            <Box sx={{ width: isMobile ? "100%" : "auto", flexGrow: 1 }}>
               <SearchBar value={searchTerm} onChange={handleSearchChange} />
             </Box>
             <Stack
@@ -90,7 +90,9 @@ const SearchFilterBar = () => {
               }}
             >
               <CategoryButtons onSelect={handleCategorySelect} />
-              <Box sx={{ marginLeft: 1 }}> {/* Add margin to separate filter button from category buttons */}
+              <Box sx={{ marginLeft: 1 }}>
+                {" "}
+                {/* Add margin to separate filter button from category buttons */}
                 <FilterButton onFilter={handleFilterChange} />
               </Box>
             </Stack>
