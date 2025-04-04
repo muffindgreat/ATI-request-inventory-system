@@ -20,6 +20,12 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
   const navigate = useNavigate();
 
+  const styles = {
+    iconColor: "#2e7d32",
+    textColor: "#2e7d32",
+    drawerBackgroundColor: "white",
+  };
+
   // Handle Sign Out
   const handleSignOut = async () => {
     try {
@@ -37,48 +43,53 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
       onClose={handleDrawerToggle}
       sx={{
         "& .MuiDrawer-paper": {
-          backgroundColor: "white", // Background changed to white
-          color: "#2e7d32", // Text color changed to green
+          backgroundColor: styles.drawerBackgroundColor,
+          color: styles.textColor,
         },
       }}
     >
-      <Box sx={{ width: 250, paddingTop: "10px" }}>
+      <Box sx={{ width: 250 }}>
         <List>
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/")}>
               <ListItemIcon>
-                <HomeIcon sx={{ color: "#2e7d32" }} /> {/* Icon Green */}
+                <HomeIcon sx={{ color: styles.iconColor }} />
               </ListItemIcon>
-              <ListItemText
-                primary="HOME"
-                sx={{ color: "#2e7d32", fontWeight: "bold" }} // Text Green
-              />
+              <ListItemText primary="Home" sx={{ color: styles.textColor }} />
             </ListItemButton>
           </ListItem>
-          <Divider sx={{ backgroundColor: "#2e7d32" }} />
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/user-profile")}>
               <ListItemIcon>
-                <PersonIcon sx={{ color: "#2e7d32" }} />
+                <PersonIcon sx={{ color: styles.iconColor }} />
               </ListItemIcon>
-              <ListItemText primary="Profile" sx={{ color: "#2e7d32" }} />
+              <ListItemText
+                primary="Profile"
+                sx={{ color: styles.textColor }}
+              />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/my-requests")}>
               <ListItemIcon>
-                <AssignmentIcon sx={{ color: "#2e7d32" }} />
+                <AssignmentIcon sx={{ color: styles.iconColor }} />
               </ListItemIcon>
-              <ListItemText primary="My Requests" sx={{ color: "#2e7d32" }} />
+              <ListItemText
+                primary="My Requests"
+                sx={{ color: styles.textColor }}
+              />
             </ListItemButton>
           </ListItem>
-          <Divider sx={{ backgroundColor: "#2e7d32" }} />
+          <Divider sx={{ backgroundColor: styles.iconColor }} />
           <ListItem disablePadding>
             <ListItemButton onClick={handleSignOut}>
               <ListItemIcon>
-                <ExitToAppIcon sx={{ color: "#2e7d32" }} />
+                <ExitToAppIcon sx={{ color: styles.iconColor }} />
               </ListItemIcon>
-              <ListItemText primary="Sign Out" sx={{ color: "#2e7d32" }} />
+              <ListItemText
+                primary="Sign Out"
+                sx={{ color: styles.textColor }}
+              />
             </ListItemButton>
           </ListItem>
         </List>
