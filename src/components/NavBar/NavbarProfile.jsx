@@ -14,7 +14,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, onSnapshot } from "firebase/firestore";
 
 function NavbarProfile() {
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -24,29 +24,35 @@ function NavbarProfile() {
   const db = getFirestore();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "User", user.uid);
-        const userSnap = await getDoc(userRef);
+    let unsubscribe;
+    const fetchUserProfile = () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const userRef = doc(db, "User", user.uid);
 
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          setUserData({
-            name: `${data.firstName} ${data.lastName}`,
-            role: data.designation,
-            email: data.email,
-            phoneNumber: data.phoneNumber,
-            profilePic: data.profilePic || null, // Store profile picture URL if available
+          // Real-time listener for user data changes
+          unsubscribe = onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              setUserData({
+                name: `${data.firstName} ${data.lastName}`,
+                role: data.designation,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                profilePic: data.profilePic || null, // Store profile picture URL if available
+              });
+            } else {
+              console.log("No user data found");
+            }
           });
         } else {
-          console.log("No user data found");
+          setUserData(null);
         }
-      } else {
-        setUserData(null);
-      }
-    });
+      });
+    };
 
-    return () => unsubscribe();
+    fetchUserProfile();
+    return () => unsubscribe && unsubscribe();
   }, [auth, db]);
 
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
