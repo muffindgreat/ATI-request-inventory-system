@@ -121,10 +121,9 @@ const CartItemList = ({
             {cartItems.map((item) => (
               <Box
                 key={item.id}
-                display="grid"
+                display="flex"
                 gridTemplateColumns="50px 1fr 50px"
                 alignItems="center"
-                gap={1}
                 p={1}
                 sx={{ borderBottom: "1px solid #ddd" }}
               >
