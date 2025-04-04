@@ -42,11 +42,17 @@ function Navbar() {
       sx={{
         backgroundColor: "white",
         boxShadow: "none",
-        padding: isMobile ? "8px 0" : "10px 0",
+        padding: isMobile ? "8px 0" : "15px 0",
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            px: isMobile ? 0 : 4, // Padding left & right
+          }}
+        >
           {/* Responsive Logo */}
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
             <img
@@ -65,7 +71,7 @@ function Navbar() {
           {!isTablet && <NavbarHome />}
 
           {/* Right Side Controls */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
             {isAuthenticated ? (
               <>
                 <NavbarCart />
