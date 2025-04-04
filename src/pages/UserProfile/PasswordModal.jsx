@@ -46,17 +46,18 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      setError("No user is logged in.");
+      showToast("No user is logged in.", "error");
+
       return;
     }
 
     if (passwords.newPassword !== passwords.confirmPassword) {
-      setError("New passwords do not match.");
+      showToast("New passwords do not match.", "error");
       return;
     }
 
     if (passwords.newPassword.length < 6) {
-      setError("Password must be at least 6 characters.");
+      showToast("Password must be at least 6 characters.", "error");
       return;
     }
 
@@ -111,9 +112,11 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
             error={!!error}
             helperText={
               field === "confirmPassword" &&
-              passwords.newPassword !== passwords.confirmPassword
-                ? "Passwords do not match."
-                : ""
+              passwords.newPassword !== passwords.confirmPassword ? (
+                <span style={{ color: "red" }}>Passwords do not match.</span>
+              ) : (
+                ""
+              )
             }
             InputProps={{
               endAdornment: (
@@ -137,7 +140,15 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
           <Button
             variant="outlined"
             sx={{ textTransform: "none" }}
-            onClick={() => setOpenModal(false)}
+            onClick={() => {
+              setOpenModal(false);
+              setPasswords({
+                currentPassword: "",
+                newPassword: "",
+                confirmPassword: "",
+              });
+              setError("");
+            }}
           >
             Cancel
           </Button>
