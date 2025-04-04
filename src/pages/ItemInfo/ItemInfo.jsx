@@ -263,7 +263,7 @@ const ItemInfo = () => {
 
                       // 2. Extract filename from URL
                       const urlParts = item.pdfUrl.split("/");
-                      const filename = urlParts[urlParts.length - 1];
+                      const filename = `${item.title}.pdf`;
 
                       // 3. Trigger download
                       const link = document.createElement("a");
