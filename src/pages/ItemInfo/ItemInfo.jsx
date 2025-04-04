@@ -32,6 +32,7 @@ const ItemInfo = () => {
   const { currentUser } = useAuth(); // ✅ Use currentUser from AuthContext
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false); // State for download button loading
   const hasUpdated = useRef(false); // Prevents duplicate updates
 
   const showToast = useToast();
@@ -250,6 +251,11 @@ const ItemInfo = () => {
                     bgcolor: "#1A854B",
                     color: "white",
                     textTransform: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: "130px", // You can adjust this value to match the original button size
+                    height: "36px", // Adjust according to the original button height
                   }}
                   onClick={async () => {
                     if (!item.pdfUrl) {
@@ -257,6 +263,8 @@ const ItemInfo = () => {
                       alert("PDF is not available for download.");
                       return;
                     }
+
+                    setIsDownloading(true); // Start loading when download begins
 
                     try {
                       // 1. Fetch the PDF as blob
@@ -291,10 +299,17 @@ const ItemInfo = () => {
                     } catch (error) {
                       console.error("Error downloading the PDF:", error);
                       showToast("PDF is not available for download.", "error");
+                    } finally {
+                      setIsDownloading(false); // End loading when download is complete
                     }
                   }}
+                  disabled={isDownloading} // Disable button while downloading
                 >
-                  Download PDF
+                  {isDownloading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Download PDF"
+                  )}
                 </Button>
 
                 <Button
