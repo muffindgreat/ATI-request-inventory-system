@@ -18,8 +18,6 @@ import {
 } from "firebase/auth";
 import useToast from "../../components/Toastify/useToast";
 
-const showToast = useToast();
-
 const PasswordModal = ({ openModal, setOpenModal }) => {
   const [passwords, setPasswords] = useState({
     currentPassword: "",
@@ -40,6 +38,8 @@ const PasswordModal = ({ openModal, setOpenModal }) => {
   const handleChange = (e) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
+
+  const showToast = useToast();
 
   const handleChangePassword = async () => {
     const auth = getAuth();
