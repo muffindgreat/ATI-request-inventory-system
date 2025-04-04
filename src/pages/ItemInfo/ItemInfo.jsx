@@ -251,11 +251,45 @@ const ItemInfo = () => {
                     color: "white",
                     textTransform: "none",
                   }}
-                  onClick={() => {
-                    if (item.pdfUrl) {
-                      console.log("Downloading PDF from:", item.pdfUrl);
-                      window.open(item.pdfUrl, "_blank");
-                    } else {
+                  onClick={async () => {
+                    if (!item.pdfUrl) {
+                      console.error("Error: No PDF link available.");
+                      alert("PDF is not available for download.");
+                      return;
+                    }
+
+                    try {
+                      // 1. Fetch the PDF as blob
+                      const response = await fetch(item.pdfUrl);
+                      const blob = await response.blob();
+                      const blobUrl = window.URL.createObjectURL(blob);
+
+                      // 2. Extract filename from URL
+                      const urlParts = item.pdfUrl.split("/");
+                      const filename = `${item.title}.pdf`;
+
+                      // 3. Trigger download
+                      const link = document.createElement("a");
+                      link.href = blobUrl;
+                      link.setAttribute("download", filename);
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+
+                      // 4. Clean up memory
+                      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+
+                      // 5. Increment downloads in Firestore
+                      const docRef = doc(db, "Inventory", id);
+                      await updateDoc(docRef, { downloads: increment(1) });
+
+                      // 6. Optional: update local state so UI reflects new download count immediately
+                      setItem((prev) => ({
+                        ...prev,
+                        downloads: (prev.downloads || 0) + 1,
+                      }));
+                    } catch (error) {
+                      console.error("Error downloading the PDF:", error);
                       showToast("PDF is not available for download.", "error");
                     }
                   }}
