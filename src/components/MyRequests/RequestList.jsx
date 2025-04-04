@@ -55,7 +55,7 @@ function RequestItemSummary({ item }) {
         <Box
           component="img"
           sx={{ width: 64, height: 64, borderRadius: 1, mr: 2 }}
-          src={firstMaterial.image}
+          src={firstMaterial.imageUrl} // ✅ Fix: Use imageUrl instead of image
           alt={firstMaterial.name}
         />
       )}
@@ -77,16 +77,15 @@ function RequestItemSummary({ item }) {
             {firstMaterial ? firstMaterial.name : "No materials"}
           </Typography>
 
-          {/* Ensure "+X more" appears below item name on small screens */}
           {additionalCount > 0 && (
             <Typography
               component="span"
               sx={{
                 color: "gray",
                 fontSize: 14,
-                display: "block", // Ensures it's on a new line
+                display: "block",
                 "@media (min-width:600px)": {
-                  display: "inline", // Stays inline on larger screens
+                  display: "inline",
                   ml: 1,
                 },
               }}
@@ -100,7 +99,7 @@ function RequestItemSummary({ item }) {
         </Typography>
 
         {/* Programs (if available) */}
-        {firstMaterial.bannerPrograms?.length > 0 && (
+        {firstMaterial.bannerProgram?.length > 0 && ( // ✅ Fix: Use bannerProgram (not bannerPrograms)
           <Stack
             direction="row"
             sx={{
@@ -110,14 +109,8 @@ function RequestItemSummary({ item }) {
               alignItems: "center",
             }}
           >
-            {firstMaterial.bannerPrograms.map((program, i) => (
-              <Chip
-                key={i}
-                label={program}
-                color="primary"
-                size="small"
-                sx={{ m: 0 }}
-              />
+            {firstMaterial.bannerProgram.map((program, i) => (
+              <Chip key={i} label={program} color="primary" size="small" sx={{ m: 0 }} />
             ))}
           </Stack>
         )}
@@ -127,23 +120,11 @@ function RequestItemSummary({ item }) {
       <Stack spacing={0.5} alignItems="flex-end">
         <Chip
           label={item.status}
-          color={
-            item.status === "Pending"
-              ? "warning"
-              : item.status === "Accepted" || item.status === "Approved"
-              ? "info"
-              : item.status === "Completed"
-              ? "success"
-              : "default"
-          }
+          color={getStatusColor(item.status)}
           size="small"
           sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
         />
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          sx={{ fontWeight: "bold" }}
-        >
+        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: "bold" }}>
           Qty: {formatQuantity(firstMaterial.quantity)}
         </Typography>
       </Stack>
@@ -151,19 +132,19 @@ function RequestItemSummary({ item }) {
   );
 }
 
+
 function RequestMaterials({ materials }) {
   return (
     <>
       {materials.map((material, index) => (
         <Box key={index}>
-          {/* Divider sa pagitan ng bawat item, maliban sa unang item */}
           {index > 0 && <Divider sx={{ my: 1 }} />}
 
           <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 2 }}>
             <Box
               component="img"
               sx={{ width: 64, height: 64, borderRadius: 1, mr: 2 }}
-              src={material.image}
+              src={material.imageUrl} // ✅ Fix: Use imageUrl
               alt={material.name}
             />
             <Box sx={{ flexGrow: 1 }}>
@@ -173,37 +154,23 @@ function RequestMaterials({ materials }) {
               <Typography variant="body2" color="textSecondary">
                 {material.type}
               </Typography>
-              {material.bannerPrograms?.length > 0 && (
+              {material.bannerProgram?.length > 0 && ( // ✅ Fix: Use bannerProgram (not bannerPrograms)
                 <Stack
                   direction="row"
                   sx={{
                     mt: 1,
-                    flexWrap: "wrap", // ✅ Allow wrapping
-                    gap: 1, // ✅ Controlled spacing (instead of spacing={1})
-                    alignItems: "center", // ✅ Align items properly
+                    flexWrap: "wrap",
+                    gap: 1,
+                    alignItems: "center",
                   }}
                 >
-                  {material.bannerPrograms.map((program, i) => (
-                    <Chip
-                      key={i}
-                      label={program}
-                      color="primary"
-                      size="small"
-                      sx={{ m: 0 }}
-                    /> // ✅ Remove extra margins
+                  {material.bannerProgram.map((program, i) => (
+                    <Chip key={i} label={program} color="primary" size="small" sx={{ m: 0 }} />
                   ))}
                 </Stack>
               )}
             </Box>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{
-                fontWeight: "bold",
-                px: 1,
-                borderRadius: 1,
-              }}
-            >
+            <Typography variant="body2" color="textSecondary" sx={{ fontWeight: "bold", px: 1, borderRadius: 1 }}>
               Qty: {formatQuantity(material.quantity)}
             </Typography>
           </Box>
@@ -213,15 +180,16 @@ function RequestMaterials({ materials }) {
   );
 }
 
+
 function getStatusColor(status) {
   switch (status) {
     case "Pending":
       return "warning";
     case "Accepted":
-      return "info";
     case "Approved":
       return "info";
     case "Completed":
+    case "Received":
       return "success";
     default:
       return "default";
@@ -231,81 +199,51 @@ function getStatusColor(status) {
 function RequestDetails({ item }) {
   const statusStages = [
     {
-      key: "requestedTime",
+      key: "date",
       label: "Requested",
-      icon: (
-        <AccessTimeIcon sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }} />
-      ),
+      icon: <AccessTimeIcon sx={{ fontSize: 18, mr: 1 }} />,
     },
     {
-      key: "acceptedTime",
+      key: "acceptedDate",
       label: "Accepted",
-      icon: (
-        <HourglassEmptyIcon
-          sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }}
-        />
-      ),
-      condition: item.status !== "Pending",
+      icon: <HourglassEmptyIcon sx={{ fontSize: 18, mr: 1 }} />,
+      show: item.status !== "Pending",
     },
     {
-      key: "approvedTime",
+      key: "approvedDate",
       label: "Approved",
-      icon: (
-        <CheckCircleIcon
-          sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }}
-        />
-      ),
-      condition: ["Approved", "Completed"].includes(item.status),
+      icon: <CheckCircleIcon sx={{ fontSize: 18, mr: 1 }} />,
+      show: ["Approved", "Completed", "Received"].includes(item.status),
     },
     {
-      key: "completedTime",
-      label: "Completed",
-      icon: <DoneIcon sx={{ verticalAlign: "middle", fontSize: 18, mr: 1 }} />,
-      condition: item.status === "Completed",
+      key: "receivedDate",
+      label: "Received",
+      icon: <DoneIcon sx={{ fontSize: 18, mr: 1 }} />,
+      show: item.status === "Received",
     },
   ];
 
   return (
     <Box sx={{ my: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h6">Request Details</Typography>
-        <Chip
-          label={item.status}
-          color={getStatusColor(item.status)}
-          size="small"
-          sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
-        />
-      </Box>
-      <Divider sx={{ my: 1 }} />
       <Stack spacing={1}>
-        {statusStages.map(({ key, label, icon, condition }) =>
-          condition !== false ? (
+        {statusStages.map(({ key, label, icon, show }) =>
+          show !== false ? (
             <Typography key={key} variant="body2" color="textSecondary">
-              {icon} <strong>{label}:</strong>{" "}
-              {item[key] || `Not yet ${label.toLowerCase()}`}
+              {icon} <strong>{label}:</strong> {item[key] || "Not yet recorded"}
             </Typography>
           ) : null
         )}
       </Stack>
       <Divider sx={{ my: 2 }} />
-      <Box>
-        {[
-          { label: "Purpose", value: item.purpose },
-          { label: "Date Needed", value: item.dateNeeded },
-          { label: "Program", value: item.program },
-        ].map(({ label, value }) => (
-          <Typography key={label} variant="body2">
-            <strong>{label}:</strong>{" "}
-            {value || `No ${label.toLowerCase()} provided`}
-          </Typography>
-        ))}
-      </Box>
+      <Typography variant="body2">
+        <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
+      </Typography>
+      <Typography variant="body2">
+        <strong>Date Needed:</strong> {item.dateNeeded || "Not specified"}
+      </Typography>
+      <Typography variant="body2">
+        <strong>Program:</strong> {item.program || "Not specified"}
+      </Typography>
     </Box>
   );
 }
