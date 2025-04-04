@@ -22,7 +22,8 @@ import {
   increment,
   arrayUnion,
 } from "firebase/firestore";
-import { useAuth } from "../../context/AuthContext"; // ✅ Import useAuth
+import { useAuth } from "../../context/AuthContext";
+import useToast from "../../components/Toastify/useToast";
 
 const ItemInfo = () => {
   const theme = useTheme();
@@ -32,6 +33,8 @@ const ItemInfo = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const hasUpdated = useRef(false); // Prevents duplicate updates
+
+  const showToast = useToast();
 
   useEffect(() => {
     console.log("Current User from AuthContext:", currentUser); // ✅ Debugging user state
@@ -78,7 +81,7 @@ const ItemInfo = () => {
     console.log("Current User in addToCart:", currentUser); // ✅ Debugging user state
 
     if (!currentUser) {
-      alert("Please log in to add items to your cart.");
+      showToast("Please log in to add items to your cart.", "error");
       return;
     }
 
@@ -95,7 +98,7 @@ const ItemInfo = () => {
         );
 
         if (isItemInCart) {
-          alert("Item is already in the cart.");
+          showToast("Item is already in the cart.", "error");
           return; // Don't add if the item is already in the cart
         }
 
@@ -104,10 +107,10 @@ const ItemInfo = () => {
           cart: arrayUnion({ itemId: id, quantity: 1 }),
         });
 
-        alert("Item added to request cart!");
+        showToast("Item added to request cart!", "success");
       } else {
         console.log("User document does not exist.");
-        alert("User document not found.");
+        showToast("Network Error", "error");
       }
     } catch (error) {
       console.error("Error adding item to cart:", {
@@ -117,7 +120,7 @@ const ItemInfo = () => {
         userUID: currentUser?.uid,
         itemId: id,
       });
-      alert(`Failed to add item to cart. Error: ${error.message}`);
+      showToast("Network Error", "error");
     }
   };
 
@@ -253,8 +256,7 @@ const ItemInfo = () => {
                       console.log("Downloading PDF from:", item.pdfUrl);
                       window.open(item.pdfUrl, "_blank");
                     } else {
-                      console.error("Error: No PDF link available.");
-                      alert("PDF is not available for download.");
+                      showToast("PDF is not available for download.", "error");
                     }
                   }}
                 >

@@ -21,6 +21,7 @@ import Home from "./pages/Home/Home";
 import Footer from "./components/Footer/Footer";
 import Loader from "./components/Loader/Loader";
 import { auth } from "./config/firebaseConfig";
+import { ToastContainer } from "react-toastify";
 
 function Layout() {
   const location = useLocation();
@@ -38,6 +39,7 @@ function Layout() {
     <div
       style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
     >
+      <ToastContainer />
       {!hideNavbarAndFooterRoutes.includes(location.pathname) && <Navbar />}
 
       <main style={{ flexGrow: 1 }}>
