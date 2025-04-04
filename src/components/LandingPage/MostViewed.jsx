@@ -68,28 +68,29 @@ const MostViewed = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 200, // Reduced speed for smoother transition
+    speed: 300, // speed for smoother transition
     slidesToShow: isMobile ? 1 : 5,
-    slideToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2200,
-    cssEase: "ease-in-out", // Added easing for smoother transition
+    autoplaySpeed: 4000, // speed of autoplay
+    cssEase: "cubic-bezier(0.25, 0.1, 0.25, 1.0)", // Added easing for smoother transition
     arrows: false,
     centerMode: false,
+    variableWidth: false,
+    swipeToSlide: true, // Enable swipe to slide
     beforeChange: handleSlideChange,
     afterChange: handleSlideAfterChange,
     responsive: [
-      { breakpoint: 1920, settings: { slidesToShow: 5, variableWidth: false, } },
-      { breakpoint: 1600, settings: { slidesToShow: 4, variableWidth: false, } },
-      { breakpoint: 1440, settings: { slidesToShow: 4, variableWidth: false, } },
-      { breakpoint: 1200, settings: { slidesToShow: 3, variableWidth: false, } },
-      { breakpoint: 1024, settings: { slidesToShow: 3, variableWidth: false, } },
-      { breakpoint: 992, settings: { slidesToShow: 3, variableWidth: false, } },
-      { breakpoint: 768, settings: { slidesToShow: 2, variableWidth: false, } },
-      { breakpoint: 600, settings: { slidesToShow: 2, variableWidth: false, } },
-      { breakpoint: 480, settings: { slidesToShow: 1, variableWidth: false, } },
-      { breakpoint: 375, settings: { slidesToShow: 1, variableWidth: false, } },
-      { breakpoint: 320, settings: { slidesToShow: 1, variableWidth: false, } },
+      { breakpoint: 1920, settings: { slidesToShow: 5, } },
+      { breakpoint: 1600, settings: { slidesToShow: 4, } },
+      { breakpoint: 1440, settings: { slidesToShow: 4, } },
+      { breakpoint: 1200, settings: { slidesToShow: 3, } },
+      { breakpoint: 1024, settings: { slidesToShow: 3, } },
+      { breakpoint: 992, settings: { slidesToShow: 3, } },
+      { breakpoint: 768, settings: { slidesToShow: 2, } },
+      { breakpoint: 600, settings: { slidesToShow: 2, } },
+      { breakpoint: 480, settings: { slidesToShow: 1, } },
+      { breakpoint: 375, settings: { slidesToShow: 1, } },
+      { breakpoint: 320, settings: { slidesToShow: 1, } },
     ],
   };
 
@@ -126,7 +127,7 @@ const MostViewed = () => {
           margin: 0,
         },
         "& .slick-dots li": {
-          margin: "0 12px",
+          margin: "0px 16px",
         },
         "& .slick-dots li button": {
           padding: 0,
