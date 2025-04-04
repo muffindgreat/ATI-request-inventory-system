@@ -7,6 +7,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { db } from "../../config/firebaseConfig";
 import { collection, getDocs, orderBy, query, limit } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
@@ -14,6 +15,8 @@ const MostViewed = () => {
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const clickTimeout = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -65,21 +68,28 @@ const MostViewed = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 800,
-    slidesToShow: 5,
+    speed: 200, // Reduced speed for smoother transition
+    slidesToShow: isMobile ? 1 : 5,
     slideToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2500,
-    cssEase: "linear",
+    autoplaySpeed: 2200,
+    cssEase: "ease-in-out", // Added easing for smoother transition
     arrows: false,
     centerMode: false,
     beforeChange: handleSlideChange,
     afterChange: handleSlideAfterChange,
     responsive: [
-      { breakpoint: 1200, settings: { slidesToShow: 5 } },
-      { breakpoint: 992, settings: { slidesToShow: 5 } },
-      { breakpoint: 768, settings: { slidesToShow: 3 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } },
+      { breakpoint: 1920, settings: { slidesToShow: 5, variableWidth: false, } },
+      { breakpoint: 1600, settings: { slidesToShow: 4, variableWidth: false, } },
+      { breakpoint: 1440, settings: { slidesToShow: 4, variableWidth: false, } },
+      { breakpoint: 1200, settings: { slidesToShow: 3, variableWidth: false, } },
+      { breakpoint: 1024, settings: { slidesToShow: 3, variableWidth: false, } },
+      { breakpoint: 992, settings: { slidesToShow: 3, variableWidth: false, } },
+      { breakpoint: 768, settings: { slidesToShow: 2, variableWidth: false, } },
+      { breakpoint: 600, settings: { slidesToShow: 2, variableWidth: false, } },
+      { breakpoint: 480, settings: { slidesToShow: 1, variableWidth: false, } },
+      { breakpoint: 375, settings: { slidesToShow: 1, variableWidth: false, } },
+      { breakpoint: 320, settings: { slidesToShow: 1, variableWidth: false, } },
     ],
   };
 
@@ -88,7 +98,7 @@ const MostViewed = () => {
       sx={{
         position: "relative",
         maxWidth: "100%",
-        minHeight: "90vh",
+        minHeight: "100vh",
         backgroundImage: "url('/image.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -98,39 +108,47 @@ const MostViewed = () => {
         alignItems: "center",
         justifyContent: "center",
         boxSizing: "border-box",
+        padding: "20px 0", // Added padding top and bottom
+        "@media (max-width: 1600px)": { padding: "25px 0",},
+        "@media (max-width: 1440px)": { padding: "30px 0",},
+        "@media (max-width: 1200px)": { padding: "35px 0",},
+        "@media (max-width: 1024px)": { padding: "40px 0",},
+        "@media (max-width: 768px)": { padding: "45px 0",},
+        "@media (max-width: 480px)": { padding: "50px 0",},
+        "@media (max-width: 375px)": { padding: "55px 0",},
+        "@media (max-width: 320px)": { padding: "60px 0",},
         "& .slick-dots": {
           position: "absolute",
-          bottom: "-40px",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           listStyle: "none",
           padding: 0,
           margin: 0,
         },
         "& .slick-dots li": {
-          margin: "0 5px",
+          margin: "0 12px",
         },
         "& .slick-dots li button": {
           padding: 0,
           border: "none",
           background: "transparent",
-          width: "16px",
-          height: "6px",
+          width: "32px",
+          height: "8px",
           borderRadius: "8px",
         },
         "& .slick-dots li button:before": {
           content: '""',
           display: "block",
-          width: "16px",
-          height: "6px",
+          width: "32px",
+          height: "8px",
           background: "#fff",
           transition: "all 0.3s ease",
           borderRadius: "8px",
           opacity: 0.6,
         },
         "& .slick-dots li.slick-active button:before": {
-          width: "16px",
-          height: "6px",
+          width: "32px",
+          height: "8px",
           background: "#1E874A",
           opacity: 1,
           borderRadius: "8px",
@@ -152,8 +170,8 @@ const MostViewed = () => {
             position: "absolute",
             width: "100%",
             height: "100%",
-            zIndex: 3, // Ensure it's on top of the content
-            pointerEvents: 'none', // Prevent interaction
+            zIndex: 3,
+            pointerEvents: "none",
           }}
         />
       )}
@@ -168,9 +186,10 @@ const MostViewed = () => {
               fontWeight: "bold",
               position: "relative",
               zIndex: 2,
-              padding: "0 10px",
               fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-              marginBottom: "20px",
+              "@media (max-width: 600px)": {
+                fontSize: "2rem",
+              },
             }}
           >
             MOST VIEWED
@@ -182,7 +201,7 @@ const MostViewed = () => {
             Loading...
           </Typography>
         ) : (
-          <Box sx={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
+          <div style={{ width: "90%", mx: "auto", position: "relative", zIndex: 2 }}>
             <Slider {...settings}>
               {materials.map((material) => (
                 <Box
@@ -228,9 +247,9 @@ const MostViewed = () => {
 
                     <Box
                       sx={{
-                        height: "100%",
+                        height: isMobile ? "" : "100%",
                         width: "100%",
-                        aspectRatio: "9 / 16",
+                        aspectRatio: isMobile ? "9 / 16" : "9 / 16",
                         overflow: "hidden",
                         borderRadius: "8px",
                         display: "flex",
@@ -255,7 +274,7 @@ const MostViewed = () => {
                 </Box>
               ))}
             </Slider>
-          </Box>
+          </div>
         )}
       </Box>
     </Box>
