@@ -44,6 +44,14 @@ const CartItemList = ({
     }
   };
 
+  const handleRemoveItem = (itemId) => {
+    handleDelete(itemId);
+    // Update the Select All checkbox after removing the item
+    if (selectedItems.includes(itemId)) {
+      setSelectedItems(selectedItems.filter((id) => id !== itemId));
+    }
+  };
+
   return (
     <CardContent sx={{ padding: 0 }}>
       {cartItems.length === 0 ? (
@@ -247,7 +255,10 @@ const CartItemList = ({
                 </Box>
 
                 {/* Remove Button */}
-                <IconButton color="error" onClick={() => handleDelete(item.id)}>
+                <IconButton
+                  color="error"
+                  onClick={() => handleRemoveItem(item.id)}
+                >
                   <CloseIcon />
                 </IconButton>
               </Box>

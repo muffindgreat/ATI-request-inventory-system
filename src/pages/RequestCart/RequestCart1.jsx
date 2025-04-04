@@ -134,9 +134,8 @@ export default function ReqCart1() {
         await updateDoc(userRef, { cart: updatedCart });
         console.log("Items removed from Firestore");
 
-        // Update local state
+        // Update local state: Remove items from cartItems (without affecting selectedItems)
         setCartItems((prev) => prev.filter((item) => !ids.includes(item.id)));
-        setSelectedItems([]); // Clear selection
       }
     } catch (error) {
       console.error("Error removing items:", error);
