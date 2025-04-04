@@ -22,6 +22,7 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
+  getDocs,
 } from "firebase/firestore";
 import { auth, db } from "../../config/firebaseConfig";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -29,6 +30,7 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useToast from "../../components/Toastify/useToast";
+import emailjs from "@emailjs/browser";
 
 const MatsReq = () => {
   const navigate = useNavigate();
@@ -47,8 +49,32 @@ const MatsReq = () => {
     status: "Pending",
   });
   const [loading, setLoading] = useState(false);
+  const [availableEmails, setAvailableEmails] = useState([]);
 
   const showToast = useToast();
+
+  useEffect(() => {
+    const fetchavailableEmails = async () => {
+      try {
+        const adminRef = collection(db, "Admin");
+        const querySnapshot = await getDocs(adminRef);
+
+        const emails = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.status === "Active") {
+            emails.push(data.email);
+          }
+        });
+
+        setAvailableEmails(emails);
+      } catch (error) {
+        console.error("Error fetching available admins:", error);
+      }
+    };
+
+    fetchavailableEmails();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -85,6 +111,8 @@ const MatsReq = () => {
     setFormData({ ...formData, [id]: value });
   };
 
+  console.log(formData.materialRequested);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -116,6 +144,12 @@ const MatsReq = () => {
 
       console.log("Submitting request:", trimmedData); // Debugging line
 
+      const totalQuantity = formData.materialRequested.reduce((sum, item) => {
+        return sum + (parseInt(item.quantity) || 0);
+      }, 0);
+
+      await sendEmailsToAdmins(totalQuantity);
+
       // Add new request to "Request" collection and get the new document ID
       const requestRef = await addDoc(collection(db, "Request"), trimmedData);
       const reqID = requestRef.id;
@@ -146,6 +180,30 @@ const MatsReq = () => {
     } finally {
       navigate("/my-requests");
       setLoading(false);
+    }
+  };
+
+  const sendEmailsToAdmins = async (totalQuantity) => {
+    for (const email of availableEmails) {
+      const templateParams = {
+        to_email: email,
+        requestee: `${formData.firstName} ${formData.lastName}`,
+        orders: formData.materialRequested,
+        totalQuantity,
+      };
+      console.log(templateParams);
+
+      try {
+        const result = await emailjs.send(
+          "service_jsnb4fe",
+          "template_nkq3oik",
+          templateParams,
+          "MMXB1DNl_6rj4C-J8"
+        );
+        console.log(`Email sent to ${email}:`, result.text);
+      } catch (err) {
+        console.error(`Failed to send email to ${email}:`, err);
+      }
     }
   };
 
