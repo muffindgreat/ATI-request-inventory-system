@@ -31,11 +31,11 @@ export default function MyRequests() {
             where("email", "==", user.email)
           );
           const querySnapshot = await getDocs(q);
-  
+
           const fetchedRequests = await Promise.all(
             querySnapshot.docs.map(async (doc) => {
               const data = doc.data();
-  
+
               // Fetch inventory details for each requested material
               const materials = await Promise.all(
                 (data.materialRequested || []).map(async (mat) => {
@@ -48,18 +48,19 @@ export default function MyRequests() {
                     inventorySnapshot.docs.length > 0
                       ? inventorySnapshot.docs[0].data()
                       : {};
-  
+
                   return {
                     name: mat.title,
                     type: mat.type,
                     quantity: mat.quantity,
                     imageUrl:
-                      inventoryData.imageUrl || "https://via.placeholder.com/150",
+                      inventoryData.imageUrl ||
+                      "https://via.placeholder.com/150",
                     bannerProgram: inventoryData.bannerProgram || [],
                   };
                 })
               );
-  
+
               return {
                 id: doc.id,
                 reqNo: data.reqNo,
@@ -79,7 +80,7 @@ export default function MyRequests() {
                 receivedDate: data.receivedDate?.toDate
                   ? data.receivedDate.toDate().toLocaleString()
                   : "",
-  
+
                 purpose: data.purpose || "",
                 program: data.program || "",
                 section: data.section || "",
@@ -87,7 +88,7 @@ export default function MyRequests() {
               };
             })
           );
-  
+
           setAllRequests(fetchedRequests);
         } catch (err) {
           console.error("Error fetching requests:", err);
@@ -96,17 +97,16 @@ export default function MyRequests() {
         }
       }
     });
-  
+
     return () => unsubscribe();
   }, []);
-  
 
   const pendingRequests = allRequests.filter((req) => req.status === "Pending");
   const processedRequests = allRequests.filter(
     (req) => req.status === "Accepted" || req.status === "Approved"
   );
   const completedRequests = allRequests.filter(
-    (req) => req.status === "Completed"
+    (req) => req.status === "Received"
   );
 
   const requestMap = {

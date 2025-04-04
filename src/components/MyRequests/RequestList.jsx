@@ -13,6 +13,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneIcon from "@mui/icons-material/Done";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import Tooltip from "@mui/material/Tooltip";
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
 export default function RequestList({ items }) {
@@ -54,14 +55,24 @@ function RequestItemSummary({ item }) {
       {firstMaterial && (
         <Box
           component="img"
-          sx={{ width: 64, height: 64, borderRadius: 1, mr: 2 }}
+          sx={{
+            borderRadius: 1,
+            mr: 1,
+            width: 60,
+            height: 90,
+            minWidth: 60,
+            minHeight: 90,
+            borderRadius: 1,
+            flexShrink: 0,
+            objectFit: "cover",
+          }}
           src={firstMaterial.imageUrl} // ✅ Fix: Use imageUrl instead of image
           alt={firstMaterial.name}
         />
       )}
 
       {/* Material Info */}
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, ml: 1 }}>
         <Box>
           <Typography
             variant="body1"
@@ -99,7 +110,7 @@ function RequestItemSummary({ item }) {
         </Typography>
 
         {/* Programs (if available) */}
-        {firstMaterial.bannerProgram?.length > 0 && ( // ✅ Fix: Use bannerProgram (not bannerPrograms)
+        {firstMaterial.bannerProgram?.length > 0 && (
           <Stack
             direction="row"
             sx={{
@@ -110,7 +121,31 @@ function RequestItemSummary({ item }) {
             }}
           >
             {firstMaterial.bannerProgram.map((program, i) => (
-              <Chip key={i} label={program} color="primary" size="small" sx={{ m: 0 }} />
+              <Tooltip key={i} title={program}>
+                <Chip
+                  label={program}
+                  color="primary"
+                  size="small"
+                  sx={{
+                    maxWidth: {
+                      xs: 90, // ellipsis on small screens
+                      sm: "none", // full width on medium and up
+                    },
+                    textOverflow: {
+                      xs: "ellipsis",
+                      sm: "initial",
+                    },
+                    overflow: {
+                      xs: "hidden",
+                      sm: "visible",
+                    },
+                    whiteSpace: {
+                      xs: "nowrap",
+                      sm: "normal",
+                    },
+                  }}
+                />
+              </Tooltip>
             ))}
           </Stack>
         )}
@@ -119,19 +154,22 @@ function RequestItemSummary({ item }) {
       {/* Status & Quantity */}
       <Stack spacing={0.5} alignItems="flex-end">
         <Chip
-          label={item.status}
+          label={getStatusLabel(item.status)}
           color={getStatusColor(item.status)}
           size="small"
           sx={{ borderRadius: 2, height: 24, minWidth: 80 }}
         />
-        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          sx={{ fontWeight: "bold" }}
+        >
           Qty: {formatQuantity(firstMaterial.quantity)}
         </Typography>
       </Stack>
     </Box>
   );
 }
-
 
 function RequestMaterials({ materials }) {
   return (
@@ -143,7 +181,17 @@ function RequestMaterials({ materials }) {
           <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 2 }}>
             <Box
               component="img"
-              sx={{ width: 64, height: 64, borderRadius: 1, mr: 2 }}
+              sx={{
+                borderRadius: 1,
+                mr: 2,
+                width: 60,
+                height: 90,
+                minWidth: 60,
+                minHeight: 90,
+                borderRadius: 1,
+                flexShrink: 0,
+                objectFit: "cover",
+              }}
               src={material.imageUrl} // ✅ Fix: Use imageUrl
               alt={material.name}
             />
@@ -165,12 +213,40 @@ function RequestMaterials({ materials }) {
                   }}
                 >
                   {material.bannerProgram.map((program, i) => (
-                    <Chip key={i} label={program} color="primary" size="small" sx={{ m: 0 }} />
+                    <Tooltip key={i} title={program}>
+                      <Chip
+                        label={program}
+                        color="primary"
+                        size="small"
+                        sx={{
+                          maxWidth: {
+                            xs: 90, // ellipsis on small screens
+                            sm: "none", // full width on medium and up
+                          },
+                          textOverflow: {
+                            xs: "ellipsis",
+                            sm: "initial",
+                          },
+                          overflow: {
+                            xs: "hidden",
+                            sm: "visible",
+                          },
+                          whiteSpace: {
+                            xs: "nowrap",
+                            sm: "normal",
+                          },
+                        }}
+                      />
+                    </Tooltip>
                   ))}
                 </Stack>
               )}
             </Box>
-            <Typography variant="body2" color="textSecondary" sx={{ fontWeight: "bold", px: 1, borderRadius: 1 }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ fontWeight: "bold", px: 1, borderRadius: 1 }}
+            >
               Qty: {formatQuantity(material.quantity)}
             </Typography>
           </Box>
@@ -180,6 +256,9 @@ function RequestMaterials({ materials }) {
   );
 }
 
+function getStatusLabel(status) {
+  return status === "Received" ? "Completed" : status;
+}
 
 function getStatusColor(status) {
   switch (status) {
