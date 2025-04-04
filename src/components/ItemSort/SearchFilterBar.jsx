@@ -26,9 +26,9 @@ const SearchFilterBar = () => {
     if (navbar) {
       setNavbarHeight(navbar.offsetHeight);
     } else {
-      setNavbarHeight(70);
+      setNavbarHeight(isMobile ? 70 : 90); // If navbar not found, adjust based on screen size
     }
-  }, []);
+  }, [isMobile]);
 
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
   const handleFilterChange = (order) => setSortOrder(order); // Update sorting order
