@@ -203,7 +203,7 @@ const MostViewed = () => {
             Loading...
           </Typography>
         ) : (
-          <Box sx={{
+          <Box sx={{//Sizes for screens showing image carousel
               width: "80%", // Default width
               position: "relative",
               zIndex: 2,
