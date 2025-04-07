@@ -4,6 +4,8 @@ import Library from "../../components/LandingPage/Library";
 import Navbar from "../../components/NavBar/Navbar";
 import { useEffect } from "react";
 import { Box } from "@mui/material";
+import FeaturedSection from "../../components/LandingPage/Featured";
+import Title from "../../components/LandingPage/Name";
 
 export default function Home() {
   useEffect(() => {
@@ -35,6 +37,8 @@ export default function Home() {
           },
         }}
       >
+        <Title />
+        <FeaturedSection />
         <MostViewed />
         <ItemSort />
         <Library />
