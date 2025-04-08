@@ -206,16 +206,24 @@ const ItemInfo = () => {
             </Box>
 
             <Box sx={{ flex: 1, p: isSmallScreen ? 2 : 5 }}>
-              <Typography variant="h4" fontWeight="bold" gutterBottom>
-                {item.itemName}
-              </Typography>
-              <Typography variant="h6" color="textSecondary" gutterBottom>
+              <Typography
+                variant="h4"
+                color="textPrimary"
+                sx={{ fontWeight: "bold" }}
+              >
                 {item.title}
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 {item.type}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                by {item.publisher} · {item.date}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                sx={{ mb: 0.5 }}
+              >
                 Views: {item.views || 0}
               </Typography>
               <Typography variant="body2" color="textSecondary">
