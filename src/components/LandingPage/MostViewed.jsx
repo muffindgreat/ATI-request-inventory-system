@@ -211,7 +211,7 @@ const MostViewed = () => {
               },
             }}
           >
-            MOST VIEWED
+            Most Viewed
           </Typography>
         </Box>
 
