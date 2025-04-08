@@ -44,12 +44,14 @@ export default function MyRequests() {
                     where("title", "==", mat.title) // Match material with inventory
                   );
                   const inventorySnapshot = await getDocs(inventoryQuery);
+                  const inventoryDoc = inventorySnapshot.docs[0];
                   const inventoryData =
                     inventorySnapshot.docs.length > 0
                       ? inventorySnapshot.docs[0].data()
                       : {};
 
                   return {
+                    id: inventoryDoc?.id || null,
                     name: mat.title,
                     type: mat.type,
                     quantity: mat.quantity,
@@ -132,11 +134,14 @@ export default function MyRequests() {
           <CustomCardHeader title="My Requests" showBackButton />
           <CardContent>
             <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
               {loading ? (
                 <CircularProgress />
               ) : (
-                <RequestList items={requestMap[tabIndex] || []} />
+                <RequestList
+                  items={requestMap[tabIndex] || []}
+                  sx={{ py: 5 }}
+                />
               )}
             </Box>
           </CardContent>

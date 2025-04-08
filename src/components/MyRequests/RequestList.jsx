@@ -14,6 +14,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneIcon from "@mui/icons-material/Done";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import Tooltip from "@mui/material/Tooltip";
+import { Link } from "react-router-dom";
+
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
 export default function RequestList({ items }) {
@@ -49,6 +51,7 @@ function RequestItemSummary({ item }) {
   const firstMaterial = item.materials[0];
   const additionalCount = item.materials.length - 1; // Calculate additional items
 
+  console.log("firstMaterial", firstMaterial);
   return (
     <Box sx={{ display: "flex", alignItems: "center", p: 2, width: "100%" }}>
       {/* Material Image */}
@@ -75,6 +78,8 @@ function RequestItemSummary({ item }) {
       <Box sx={{ flexGrow: 1, ml: 1 }}>
         <Box>
           <Typography
+            component={Link}
+            to={`/item-info/${firstMaterial?.id}`}
             variant="body1"
             sx={{
               fontWeight: "bold",
@@ -83,6 +88,8 @@ function RequestItemSummary({ item }) {
               WebkitBoxOrient: "vertical",
               WebkitLineClamp: 2,
               overflow: "hidden", // Truncate after 2 lines
+              color: "inherit",
+              textDecoration: "none",
             }}
           >
             {firstMaterial ? firstMaterial.name : "No materials"}
@@ -196,7 +203,17 @@ function RequestMaterials({ materials }) {
               alt={material.name}
             />
             <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="body1" sx={{ fontWeight: "bold", mb: 0.5 }}>
+              <Typography
+                component={Link}
+                to={`/item-info/${material.id}`}
+                variant="body1"
+                sx={{
+                  fontWeight: "bold",
+                  mb: 0.5,
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
                 {material.name}
               </Typography>
               <Typography variant="body2" color="textSecondary">
