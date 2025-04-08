@@ -284,7 +284,7 @@ const ItemInfo = () => {
                   onClick={async () => {
                     if (!item.pdfUrl) {
                       console.error("Error: No PDF link available.");
-                      alert("PDF is not available for download.");
+                      showToast("PDF is not available for download.", "error");
                       return;
                     }
 
