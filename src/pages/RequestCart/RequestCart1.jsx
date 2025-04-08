@@ -62,7 +62,6 @@ export default function ReqCart1() {
         } catch (error) {
           console.error("Error fetching cart items:", error);
         } finally {
-          console.log("Loading finished"); // Add this log to check
           setLoading(false); // Set loading to false after fetching
         }
       }
