@@ -84,6 +84,7 @@ export default function MyRequests() {
                 purpose: data.purpose || "",
                 program: data.program || "",
                 section: data.section || "",
+                remarks: data.remarks || "",
                 materials, // Updated with Inventory Data
               };
             })
