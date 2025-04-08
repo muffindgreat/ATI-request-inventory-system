@@ -6,9 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState, useEffect, Suspense } from "react";
-import { onAuthStateChanged } from "firebase/auth"; // Ensure auth import
+import { onAuthStateChanged } from "firebase/auth";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./context/Protected"; // Import the ProtectedRoute
+import ProtectedRoute from "./context/Protected";
 import LogIn from "./pages/LogIn/LogIn";
 import Register from "./pages/Register/Register";
 import Navbar from "./components/NavBar/Navbar";
@@ -27,17 +27,33 @@ function Layout() {
   const location = useLocation();
   const hideNavbarAndFooterRoutes = ["/login", "/register"];
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user);
+    const style = document.createElement("style");
+      style.textContent = `
+        html, body, #root {
+          margin: 0;
+          padding: 0;
+          height: 100vh; 
+          width: 100vw;
+          overflow-x: hidden;
+        }
+      `;
+      document.head.appendChild(style);
+  
     });
     return () => unsubscribe();
   }, []);
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
     >
       <ToastContainer />
       {!hideNavbarAndFooterRoutes.includes(location.pathname) && <Navbar />}

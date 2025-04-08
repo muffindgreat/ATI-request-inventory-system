@@ -79,6 +79,7 @@ const MostViewed = () => {
     swipeToSlide: true,
     beforeChange: handleSlideChange,
     afterChange: handleSlideAfterChange,
+    pauseOnHover: false,
     responsive: [
       { breakpoint: 1920, settings: { slidesToShow: 5 } },
       { breakpoint: 1600, settings: { slidesToShow: 4 } },
@@ -115,10 +116,26 @@ const MostViewed = () => {
         "@media (max-width: 1440px)": { padding: "30px 0" },
         "@media (max-width: 1200px)": { padding: "35px 0" },
         "@media (max-width: 1024px)": { padding: "40px 0" },
+        "@media (max-width: 992px)": { padding: "42px 0" },
         "@media (max-width: 768px)": { padding: "45px 0" },
+        "@media (max-width: 600px)": { padding: "48px 0" },
         "@media (max-width: 480px)": { padding: "50px 0" },
         "@media (max-width: 375px)": { padding: "55px 0" },
         "@media (max-width: 320px)": { padding: "60px 0" },
+        
+        // Added @media queries for landscape orientation to adjust padding
+        "@media (orientation: landscape) and (max-width: 1920px)": { padding: "18px 0" },
+        "@media (orientation: landscape) and (max-width: 1600px)": { padding: "22px 0" },
+        "@media (orientation: landscape) and (max-width: 1440px)": { padding: "26px 0" },
+        "@media (orientation: landscape) and (max-width: 1200px)": { padding: "30px 0" },
+        "@media (orientation: landscape) and (max-width: 1024px)": { padding: "34px 0" },
+        "@media (orientation: landscape) and (max-width: 992px)": { padding: "36px 0" },
+        "@media (orientation: landscape) and (max-width: 768px)": { padding: "38px 0" },
+        "@media (orientation: landscape) and (max-width: 600px)": { padding: "40px 0" },
+        "@media (orientation: landscape) and (max-width: 480px)": { padding: "42px 0" },
+        "@media (orientation: landscape) and (max-width: 375px)": { padding: "44px 0" },
+        "@media (orientation: landscape) and (max-width: 320px)": { padding: "46px 0" },
+        
         "& .slick-dots": {
           position: "absolute",
           display: "flex",
@@ -212,11 +229,25 @@ const MostViewed = () => {
               "@media (max-width: 1440px)": { width: "90%", },
               "@media (max-width: 1200px)": { width: "90%", },
               "@media (max-width: 1024px)": { width: "90%", },
+              "@media (max-width: 992px)": { width: "90%", },
               "@media (max-width: 768px)": { width: "90%", },
               "@media (max-width: 600px)": { width: "78%", },
               "@media (max-width: 480px)": { width: "78%", },
               "@media (max-width: 375px)": { width: "80%", },
               "@media (max-width: 320px)": { width: "90%", },
+              
+              // Added @media queries for landscape orientation to adjust width
+              "@media (orientation: landscape) and (max-width: 1920px)": { width: "75%" },
+              "@media (orientation: landscape) and (max-width: 1600px)": { width: "85%" },
+              "@media (orientation: landscape) and (max-width: 1440px)": { width: "85%" },
+              "@media (orientation: landscape) and (max-width: 1200px)": { width: "85%" },
+              "@media (orientation: landscape) and (max-width: 1024px)": { width: "85%" },
+              "@media (orientation: landscape) and (max-width: 992px)": { width: "85%" },
+              "@media (orientation: landscape) and (max-width: 768px)": { width: "85%" },
+              "@media (orientation: landscape) and (max-width: 600px)": { width: "73%" },
+              "@media (orientation: landscape) and (max--width: 480px)": { width: "73%" },
+              "@media (orientation: landscape) and (max-width: 375px)": { width: "75%" },
+              "@media (orientation: landscape) and (max-width: 320px)": { width: "85%" },
             }}>
             <Slider {...settings}>
               {materials.map((material) => (
