@@ -217,29 +217,20 @@ const ItemInfo = () => {
                 <Typography
                   variant="body1"
                   color="textSecondary"
-                  sx={{
-                    mb: !item.publisher?.length && !item.year ? 2 : 0,
-                  }}
+                  sx={{ mb: !item.publisher && !item.year ? 2 : 0 }}
                 >
                   {item.type}
                 </Typography>
 
-                {(item.publisher?.length || item.year) && (
+                {(item.publisher || item.year) && (
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ mb: 2 }}
                   >
-                    {item.publisher?.length > 0 ? (
-                      <>
-                        by{" "}
-                        {item.publisher.length >= 3
-                          ? `${item.publisher[0]} et al.`
-                          : item.publisher.join(", ")}
-                        {item.year && " · "}
-                      </>
-                    ) : null}
-                    {!item.publisher?.length && item.year && item.year}
+                    {item.publisher && `by ${item.publisher}`}
+                    {item.publisher && item.year && ` · ${item.year}`}
+                    {!item.publisher && item.year && item.year}
                   </Typography>
                 )}
               </>
