@@ -12,20 +12,28 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
     const fetchImages = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Inventory"));
-        const imageList = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            src: data.imageUrl || "",
-            views: data.views || 0,
-            category:
-              Array.isArray(data.bannerProgram) && data.bannerProgram.length > 0
-                ? data.bannerProgram[0]
-                : "Unknown",
+        const imageList = querySnapshot.docs
+          .map((doc) => {
+            const data = doc.data();
 
-            itemName: data.title || "",
-          };
-        });
+            // Validate important fields
+            if (!data.title || !data.imageUrl || !data.bannerProgram) {
+              return null; // ❌ Skip invalid data
+            }
+
+            return {
+              id: doc.id,
+              src: data.imageUrl,
+              views: data.views || 0,
+              category:
+                Array.isArray(data.bannerProgram) &&
+                data.bannerProgram.length > 0
+                  ? data.bannerProgram[0]
+                  : "Unknown",
+              itemName: data.title,
+            };
+          })
+          .filter(Boolean); // ✅ Remove null entries
 
         setImages(imageList);
       } catch (error) {
