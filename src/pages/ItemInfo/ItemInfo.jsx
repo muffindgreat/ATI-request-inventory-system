@@ -213,12 +213,28 @@ const ItemInfo = () => {
               >
                 {item.title}
               </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {item.type}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                by {item.publisher} · {item.date}
-              </Typography>
+              <>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  sx={{ mb: !item.publisher && !item.year ? 2 : 0 }}
+                >
+                  {item.type}
+                </Typography>
+
+                {(item.publisher || item.year) && (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                  >
+                    {item.publisher && `by ${item.publisher}`}
+                    {item.publisher && item.year && ` · ${item.year}`}
+                    {!item.publisher && item.year && item.year}
+                  </Typography>
+                )}
+              </>
+
               <Typography
                 variant="body2"
                 color="textSecondary"
