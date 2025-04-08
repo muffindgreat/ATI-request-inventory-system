@@ -38,7 +38,7 @@ export default function RequestList({ items }) {
         ))
       ) : (
         <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>
-          No Requests Found
+          No requests found
         </Typography>
       )}
     </Box>
