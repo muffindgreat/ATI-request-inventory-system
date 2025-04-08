@@ -14,7 +14,6 @@ import ImageLibrary from "../LandingPage/Library";
 
 const SearchFilterBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc"); // Default sorting A-Z
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -38,6 +37,21 @@ const SearchFilterBar = () => {
   const handleImagesReceived = (imagesData) => {
     setImages(imagesData);
   };
+
+  // Check if there's a search term or selected category
+  const hasSearchedOrFiltered = searchTerm || selectedCategory;
+
+  // Check if no images match the criteria (Search term or Category)
+  const filteredImages = images.filter(
+    (image) =>
+      (searchTerm
+        ? image.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+        : true) &&
+      (selectedCategory ? image.category === selectedCategory : true)
+  );
+
+  const isNoImagesAvailable =
+    filteredImages.length === 0 && hasSearchedOrFiltered;
 
   return (
     <>
@@ -91,8 +105,6 @@ const SearchFilterBar = () => {
             >
               <CategoryButtons onSelect={handleCategorySelect} />
               <Box sx={{ marginLeft: 1 }}>
-                {" "}
-                {/* Add margin to separate filter button from category buttons */}
                 <FilterButton onFilter={handleFilterChange} />
               </Box>
             </Stack>
@@ -103,29 +115,13 @@ const SearchFilterBar = () => {
       <ImageLibrary
         selectedCategory={selectedCategory}
         searchTerm={searchTerm}
-        sortOrder={sortOrder} // ✅ Pass sort order to Library
+        sortOrder={sortOrder}
         db={db}
-        onImagesReceived={handleImagesReceived} // pass callback
+        onImagesReceived={handleImagesReceived}
       />
 
-      {images.length === 0 ||
-        (searchTerm && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              padding: 2,
-            }}
-          >
-            <Typography variant="body1" color="textSecondary">
-              No images found matching your search.
-            </Typography>
-          </Box>
-        ))}
-
-      {images.length === 0 && selectedCategory && (
+      {/* If no images found and search term or category is provided */}
+      {isNoImagesAvailable && (
         <Box
           sx={{
             display: "flex",
@@ -135,13 +131,18 @@ const SearchFilterBar = () => {
             padding: 2,
           }}
         >
-          {/* <Typography variant="body1" color="textSecondary">
-            No images found in this category.
-          </Typography> */}
+          <Typography variant="body1" color="textSecondary">
+            {searchTerm
+              ? "No images found matching your search."
+              : selectedCategory
+              ? "No images found in this category."
+              : "No images available."}
+          </Typography>
         </Box>
       )}
 
-      {images.length === 0 && !searchTerm && !selectedCategory && (
+      {/* Show "No materials available" only if the user has not searched or selected a category */}
+      {images.length === 0 && !hasSearchedOrFiltered && (
         <Box
           sx={{
             display: "flex",
@@ -150,11 +151,7 @@ const SearchFilterBar = () => {
             width: "100%",
             padding: 2,
           }}
-        >
-          {/* <Typography variant="body1" color="textSecondary">
-            No images available.
-          </Typography> */}
-        </Box>
+        ></Box>
       )}
     </>
   );
