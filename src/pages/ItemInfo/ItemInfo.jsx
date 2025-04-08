@@ -218,21 +218,28 @@ const ItemInfo = () => {
                   variant="body1"
                   color="textSecondary"
                   sx={{
-                    mb: !item.publisher && !item.year ? 2 : 0, // Adds margin-bottom only when both are missing
+                    mb: !item.publisher?.length && !item.year ? 2 : 0,
                   }}
                 >
                   {item.type}
                 </Typography>
 
-                {(item.publisher || item.year) && (
+                {(item.publisher?.length || item.year) && (
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ mb: 2 }}
                   >
-                    by {item.publisher ? item.publisher : ""}
-                    {item.publisher && item.year ? " · " : ""}
-                    {item.year ? item.year : ""}
+                    {item.publisher?.length > 0 ? (
+                      <>
+                        by{" "}
+                        {item.publisher.length >= 3
+                          ? `${item.publisher[0]} et al.`
+                          : item.publisher.join(", ")}
+                        {item.year && " · "}
+                      </>
+                    ) : null}
+                    {!item.publisher?.length && item.year && item.year}
                   </Typography>
                 )}
               </>
