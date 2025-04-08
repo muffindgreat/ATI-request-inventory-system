@@ -31,8 +31,8 @@ const KoobLogo = styled("img")(({ theme }) => ({
   height: 100,
   position: "relative",
   zIndex: 2,
-  margin: 0,
-  padding: 0,
+  margin: 0, // removed extra spacing
+  padding: 0, // just in case
   [theme.breakpoints.down("sm")]: {
     height: 100,
   },
@@ -94,19 +94,12 @@ const StyledTitle1 = styled(Typography)(({ theme }) => ({
   },
 }));
 
-// Styled Subtitle with typewriter effect
 const StyledSubtitle = styled(Typography)(({ theme }) => ({
   fontFamily: "Montserrat, sans-serif",
   color: "white",
   marginTop: theme.spacing(0),
   position: "relative",
   zIndex: 2,
-  display: "inline-block",
-  overflow: "hidden", // Hide overflowed text
-  whiteSpace: "nowrap", // Prevent wrapping
-  width: "0", // Initially no width
-  borderRight: "3px solid white", // Simulate cursor
-  animation: "typing 3s steps(35) 1s forwards, blink 0.75s step-end infinite", // Adjusted timing and steps
   [theme.breakpoints.down("sm")]: {
     fontSize: "1rem",
   },
@@ -115,60 +108,37 @@ const StyledSubtitle = styled(Typography)(({ theme }) => ({
   },
 }));
 
-// Global CSS for keyframes (add this in your CSS file)
-const globalStyles = `
-  @keyframes typing {
-    0% {
-      width: 0;
-    }
-    100% {
-      width: 39%;
-    }
-  }
-
-  @keyframes blink {
-    50% {
-      border-color: transparent;
-    }
-  }
-`;
-
-// Add the global keyframes to the page
-const GlobalStyles = () => <style>{globalStyles}</style>;
-
+// Main Component
 const Title = () => {
   return (
-    <>
-      <GlobalStyles />
-      <StyledBox>
-        {/* Top logo row */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 0,
-            position: "relative",
-            zIndex: 2,
-          }}
-        >
-          <KoobLogo src="/koob.png" alt="Koob Logo" />
-          <TitleTextContainer>
-            <TitleRow>
-              <AtisLogo src="/atis.png" alt="ATI Logo" />
-              <StyledTitle variant="h2">ATI-CALABARZON</StyledTitle>
-            </TitleRow>
-            <StyledTitle1 variant="h2">E-Library</StyledTitle1>
-          </TitleTextContainer>
-        </Box>
+    <StyledBox>
+      {/* Top logo row */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 0, // no space between KoobLogo and title
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <KoobLogo src="/koob.png" alt="Koob Logo" />
+        <TitleTextContainer>
+          <TitleRow>
+            <AtisLogo src="/atis.png" alt="ATI Logo" />
+            <StyledTitle variant="h2">ATI-CALABARZON</StyledTitle>
+          </TitleRow>
+          <StyledTitle1 variant="h2">E-Library</StyledTitle1>
+        </TitleTextContainer>
+      </Box>
 
-        {/* Subtitle with typewriter animation */}
-        <StyledSubtitle variant="subtitle1">
-          Your online portal to agricultural knowledge and learning materials.
-        </StyledSubtitle>
-      </StyledBox>
-    </>
+      {/* Subtitle below */}
+      <StyledSubtitle variant="subtitle1">
+        Your online portal to agricultural knowledge and learning materials.
+      </StyledSubtitle>
+    </StyledBox>
   );
 };
 
