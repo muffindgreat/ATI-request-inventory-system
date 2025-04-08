@@ -12,10 +12,12 @@ export default function ReqCart1() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [pendingUpdates, setPendingUpdates] = useState({});
+  const [loading, setLoading] = useState(true); // Add this line
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        setLoading(true); // Set loading to true before starting the fetch
         try {
           const userRef = doc(db, "User", user.uid);
           const userSnap = await getDoc(userRef);
@@ -59,6 +61,9 @@ export default function ReqCart1() {
           }
         } catch (error) {
           console.error("Error fetching cart items:", error);
+        } finally {
+          console.log("Loading finished"); // Add this log to check
+          setLoading(false); // Set loading to false after fetching
         }
       }
     });
@@ -189,6 +194,7 @@ export default function ReqCart1() {
             handleConfirmQuantityChange={handleConfirmQuantityChange}
             pendingUpdates={pendingUpdates}
             handleDelete={handleDelete}
+            loading={loading} // Pass loading state to CartItemList
           />
         </Card>
         <Collapse

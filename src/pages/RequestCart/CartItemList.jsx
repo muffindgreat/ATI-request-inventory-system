@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -9,11 +9,13 @@ import {
   IconButton,
   CardMedia,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import { Link } from "react-router-dom";
 
 const CartItemList = ({
   cartItems,
@@ -23,6 +25,7 @@ const CartItemList = ({
   handleQuantityChange,
   handleConfirmQuantityChange,
   handleDelete,
+  loading, // Assuming 'loading' is passed as a prop
 }) => {
   const [quantityInputs, setQuantityInputs] = useState({});
   const [pendingUpdates, setPendingUpdates] = useState({});
@@ -46,15 +49,25 @@ const CartItemList = ({
 
   const handleRemoveItem = (itemId) => {
     handleDelete(itemId);
-    // Update the Select All checkbox after removing the item
     if (selectedItems.includes(itemId)) {
       setSelectedItems(selectedItems.filter((id) => id !== itemId));
     }
   };
 
   return (
-    <CardContent sx={{ padding: 0 }}>
-      {cartItems.length === 0 ? (
+    <CardContent
+      sx={{
+        padding: 0,
+        // "&:last-child": {
+        //   paddingBottom: 0,
+        // },
+      }}
+    >
+      {loading ? ( // Show loading spinner when loading is true
+        <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
+          <CircularProgress />
+        </Box>
+      ) : cartItems.length === 0 ? (
         <Typography sx={{ textAlign: "center", color: "gray", py: 5 }}>
           No items added
         </Typography>
@@ -159,7 +172,18 @@ const CartItemList = ({
                     />
 
                     <Box sx={{ ml: 1, flexGrow: 1 }}>
-                      <Typography fontWeight="bold">{item.name}</Typography>
+                      <Typography
+                        fontWeight="bold"
+                        component={Link}
+                        to={`/item-info/${item.id}`}
+                        sx={{
+                          textDecoration: "none",
+                          color: "inherit",
+                        }}
+                      >
+                        {item.name}
+                      </Typography>
+
                       <Typography variant="body2" color="textSecondary">
                         {item.type || "Unknown"}
                       </Typography>
