@@ -103,7 +103,6 @@ function RequestItemSummary({ item }) {
                 display: "block",
                 "@media (min-width:600px)": {
                   display: "inline",
-                  ml: 1,
                 },
               }}
             >
