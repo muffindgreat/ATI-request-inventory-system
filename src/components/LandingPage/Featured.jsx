@@ -10,6 +10,8 @@ import {
   ButtonBase,
   styled,
   CircularProgress,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../config/firebaseConfig";
@@ -28,6 +30,9 @@ const FeaturedSection = () => {
   const [featuredItems, setFeaturedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleClick = (id) => {
     navigate(`/item-info/${id}`);
@@ -39,8 +44,8 @@ const FeaturedSection = () => {
       try {
         const featuredQuery = query(
           collection(db, "Inventory"),
-          where("isFeatured", "==", true),
-          limit(3) // You can adjust the number of featured items to display
+          where("isFeatured", "==", true)
+          // You can add orderBy and limit here if needed for featured items
         );
         const querySnapshot = await getDocs(featuredQuery);
         const items = querySnapshot.docs.map((doc) => ({
@@ -72,35 +77,49 @@ const FeaturedSection = () => {
         ) : featuredItems.length > 0 ? (
           <Grid container spacing={3} justifyContent="center">
             {featuredItems.map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item.id}>
+              <Grid
+                item
+                xs={12}
+                sm={isMobile ? 12 : 6}
+                md={isTablet ? 6 : 4}
+                lg={3} // Adjust for larger screens
+                key={item.id}
+              >
                 <Card
                   elevation={3}
                   sx={{
                     transition: "transform 0.2s ease-in-out",
                     "&:hover": { transform: "scale(1.03)" },
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%", // Make cards take up equal height in the row
                   }}
                 >
                   <ButtonBase
                     onClick={() => handleClick(item.id)}
-                    sx={{ display: "block", width: "100%" }}
+                    sx={{ display: "block", width: "100%", flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
                   >
-                    <CardMedia
-                      component="img"
-                      height="200"
-                      image={item.imageUrl || "/placeholder.jpg"}
-                      alt={item.title || "Featured item"}
-                      sx={{ objectFit: "cover", width: "100%" }}
-                    />
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        aspectRatio: "9 / 16", // Same aspect ratio as MostViewed
+                        overflow: "hidden",
+                        borderRadius: "8px 8px 0 0",
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        image={item.imageUrl || "/placeholder.jpg"}
+                        alt={item.title || "Featured item"}
+                        sx={{
+                          objectFit: "cover",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    </Box>
                   </ButtonBase>
-                  <CardContent>
-                    <Typography variant="h6" component="div">
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.description}
-                    </Typography>
-                    {/* You can display other relevant information here */}
-                  </CardContent>
                 </Card>
               </Grid>
             ))}
