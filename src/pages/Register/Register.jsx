@@ -23,6 +23,8 @@ import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
 
+// ...imports stay the same
+
 export default function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -65,8 +67,8 @@ export default function Register() {
       );
       const user = userCredential.user;
       await setDoc(doc(db, "User", user.uid), {
-        firstName: firstName,
-        lastName: lastName,
+        firstName,
+        lastName,
         email: user.email,
         createdAt: new Date(),
       });
@@ -99,14 +101,25 @@ export default function Register() {
       minHeight="100vh"
     >
       <BackgroundImage imageUrl={bgImage} />
+
       <Box
-        position="absolute"
-        top={1}
-        left={{ xs: "50%", md: "-100px" }}
-        transform={{ xs: "translateX(-50%)", md: "none" }}
+        sx={{
+          position: "absolute",
+          top: 1,
+          left: { xs: "50%", md: "-100px" },
+          transform: { xs: "translateX(-50%)", md: "none" },
+        }}
       >
-        <img src={logo} alt="Logo" style={{ width: 350 }} />
+        <img
+          src={logo}
+          alt="Logo"
+          style={{
+            width: "100%",
+            maxWidth: 350,
+          }}
+        />
       </Box>
+
       <Container
         maxWidth="xs"
         sx={{
