@@ -16,6 +16,8 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db }) => {
           .map((doc) => {
             const data = doc.data();
 
+            if (data.isDisplay === false) return null;
+
             // Validate important fields
             if (!data.title || !data.imageUrl || !data.bannerProgram) {
               return null; // ❌ Skip invalid data
