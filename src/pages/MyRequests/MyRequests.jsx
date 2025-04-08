@@ -44,12 +44,14 @@ export default function MyRequests() {
                     where("title", "==", mat.title) // Match material with inventory
                   );
                   const inventorySnapshot = await getDocs(inventoryQuery);
+                  const inventoryDoc = inventorySnapshot.docs[0];
                   const inventoryData =
                     inventorySnapshot.docs.length > 0
                       ? inventorySnapshot.docs[0].data()
                       : {};
 
                   return {
+                    id: inventoryDoc?.id || null,
                     name: mat.title,
                     type: mat.type,
                     quantity: mat.quantity,
