@@ -133,7 +133,7 @@ const SearchFilterBar = () => {
         >
           <Typography variant="body1" color="textSecondary">
             {searchTerm
-              ? "No images found matching your search."
+              ? "No materials found matching your search."
               : selectedCategory
               ? "No images found in this category."
               : "No images available."}
