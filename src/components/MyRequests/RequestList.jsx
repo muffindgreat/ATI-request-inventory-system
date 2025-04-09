@@ -103,7 +103,6 @@ function RequestItemSummary({ item }) {
                 display: "block",
                 "@media (min-width:600px)": {
                   display: "inline",
-                  ml: 1,
                 },
               }}
             >
@@ -339,6 +338,17 @@ function RequestDetails({ item }) {
         )}
       </Stack>
       <Divider sx={{ my: 2 }} />
+
+      {/* Display Remarks if Status is Accepted, Approved, Received, or Completed */}
+      {["Accepted", "Approved", "Received", "Completed"].includes(
+        item.status
+      ) &&
+        item.remarks && (
+          <Typography variant="body2">
+            <strong>Remarks:</strong> {item.remarks || "No remarks available"}
+          </Typography>
+        )}
+
       <Typography variant="body2">
         <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
       </Typography>

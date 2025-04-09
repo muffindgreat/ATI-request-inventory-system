@@ -128,7 +128,6 @@ const SearchFilterBar = () => {
             justifyContent: "center",
             alignItems: "center",
             width: "100%",
-            padding: 2,
           }}
         >
           <Typography variant="body1" color="textSecondary">

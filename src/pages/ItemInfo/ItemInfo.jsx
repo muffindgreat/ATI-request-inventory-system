@@ -327,7 +327,7 @@ const ItemInfo = () => {
                       setIsDownloading(false); // End loading when download is complete
                     }
                   }}
-                  disabled={isDownloading} // Disable button while downloading
+                  disabled={!item.pdfUrl || isDownloading} // Disable button while downloading
                 >
                   {isDownloading ? (
                     <CircularProgress size={24} color="inherit" />
