@@ -51,7 +51,6 @@ function RequestItemSummary({ item }) {
   const firstMaterial = item.materials[0];
   const additionalCount = item.materials.length - 1; // Calculate additional items
 
-  console.log("firstMaterial", firstMaterial);
   return (
     <Box sx={{ display: "flex", alignItems: "center", p: 2, width: "100%" }}>
       {/* Material Image */}
