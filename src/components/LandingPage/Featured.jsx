@@ -115,55 +115,62 @@ const FeaturedSection = () => {
   }, []);
 
   return (
-    <StyledBox sx={{
-      "& .slick-dots": {
-        position: "absolute",
-        display: "flex",
-        justifyContent: "center", // Center the dots
-        listStyle: "none",
-        padding: 0,
-        margin: 0,
-      },
-      "& .slick-dots li": {
-        margin: "0px 16px", // Adjust horizontal spacing
-      },
-      "& .slick-dots li button": {
-        padding: 0,
-        border: "none",
-        background: "transparent",
-        width: "32px", // Smaller dot width
-        height: "8px", // Smaller dot height
-        borderRadius: "8px", // Make them circles
-      },
-      "& .slick-dots li button:before": {
-        content: '""',
-        display: "block",
-        width: "32px",
-        height: "8px",
-        background: theme.palette.grey[400], // Light grey color
-        transition: "all 0.3s ease",
-        borderRadius: "8px",
-        opacity: 0.6,
-      },
-      "& .slick-dots li.slick-active button:before": {
-        background: "#1E874A", // Primary color for active dot
-        width: "32px", // Slightly larger active dot
-        height: "8px",
-        opacity: 1,
-        borderRadius: "8px",
-      },
-    }}>
+    <StyledBox
+      sx={{
+        "& .slick-dots": {
+          position: "absolute",
+          display: "flex",
+          justifyContent: "center", // Center the dots
+          listStyle: "none",
+          padding: 0,
+          margin: 0,
+        },
+        "& .slick-dots li": {
+          margin: "0px 16px", // Adjust horizontal spacing
+        },
+        "& .slick-dots li button": {
+          padding: 0,
+          border: "none",
+          background: "transparent",
+          width: "32px", // Smaller dot width
+          height: "8px", // Smaller dot height
+          borderRadius: "8px", // Make them circles
+        },
+        "& .slick-dots li button:before": {
+          content: '""',
+          display: "block",
+          width: "32px",
+          height: "8px",
+          background: theme.palette.grey[400], // Light grey color
+          transition: "all 0.3s ease",
+          borderRadius: "8px",
+          opacity: 0.6,
+        },
+        "& .slick-dots li.slick-active button:before": {
+          background: "#1E874A", // Primary color for active dot
+          width: "32px", // Slightly larger active dot
+          height: "8px",
+          opacity: 1,
+          borderRadius: "8px",
+        },
+      }}
+    >
       <Container maxWidth="lg">
-        <Typography variant="h4" gutterBottom align="center" sx={{ textAlign: "center",
-              fontWeight: "bold",
-              position: "relative",
-              zIndex: 2,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-              "@media (max-width: 600px)": {
-                fontSize: "2rem",
-              },
-              
-            }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          align="center"
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            position: "relative",
+            zIndex: 2,
+            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+            "@media (max-width: 600px)": {
+              fontSize: "2rem",
+            },
+          }}
+        >
           Featured Items
         </Typography>
         {isLoading ? (
@@ -187,7 +194,13 @@ const FeaturedSection = () => {
                 >
                   <ButtonBase
                     onClick={() => handleClick(item.id)}
-                    sx={{ display: "block", width: "100%", flexGrow: 1, flexDirection: 'column', alignItems: 'stretch' }}
+                    sx={{
+                      display: "block",
+                      width: "100%",
+                      flexGrow: 1,
+                      flexDirection: "column",
+                      alignItems: "stretch",
+                    }}
                   >
                     <Box
                       sx={{

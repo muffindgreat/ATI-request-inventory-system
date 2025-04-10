@@ -15,6 +15,7 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db, onImagesReceived
           const imageList = querySnapshot.docs
             .map((doc) => {
               const data = doc.data();
+              if (data.isDisplay === false) return null;
               if (!data.title || !data.imageUrl || !data.bannerProgram) {
                 return null;
               }
