@@ -29,31 +29,33 @@ export default function ReqCart1() {
                 .map((item) => item.itemId)
                 .filter(Boolean);
 
-              let fetchedItems = [];
+              const fetchedItems = await Promise.all(
+                itemIds.map(async (itemId) => {
+                  const itemRef = doc(db, "Inventory", itemId);
+                  const itemSnap = await getDoc(itemRef);
 
-              for (const itemId of itemIds) {
-                const itemRef = doc(db, "Inventory", itemId);
-                const itemSnap = await getDoc(itemRef);
+                  if (itemSnap.exists()) {
+                    const itemData = itemSnap.data();
+                    const matchingCartItem = userData.cart.find(
+                      (cartItem) => cartItem.itemId === itemSnap.id
+                    );
 
-                if (itemSnap.exists()) {
-                  const itemData = itemSnap.data();
-                  const matchingCartItem = userData.cart.find(
-                    (cartItem) => cartItem.itemId === itemSnap.id
-                  );
+                    return {
+                      id: itemSnap.id,
+                      name: itemData.title || "Unknown",
+                      image:
+                        itemData.imageUrl || "https://via.placeholder.com/150",
+                      quantity: matchingCartItem
+                        ? matchingCartItem.quantity
+                        : 1,
+                      type: itemData.type || "Unknown",
+                    };
+                  }
+                  return null;
+                })
+              );
 
-                  fetchedItems.push({
-                    id: itemSnap.id,
-                    name: itemData.title || "Unknown",
-                    image:
-                      itemData.imageUrl || "https://via.placeholder.com/150",
-                    quantity: matchingCartItem ? matchingCartItem.quantity : 1,
-                    type: itemData.type || "Unknown",
-                  });
-                }
-              }
-
-              console.log("Fetched Inventory Items:", fetchedItems);
-              setCartItems(fetchedItems);
+              setCartItems(fetchedItems.filter(Boolean));
             } else {
               console.log("Cart is empty.");
               setCartItems([]);
