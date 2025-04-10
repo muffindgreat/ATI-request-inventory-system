@@ -49,46 +49,46 @@ const StyledBox = styled(Box)(({ theme }) => ({
     zIndex: 1,
   },
   "& .slick-dots": {
-        position: "absolute",
-        display: "flex",
-        justifyContent: "center", // Center the dots
-        listStyle: "none",
-        padding: 0,
-        margin: 0,
-      },
-      "& .slick-dots li": {
-        margin: "0px 16px", // Adjust horizontal spacing
-      },
-      "& .slick-dots li button": {
-        padding: 0,
-        border: "none",
-        background: "transparent",
-        width: "32px", // Smaller dot width
-        height: "8px", // Smaller dot height
-        borderRadius: "8px", // Make them circles
-      },
-      "& .slick-dots li button:before": {
-        content: '""',
-        display: "block",
-        width: "32px",
-        height: "8px",
-        background: theme.palette.grey[400], // Light grey color
-        transition: "all 0.3s ease",
-        borderRadius: "8px",
-        opacity: 0.6,
-      },
-      "& .slick-dots li.slick-active button:before": {
-        background: "#1E874A", // Primary color for active dot
-        width: "32px", // Slightly larger active dot
-        height: "8px",
-        opacity: 1,
-        borderRadius: "8px",
-      },
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center", // Center the dots
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+  },
+  "& .slick-dots li": {
+    margin: "0px 16px", // Adjust horizontal spacing
+  },
+  "& .slick-dots li button": {
+    padding: 0,
+    border: "none",
+    background: "transparent",
+    width: "32px", // Smaller dot width
+    height: "8px", // Smaller dot height
+    borderRadius: "8px", // Make them circles
+  },
+  "& .slick-dots li button:before": {
+    content: '""',
+    display: "block",
+    width: "32px",
+    height: "8px",
+    background: theme.palette.grey[400], // Light grey color
+    transition: "all 0.3s ease",
+    borderRadius: "8px",
+    opacity: 0.6,
+  },
+  "& .slick-dots li.slick-active button:before": {
+    background: "#1E874A", // Primary color for active dot
+    width: "32px", // Slightly larger active dot
+    height: "8px",
+    opacity: 1,
+    borderRadius: "8px",
+  },
 }));
 
 const MostViewed = ({ currentSlide, setCurrentSlide }) => {
   const [materials, setMaterials] = useState([]);
-  const [loading, setLoading] = useState(true);//isLoading
+  const [loading, setLoading] = useState(true); //isLoading
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -107,7 +107,7 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
         navigate(`/item-info/${id}`);
       }, 200); // Adjust the delay (in milliseconds) as needed
     }
-  }; 
+  };
 
   const settings = {
     dots: true,
@@ -168,12 +168,18 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
         );
         const querySnapshot = await getDocs(materialsQuery);
 
-        const imageList = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          src: doc.data().imageUrl,
-          views: doc.data().views || 0,
-          itemName: doc.data().title,
-        }));
+        const imageList = querySnapshot.docs
+          .map((doc) => {
+            const data = doc.data();
+            if (data.isDisplay === false) return null; // Skip if isDisplay is false
+            return {
+              id: doc.id,
+              src: data.imageUrl,
+              views: data.views || 0,
+              itemName: data.title,
+            };
+          })
+          .filter((item) => item !== null);
 
         setMaterials(imageList);
       } catch (error) {
@@ -273,8 +279,13 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
                           zIndex: 2,
                         }}
                       >
-                        <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
-                        <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
+                        <VisibilityIcon
+                          sx={{ fontSize: "16px", color: "white" }}
+                        />
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "#fff", fontWeight: "bold" }}
+                        >
                           {material.views}
                         </Typography>
                       </Box>
