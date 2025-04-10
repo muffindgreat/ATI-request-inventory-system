@@ -86,7 +86,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
       },
 }));
 
-const MostViewed = () => {
+const MostViewed = ({ currentSlide, setCurrentSlide }) => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);//isLoading
   const navigate = useNavigate();
@@ -95,7 +95,14 @@ const MostViewed = () => {
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const [isDragging, setIsDragging] = useState(false);
   const clickTimeout = useRef(null);
+  const sliderRef = useRef();
 
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(currentSlide);
+    }
+  }, [currentSlide]);
+  
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
@@ -130,19 +137,6 @@ const MostViewed = () => {
     }
   };
 
-  const handleSlideChange = () => {
-    setIsDragging(true);
-    if (clickTimeout.current) {
-      clearTimeout(clickTimeout.current);
-    }
-  };
-
-  const handleSlideAfterChange = () => {
-    clickTimeout.current = setTimeout(() => {
-      setIsDragging(false);
-    }, 200);
-  };
-
   const settings = {
     dots: true,
     infinite: true,
@@ -154,8 +148,11 @@ const MostViewed = () => {
     centerMode: true,
     variableWidth: false,
     swipeToSlide: true,
-    beforeChange: handleSlideChange,
-    afterChange: handleSlideAfterChange,
+    afterChange: (index) => {
+      setCurrentSlide(index);
+      setTimeout(() => setIsDragging(false), 100);
+    },
+    onSwipe: () => setIsDragging(true),
     pauseOnHover: false,
     responsive: [
       { breakpoint: 1920, settings: { slidesToShow: 5 } },
@@ -181,7 +178,7 @@ const MostViewed = () => {
           align="center"
           sx={{
             textAlign: "center",
-            fontWeight: "bold",
+            // fontWeight: "bold",
             color: "#fff",
             position: "relative",
             zIndex: 2,
@@ -199,7 +196,7 @@ const MostViewed = () => {
             <CircularProgress sx={{ color: "#fff" }} />
           </Box>
         ) : materials.length > 0 ? (
-          <Slider {...settings}>
+          <Slider ref={sliderRef} {...settings}>
             {materials.map((material) => (
               <Box key={material.id} sx={{ px: 1 }}>
                 <Card
