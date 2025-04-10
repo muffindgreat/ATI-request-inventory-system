@@ -7,7 +7,7 @@ const SearchBar = ({ value, onChange }) => {
   return (
     <TextField
       variant="outlined"
-      placeholder="Search item..."
+      placeholder="Search Title..."
       size="small"
       value={value}
       onChange={onChange}

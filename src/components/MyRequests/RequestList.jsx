@@ -51,7 +51,6 @@ function RequestItemSummary({ item }) {
   const firstMaterial = item.materials[0];
   const additionalCount = item.materials.length - 1; // Calculate additional items
 
-  console.log("firstMaterial", firstMaterial);
   return (
     <Box sx={{ display: "flex", alignItems: "center", p: 2, width: "100%" }}>
       {/* Material Image */}
@@ -104,7 +103,6 @@ function RequestItemSummary({ item }) {
                 display: "block",
                 "@media (min-width:600px)": {
                   display: "inline",
-                  ml: 1,
                 },
               }}
             >
@@ -340,6 +338,17 @@ function RequestDetails({ item }) {
         )}
       </Stack>
       <Divider sx={{ my: 2 }} />
+
+      {/* Display Remarks if Status is Accepted, Approved, Received, or Completed */}
+      {["Accepted", "Approved", "Received", "Completed"].includes(
+        item.status
+      ) &&
+        item.remarks && (
+          <Typography variant="body2">
+            <strong>Remarks:</strong> {item.remarks || "No remarks available"}
+          </Typography>
+        )}
+
       <Typography variant="body2">
         <strong>Purpose:</strong> {item.purpose || "No purpose provided"}
       </Typography>
