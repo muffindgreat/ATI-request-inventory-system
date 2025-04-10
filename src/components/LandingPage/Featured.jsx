@@ -15,7 +15,13 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../config/firebaseConfig";
-import { collection, getDocs, query, where, limit } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  limit,
+  onSnapshot,
+} from "firebase/firestore";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -29,41 +35,41 @@ const StyledBox = styled(Box)(({ theme }) => ({
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
   "& .slick-dots": {
-        position: "absolute",
-        display: "flex",
-        justifyContent: "center", // Center the dots
-        listStyle: "none",
-        padding: 0,
-        margin: 0,
-      },
-      "& .slick-dots li": {
-        margin: "0px 16px", // Adjust horizontal spacing
-      },
-      "& .slick-dots li button": {
-        padding: 0,
-        border: "none",
-        background: "transparent",
-        width: "32px", // Smaller dot width
-        height: "8px", // Smaller dot height
-        borderRadius: "8px", // Make them circles
-      },
-      "& .slick-dots li button:before": {
-        content: '""',
-        display: "block",
-        width: "32px",
-        height: "8px",
-        background: theme.palette.grey[400], // Light grey color
-        transition: "all 0.3s ease",
-        borderRadius: "8px",
-        opacity: 0.6,
-      },
-      "& .slick-dots li.slick-active button:before": {
-        background: "#1E874A", // Primary color for active dot
-        width: "32px", // Slightly larger active dot
-        height: "8px",
-        opacity: 1,
-        borderRadius: "8px",
-      },
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center",
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+  },
+  "& .slick-dots li": {
+    margin: "0px 16px",
+  },
+  "& .slick-dots li button": {
+    padding: 0,
+    border: "none",
+    background: "transparent",
+    width: "32px",
+    height: "8px",
+    borderRadius: "8px",
+  },
+  "& .slick-dots li button:before": {
+    content: '""',
+    display: "block",
+    width: "32px",
+    height: "8px",
+    background: theme.palette.grey[400],
+    transition: "all 0.3s ease",
+    borderRadius: "8px",
+    opacity: 0.6,
+  },
+  "& .slick-dots li.slick-active button:before": {
+    background: "#1E874A",
+    width: "32px",
+    height: "8px",
+    opacity: 1,
+    borderRadius: "8px",
+  },
 }));
 
 const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
@@ -78,17 +84,15 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
   const sliderRef = useRef();
 
   const handleClick = (id) => {
-    // Introduce a small delay before navigating if not dragging
     if (!isDragging) {
       if (clickTimeout.current) {
         clearTimeout(clickTimeout.current);
       }
       clickTimeout.current = setTimeout(() => {
         navigate(`/item-info/${id}`);
-      }, 200); // Adjust the delay (in milliseconds) as needed
+      }, 200);
     }
   };
-
 
   const settings = {
     dots: true,
@@ -137,50 +141,52 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
     if (sliderRef.current) {
       sliderRef.current.slickGoTo(currentSlide);
     }
-  }, [currentSlide]); 
+  }, [currentSlide]);
 
   useEffect(() => {
-    const fetchFeaturedItems = async () => {
-      setIsLoading(true);
-      try {
-        const featuredQuery = query(
-          collection(db, "Inventory"),
-          where("isFeatured", "==", true),
-          limit(5)
-        );
-        const querySnapshot = await getDocs(featuredQuery);
+    const featuredQuery = query(
+      collection(db, "Inventory"),
+      where("isFeatured", "==", true),
+      limit(5)
+    );
+
+    const unsubscribe = onSnapshot(
+      featuredQuery,
+      (querySnapshot) => {
         const items = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         setFeaturedItems(items);
-      } catch (error) {
-        console.error("Error fetching featured items:", error);
-        // Optionally set an error state here
-      } finally {
+        setIsLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching featured items in real-time:", error);
         setIsLoading(false);
       }
-    };
+    );
 
-    fetchFeaturedItems();
+    return () => unsubscribe(); // Cleanup
   }, []);
 
   return (
     <StyledBox>
       <Container maxWidth="lg">
-        <Typography variant="h4" gutterBottom align="center" 
-        sx={{ 
-              textAlign: "center",
-              // fontWeight: "bold",
-              color: "#1E874A",
-              position: "relative",
-              zIndex: 2,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-              "@media (max-width: 600px)": {
-                fontSize: "2rem",
-              },
-              
-            }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          align="center"
+          sx={{
+            textAlign: "center",
+            color: "#1E874A",
+            position: "relative",
+            zIndex: 2,
+            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+            "@media (max-width: 600px)": {
+              fontSize: "2rem",
+            },
+          }}
+        >
           Featured Items
         </Typography>
         {isLoading ? (
