@@ -97,12 +97,67 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
   const clickTimeout = useRef(null);
   const sliderRef = useRef();
 
+  const handleClick = (id) => {
+    // Introduce a small delay before navigating if not dragging
+    if (!isDragging) {
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+      clickTimeout.current = setTimeout(() => {
+        navigate(`/item-info/${id}`);
+      }, 200); // Adjust the delay (in milliseconds) as needed
+    }
+  }; 
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 300,
+    slidesToShow: isMobile ? 1 : isTablet ? 2 : 3,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    arrows: false,
+    centerMode: true,
+    variableWidth: false,
+    swipeToSlide: true,
+    beforeChange: () => {
+      setIsDragging(true);
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+    },
+    afterChange: (index) => {
+      setCurrentSlide(index);
+      setTimeout(() => setIsDragging(false), 100);
+    },
+    onSwipe: () => {
+      setIsDragging(true);
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+    },
+    pauseOnHover: false,
+    responsive: [
+      { breakpoint: 1920, settings: { slidesToShow: 5 } },
+      { breakpoint: 1600, settings: { slidesToShow: 4 } },
+      { breakpoint: 1440, settings: { slidesToShow: 4 } },
+      { breakpoint: 1200, settings: { slidesToShow: 3 } },
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 992, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 600, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
+      { breakpoint: 375, settings: { slidesToShow: 1 } },
+      { breakpoint: 320, settings: { slidesToShow: 1 } },
+    ],
+  };
+
   useEffect(() => {
     if (sliderRef.current) {
       sliderRef.current.slickGoTo(currentSlide);
     }
   }, [currentSlide]);
-  
+
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
@@ -130,44 +185,6 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
 
     fetchMaterials();
   }, []);
-
-  const handleClick = (id) => {
-    if (!isDragging) {
-      navigate(`/item-info/${id}`);
-    }
-  };
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 300,
-    slidesToShow: isMobile ? 1 : isTablet ? 2 : 3,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    arrows: false,
-    centerMode: true,
-    variableWidth: false,
-    swipeToSlide: true,
-    afterChange: (index) => {
-      setCurrentSlide(index);
-      setTimeout(() => setIsDragging(false), 100);
-    },
-    onSwipe: () => setIsDragging(true),
-    pauseOnHover: false,
-    responsive: [
-      { breakpoint: 1920, settings: { slidesToShow: 5 } },
-      { breakpoint: 1600, settings: { slidesToShow: 4 } },
-      { breakpoint: 1440, settings: { slidesToShow: 4 } },
-      { breakpoint: 1200, settings: { slidesToShow: 3 } },
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 992, settings: { slidesToShow: 3 } },
-      { breakpoint: 768, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 2 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } },
-      { breakpoint: 375, settings: { slidesToShow: 1 } },
-      { breakpoint: 320, settings: { slidesToShow: 1 } },
-    ],
-  };
 
   return (
     <StyledBox>

@@ -78,10 +78,17 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
   const sliderRef = useRef();
 
   const handleClick = (id) => {
+    // Introduce a small delay before navigating if not dragging
     if (!isDragging) {
-      navigate(`/item-info/${id}`);
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+      clickTimeout.current = setTimeout(() => {
+        navigate(`/item-info/${id}`);
+      }, 200); // Adjust the delay (in milliseconds) as needed
     }
   };
+
 
   const settings = {
     dots: true,
@@ -94,11 +101,22 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
     centerMode: true,
     variableWidth: false,
     swipeToSlide: true,
+    beforeChange: () => {
+      setIsDragging(true);
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+    },
     afterChange: (index) => {
       setCurrentSlide(index);
       setTimeout(() => setIsDragging(false), 100);
     },
-    onSwipe: () => setIsDragging(true),
+    onSwipe: () => {
+      setIsDragging(true);
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+    },
     pauseOnHover: false,
     responsive: [
       { breakpoint: 1920, settings: { slidesToShow: 5 } },
@@ -150,7 +168,9 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
   return (
     <StyledBox>
       <Container maxWidth="lg">
-        <Typography variant="h4" gutterBottom align="center" sx={{ textAlign: "center",
+        <Typography variant="h4" gutterBottom align="center" 
+        sx={{ 
+              textAlign: "center",
               // fontWeight: "bold",
               color: "#1E874A",
               position: "relative",
@@ -180,6 +200,7 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
                     display: "flex",
                     flexDirection: "column",
                     height: "100%",
+                    padding: 0,
                   }}
                 >
                   <ButtonBase
