@@ -54,6 +54,8 @@ const CartItemList = ({
     }
   };
 
+  console.log(cartItems);
+
   return (
     <CardContent
       sx={{
@@ -86,22 +88,55 @@ const CartItemList = ({
               py: 1,
               borderBottom: "1px solid #ddd",
               padding: 0,
+              userSelect: "none",
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
+            <Box
+              onClick={() => {
+                const availableItems = cartItems
+                  .filter(
+                    (item) =>
+                      item.status !== "Unavailable" &&
+                      (item.isDisplay === undefined || item.isDisplay === true)
+                  )
+                  .map((item) => item.id);
+
+                if (
+                  availableItems.length > 0 &&
+                  availableItems.every((id) => selectedItems.includes(id))
+                ) {
+                  setSelectedItems([]); // Deselect all
+                } else {
+                  setSelectedItems(availableItems); // Select only available items
+                }
+              }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                p: 1,
+                userSelect: "none",
+                cursor: "pointer",
+              }}
+            >
               <Checkbox
                 checked={
-                  selectedItems.length === cartItems.length &&
-                  cartItems.length > 0
+                  cartItems.filter(
+                    (item) =>
+                      item.status !== "Unavailable" &&
+                      (item.isDisplay === undefined || item.isDisplay === true)
+                  ).length > 0 &&
+                  cartItems
+                    .filter(
+                      (item) =>
+                        item.status !== "Unavailable" &&
+                        (item.isDisplay === undefined ||
+                          item.isDisplay === true)
+                    )
+                    .every((item) => selectedItems.includes(item.id))
                 }
-                onChange={() => {
-                  if (selectedItems.length === cartItems.length) {
-                    setSelectedItems([]); // Deselect all
-                  } else {
-                    setSelectedItems(cartItems.map((item) => item.id)); // Select all
-                  }
-                }}
+                onChange={() => {}} // Prevent default checkbox behavior
               />
+
               <Typography
                 sx={{
                   fontWeight: "bold",
@@ -130,7 +165,14 @@ const CartItemList = ({
           </Box>
 
           {/* Cart Items List */}
-          <Box sx={{ maxHeight: "500px", overflowY: "auto", pr: 1, p: 0 }}>
+          <Box
+            sx={{
+              maxHeight: "500px",
+              overflowY: "auto",
+              pr: 1,
+              p: 0,
+            }}
+          >
             {cartItems.map((item) => (
               <Box
                 key={item.id}
@@ -138,11 +180,23 @@ const CartItemList = ({
                 gridTemplateColumns="50px 1fr 50px"
                 alignItems="center"
                 p={1}
-                sx={{ borderBottom: "1px solid #ddd" }}
+                sx={{
+                  borderBottom: "1px solid #ddd",
+                  userSelect: "none",
+                  backgroundColor:
+                    item.status === "Unavailable" ||
+                    (item.isDisplay !== undefined && item.isDisplay === false)
+                      ? "grey.200"
+                      : "transparent",
+                }}
               >
                 {/* Checkbox for Selection */}
                 <Checkbox
                   checked={selectedItems.includes(item.id)}
+                  disabled={
+                    item.status === "Unavailable" ||
+                    (item.isDisplay !== undefined && item.isDisplay === false)
+                  }
                   onChange={() => toggleSelectItem(item.id)}
                 />
 
@@ -166,6 +220,7 @@ const CartItemList = ({
                         flexShrink: 0,
                         objectFit: "cover",
                         padding: 1,
+                        userSelect: "none",
                       }}
                       image={item.image}
                       alt={item.name}
@@ -181,7 +236,15 @@ const CartItemList = ({
                           color: "inherit",
                         }}
                       >
-                        {item.name}
+                        <>
+                          {item.name}{" "}
+                          {(item.status === "Unavailable" ||
+                            item.isDisplay === false) && (
+                            <span
+                              style={{ color: "red" }}
+                            >{`(Unavailable)`}</span>
+                          )}
+                        </>
                       </Typography>
 
                       <Typography variant="body2" color="textSecondary">
@@ -201,7 +264,15 @@ const CartItemList = ({
                       >
                         <IconButton
                           size="small"
-                          sx={{ color: "green", padding: "2px" }}
+                          disabled={
+                            item.status === "Unavailable" ||
+                            (item.isDisplay !== undefined &&
+                              item.isDisplay === false)
+                          }
+                          sx={{
+                            color: "green",
+                            padding: "2px",
+                          }}
                           onClick={() =>
                             handleInputChange(
                               item.id,
@@ -219,6 +290,11 @@ const CartItemList = ({
                             handleInputChange(item.id, e.target.value)
                           }
                           type="number"
+                          disabled={
+                            item.status === "Unavailable" ||
+                            (item.isDisplay !== undefined &&
+                              item.isDisplay === false)
+                          }
                           inputProps={{ min: 1, max: 99999, maxLength: 5 }}
                           variant="standard"
                           size="small"
@@ -226,6 +302,19 @@ const CartItemList = ({
                             width: "50px",
                             textAlign: "center",
                             padding: 0,
+                            userSelect: "none",
+                            pointerEvents:
+                              item.status === "Unavailable" ||
+                              (item.isDisplay !== undefined &&
+                                item.isDisplay === false)
+                                ? "none"
+                                : "auto",
+                            opacity:
+                              item.status === "Unavailable" ||
+                              (item.isDisplay !== undefined &&
+                                item.isDisplay === false)
+                                ? 0.5
+                                : 1,
                             "& .MuiInputBase-root": {
                               borderBottom: "none !important",
                               padding: "0 !important",
@@ -251,7 +340,15 @@ const CartItemList = ({
 
                         <IconButton
                           size="small"
-                          sx={{ color: "green", padding: "2px" }}
+                          disabled={
+                            item.status === "Unavailable" ||
+                            (item.isDisplay !== undefined &&
+                              item.isDisplay === false)
+                          }
+                          sx={{
+                            color: "green",
+                            padding: "2px",
+                          }}
                           onClick={() =>
                             handleInputChange(
                               item.id,

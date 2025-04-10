@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, Box, Collapse } from "@mui/material";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../config/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import CartItemList from "./CartItemList";
@@ -15,47 +15,72 @@ export default function ReqCart1() {
   const [loading, setLoading] = useState(true); // Add this line
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribers = [];
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setLoading(true); // Set loading to true before starting the fetch
+        setLoading(true);
         try {
           const userRef = doc(db, "User", user.uid);
           const userSnap = await getDoc(userRef);
 
           if (userSnap.exists()) {
             const userData = userSnap.data();
+
             if (Array.isArray(userData.cart) && userData.cart.length > 0) {
               const itemIds = userData.cart
                 .map((item) => item.itemId)
                 .filter(Boolean);
 
-              const fetchedItems = await Promise.all(
-                itemIds.map(async (itemId) => {
-                  const itemRef = doc(db, "Inventory", itemId);
-                  const itemSnap = await getDoc(itemRef);
+              const unsubscribeItemSnapshots = itemIds.map((itemId) => {
+                const itemRef = doc(db, "Inventory", itemId);
 
+                const unsubscribe = onSnapshot(itemRef, (itemSnap) => {
                   if (itemSnap.exists()) {
                     const itemData = itemSnap.data();
                     const matchingCartItem = userData.cart.find(
                       (cartItem) => cartItem.itemId === itemSnap.id
                     );
 
-                    return {
-                      id: itemSnap.id,
-                      name: itemData.title || "Unknown",
-                      image:
-                        itemData.imageUrl || "https://via.placeholder.com/150",
-                      quantity: matchingCartItem
-                        ? matchingCartItem.quantity
-                        : 1,
-                      type: itemData.type || "Unknown",
-                    };
-                  }
-                  return null;
-                })
-              );
+                    setCartItems((prevItems) => {
+                      const existingIndex = prevItems.findIndex(
+                        (item) => item.id === itemSnap.id
+                      );
 
-              setCartItems(fetchedItems.filter(Boolean));
+                      const newItem = {
+                        id: itemSnap.id,
+                        name: itemData.title || "Unknown",
+                        image:
+                          itemData.imageUrl ||
+                          "https://via.placeholder.com/150",
+                        quantity: matchingCartItem
+                          ? matchingCartItem.quantity
+                          : 1,
+                        status: itemData.status,
+                        isDisplay:
+                          itemData.isDisplay !== undefined
+                            ? itemData.isDisplay
+                            : undefined,
+                        type: itemData.type || "Unknown",
+                      };
+
+                      if (existingIndex !== -1) {
+                        // Replace the existing item
+                        const updatedItems = [...prevItems];
+                        updatedItems[existingIndex] = newItem;
+                        return updatedItems;
+                      } else {
+                        // Add new item
+                        return [...prevItems, newItem];
+                      }
+                    });
+                  }
+                });
+
+                return unsubscribe;
+              });
+
+              unsubscribers.push(...unsubscribeItemSnapshots);
             } else {
               console.log("Cart is empty.");
               setCartItems([]);
@@ -64,12 +89,16 @@ export default function ReqCart1() {
         } catch (error) {
           console.error("Error fetching cart items:", error);
         } finally {
-          setLoading(false); // Set loading to false after fetching
+          setLoading(false);
         }
       }
     });
 
-    return () => unsubscribe();
+    unsubscribers.push(unsubscribeAuth);
+
+    return () => {
+      unsubscribers.forEach((unsub) => unsub && unsub());
+    };
   }, []);
 
   const handleQuantityChange = (id, newQuantity) => {
@@ -178,6 +207,7 @@ export default function ReqCart1() {
               color: "#fff",
               borderTopLeftRadius: 8,
               borderTopRightRadius: 8,
+              userSelect: "none",
             }}
           />
           <CartItemList
