@@ -2,12 +2,14 @@ import MostViewed from "../../components/LandingPage/MostViewed";
 import ItemSort from "../../components/ItemSort/SearchFilterBar";
 import Library from "../../components/LandingPage/Library";
 import Navbar from "../../components/NavBar/Navbar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import FeaturedSection from "../../components/LandingPage/Featured";
 import Title from "../../components/LandingPage/Name";
 
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
@@ -38,8 +40,14 @@ export default function Home() {
         }}
       >
         <Title />
-        <FeaturedSection />
-        <MostViewed />
+        <FeaturedSection
+          currentSlide={currentSlide}
+          setCurrentSlide={setCurrentSlide}        
+        />
+        <MostViewed 
+          currentSlide={currentSlide}
+          setCurrentSlide={setCurrentSlide}        
+        />
         <ItemSort />
         <Library />
       </Box>

@@ -28,9 +28,45 @@ const StyledBox = styled(Box)(({ theme }) => ({
   width: "100%",
   paddingTop: theme.spacing(4),
   paddingBottom: theme.spacing(4),
+  "& .slick-dots": {
+        position: "absolute",
+        display: "flex",
+        justifyContent: "center", // Center the dots
+        listStyle: "none",
+        padding: 0,
+        margin: 0,
+      },
+      "& .slick-dots li": {
+        margin: "0px 16px", // Adjust horizontal spacing
+      },
+      "& .slick-dots li button": {
+        padding: 0,
+        border: "none",
+        background: "transparent",
+        width: "32px", // Smaller dot width
+        height: "8px", // Smaller dot height
+        borderRadius: "8px", // Make them circles
+      },
+      "& .slick-dots li button:before": {
+        content: '""',
+        display: "block",
+        width: "32px",
+        height: "8px",
+        background: theme.palette.grey[400], // Light grey color
+        transition: "all 0.3s ease",
+        borderRadius: "8px",
+        opacity: 0.6,
+      },
+      "& .slick-dots li.slick-active button:before": {
+        background: "#1E874A", // Primary color for active dot
+        width: "32px", // Slightly larger active dot
+        height: "8px",
+        opacity: 1,
+        borderRadius: "8px",
+      },
 }));
 
-const FeaturedSection = () => {
+const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
   const [featuredItems, setFeaturedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -39,24 +75,12 @@ const FeaturedSection = () => {
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const [isDragging, setIsDragging] = useState(false);
   const clickTimeout = useRef(null);
+  const sliderRef = useRef();
 
   const handleClick = (id) => {
     if (!isDragging) {
       navigate(`/item-info/${id}`);
     }
-  };
-
-  const handleSlideChange = () => {
-    setIsDragging(true);
-    if (clickTimeout.current) {
-      clearTimeout(clickTimeout.current);
-    }
-  };
-
-  const handleSlideAfterChange = () => {
-    clickTimeout.current = setTimeout(() => {
-      setIsDragging(false);
-    }, 200);
   };
 
   const settings = {
@@ -70,8 +94,11 @@ const FeaturedSection = () => {
     centerMode: true,
     variableWidth: false,
     swipeToSlide: true,
-    beforeChange: handleSlideChange,
-    afterChange: handleSlideAfterChange,
+    afterChange: (index) => {
+      setCurrentSlide(index);
+      setTimeout(() => setIsDragging(false), 100);
+    },
+    onSwipe: () => setIsDragging(true),
     pauseOnHover: false,
     responsive: [
       { breakpoint: 1920, settings: { slidesToShow: 5 } },
@@ -89,13 +116,19 @@ const FeaturedSection = () => {
   };
 
   useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(currentSlide);
+    }
+  }, [currentSlide]); 
+
+  useEffect(() => {
     const fetchFeaturedItems = async () => {
       setIsLoading(true);
       try {
         const featuredQuery = query(
           collection(db, "Inventory"),
-          where("isFeatured", "==", true)
-          // You can add orderBy and limit here if needed for featured items
+          where("isFeatured", "==", true),
+          limit(5)
         );
         const querySnapshot = await getDocs(featuredQuery);
         const items = querySnapshot.docs.map((doc) => ({
@@ -115,62 +148,19 @@ const FeaturedSection = () => {
   }, []);
 
   return (
-    <StyledBox
-      sx={{
-        "& .slick-dots": {
-          position: "absolute",
-          display: "flex",
-          justifyContent: "center", // Center the dots
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-        },
-        "& .slick-dots li": {
-          margin: "0px 16px", // Adjust horizontal spacing
-        },
-        "& .slick-dots li button": {
-          padding: 0,
-          border: "none",
-          background: "transparent",
-          width: "32px", // Smaller dot width
-          height: "8px", // Smaller dot height
-          borderRadius: "8px", // Make them circles
-        },
-        "& .slick-dots li button:before": {
-          content: '""',
-          display: "block",
-          width: "32px",
-          height: "8px",
-          background: theme.palette.grey[400], // Light grey color
-          transition: "all 0.3s ease",
-          borderRadius: "8px",
-          opacity: 0.6,
-        },
-        "& .slick-dots li.slick-active button:before": {
-          background: "#1E874A", // Primary color for active dot
-          width: "32px", // Slightly larger active dot
-          height: "8px",
-          opacity: 1,
-          borderRadius: "8px",
-        },
-      }}
-    >
+    <StyledBox>
       <Container maxWidth="lg">
-        <Typography
-          variant="h4"
-          gutterBottom
-          align="center"
-          sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            position: "relative",
-            zIndex: 2,
-            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            "@media (max-width: 600px)": {
-              fontSize: "2rem",
-            },
-          }}
-        >
+        <Typography variant="h4" gutterBottom align="center" sx={{ textAlign: "center",
+              // fontWeight: "bold",
+              color: "#1E874A",
+              position: "relative",
+              zIndex: 2,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              "@media (max-width: 600px)": {
+                fontSize: "2rem",
+              },
+              
+            }}>
           Featured Items
         </Typography>
         {isLoading ? (
@@ -178,7 +168,7 @@ const FeaturedSection = () => {
             <CircularProgress />
           </Box>
         ) : featuredItems.length > 0 ? (
-          <Slider {...settings}>
+          <Slider ref={sliderRef} {...settings}>
             {featuredItems.map((item) => (
               <Box key={item.id} sx={{ px: 1 }}>
                 <Card

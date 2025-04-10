@@ -1,23 +1,108 @@
 import React, { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
-import { Box, Typography } from "@mui/material";
+import {
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Container,
+  Box,
+  ButtonBase,
+  styled,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { db } from "../../config/firebaseConfig";
 import { collection, getDocs, orderBy, query, limit } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery, useTheme } from "@mui/material";
 
-const MostViewed = () => {
+const StyledBox = styled(Box)(({ theme }) => ({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  width: "100%",
+  overflow: "hidden",
+  backgroundImage: "url('/image.png')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(4),
+  "&::before": {
+    content: "''",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // Black overlay with 60% opacity
+    zIndex: 0,
+  },
+  "& > *": {
+    position: "relative",
+    zIndex: 1,
+  },
+  "& .slick-dots": {
+        position: "absolute",
+        display: "flex",
+        justifyContent: "center", // Center the dots
+        listStyle: "none",
+        padding: 0,
+        margin: 0,
+      },
+      "& .slick-dots li": {
+        margin: "0px 16px", // Adjust horizontal spacing
+      },
+      "& .slick-dots li button": {
+        padding: 0,
+        border: "none",
+        background: "transparent",
+        width: "32px", // Smaller dot width
+        height: "8px", // Smaller dot height
+        borderRadius: "8px", // Make them circles
+      },
+      "& .slick-dots li button:before": {
+        content: '""',
+        display: "block",
+        width: "32px",
+        height: "8px",
+        background: theme.palette.grey[400], // Light grey color
+        transition: "all 0.3s ease",
+        borderRadius: "8px",
+        opacity: 0.6,
+      },
+      "& .slick-dots li.slick-active button:before": {
+        background: "#1E874A", // Primary color for active dot
+        width: "32px", // Slightly larger active dot
+        height: "8px",
+        opacity: 1,
+        borderRadius: "8px",
+      },
+}));
+
+const MostViewed = ({ currentSlide, setCurrentSlide }) => {
   const [materials, setMaterials] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);//isLoading
   const navigate = useNavigate();
-  const [isDragging, setIsDragging] = useState(false);
-  const clickTimeout = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const [isDragging, setIsDragging] = useState(false);
+  const clickTimeout = useRef(null);
+  const sliderRef = useRef();
 
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(currentSlide);
+    }
+  }, [currentSlide]);
+  
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
@@ -52,33 +137,22 @@ const MostViewed = () => {
     }
   };
 
-  const handleSlideChange = () => {
-    setIsDragging(true);
-    if (clickTimeout.current) {
-      clearTimeout(clickTimeout.current);
-    }
-  };
-
-  const handleSlideAfterChange = () => {
-    clickTimeout.current = setTimeout(() => {
-      setIsDragging(false);
-    }, 200);
-  };
-
   const settings = {
     dots: true,
     infinite: true,
     speed: 300,
-    slidesToShow: isMobile ? 1 : 5,
+    slidesToShow: isMobile ? 1 : isTablet ? 2 : 3,
     autoplay: true,
     autoplaySpeed: 4000,
-    cssEase: "cubic-bezier(0.25, 0.1, 0.25, 1.0)",
     arrows: false,
-    centerMode: false,
+    centerMode: true,
     variableWidth: false,
     swipeToSlide: true,
-    beforeChange: handleSlideChange,
-    afterChange: handleSlideAfterChange,
+    afterChange: (index) => {
+      setCurrentSlide(index);
+      setTimeout(() => setIsDragging(false), 100);
+    },
+    onSwipe: () => setIsDragging(true),
     pauseOnHover: false,
     responsive: [
       { breakpoint: 1920, settings: { slidesToShow: 5 } },
@@ -96,235 +170,122 @@ const MostViewed = () => {
   };
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        maxWidth: "100%",
-        minHeight: "100vh",
-        backgroundImage: "url('/image.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        boxSizing: "border-box",
-        padding: "20px 0",
-        "@media (max-width: 1920px)": { padding: "20px 0" },
-        "@media (max-width: 1600px)": { padding: "25px 0" },
-        "@media (max-width: 1440px)": { padding: "30px 0" },
-        "@media (max-width: 1200px)": { padding: "35px 0" },
-        "@media (max-width: 1024px)": { padding: "40px 0" },
-        "@media (max-width: 992px)": { padding: "42px 0" },
-        "@media (max-width: 768px)": { padding: "45px 0" },
-        "@media (max-width: 600px)": { padding: "48px 0" },
-        "@media (max-width: 480px)": { padding: "50px 0" },
-        "@media (max-width: 375px)": { padding: "55px 0" },
-        "@media (max-width: 320px)": { padding: "60px 0" },
-        
-        // Added @media queries for landscape orientation to adjust padding
-        "@media (orientation: landscape) and (max-width: 1920px)": { padding: "18px 0" },
-        "@media (orientation: landscape) and (max-width: 1600px)": { padding: "22px 0" },
-        "@media (orientation: landscape) and (max-width: 1440px)": { padding: "26px 0" },
-        "@media (orientation: landscape) and (max-width: 1200px)": { padding: "30px 0" },
-        "@media (orientation: landscape) and (max-width: 1024px)": { padding: "34px 0" },
-        "@media (orientation: landscape) and (max-width: 992px)": { padding: "36px 0" },
-        "@media (orientation: landscape) and (max-width: 768px)": { padding: "38px 0" },
-        "@media (orientation: landscape) and (max-width: 600px)": { padding: "40px 0" },
-        "@media (orientation: landscape) and (max-width: 480px)": { padding: "42px 0" },
-        "@media (orientation: landscape) and (max-width: 375px)": { padding: "44px 0" },
-        "@media (orientation: landscape) and (max-width: 320px)": { padding: "46px 0" },
-        
-        "& .slick-dots": {
-          position: "absolute",
-          display: "flex",
-          justifyContent: "space-between",
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-        },
-        "& .slick-dots li": {
-          margin: "0px 16px",
-        },
-        "& .slick-dots li button": {
-          padding: 0,
-          border: "none",
-          background: "transparent",
-          width: "32px",
-          height: "8px",
-          borderRadius: "8px",
-        },
-        "& .slick-dots li button:before": {
-          content: '""',
-          display: "block",
-          width: "32px",
-          height: "8px",
-          background: "#fff",
-          transition: "all 0.3s ease",
-          borderRadius: "8px",
-          opacity: 0.6,
-        },
-        "& .slick-dots li.slick-active button:before": {
-          width: "32px",
-          height: "8px",
-          background: "#1E874A",
-          opacity: 1,
-          borderRadius: "8px",
-        },
-      }}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.6)",
-          zIndex: 1,
-        }}
-      />
-      {isDragging && (
-        <Box
+    <StyledBox>
+      <Container maxWidth="lg">
+        <Typography
+          variant="h4"
+          gutterBottom
+          align="center"
           sx={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            zIndex: 3,
-            pointerEvents: "none",
+            textAlign: "center",
+            // fontWeight: "bold",
+            color: "#fff",
+            position: "relative",
+            zIndex: 2,
+            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+            "@media (max-width: 600px)": {
+              fontSize: "2rem",
+            },
           }}
-        />
-      )}
-      <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-          <Typography
-            variant="h3"
-            component="h2"
-            sx={{
-              color: "#fff",
-              textAlign: "center",
-              fontWeight: "bold",
-              position: "relative",
-              zIndex: 2,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-              "@media (max-width: 600px)": {
-                fontSize: "2rem",
-              },
-            }}
-          >
-            Most Viewed
-          </Typography>
-        </Box>
+        >
+          Most Viewed
+        </Typography>
 
         {loading ? (
-          <Typography sx={{ color: "white", position: "relative", zIndex: 2 }}>
-            Loading...
-          </Typography>
-        ) : (
-          <Box sx={{//Sizes for screens showing image carousel
-              width: "80%", // Default width
-              position: "relative",
-              zIndex: 2,
-              "@media (max-width: 1920px)": { width: "80%", },
-              "@media (max-width: 1600px)": { width: "90%", },
-              "@media (max-width: 1440px)": { width: "90%", },
-              "@media (max-width: 1200px)": { width: "90%", },
-              "@media (max-width: 1024px)": { width: "90%", },
-              "@media (max-width: 992px)": { width: "90%", },
-              "@media (max-width: 768px)": { width: "90%", },
-              "@media (max-width: 600px)": { width: "78%", },
-              "@media (max-width: 480px)": { width: "78%", },
-              "@media (max-width: 375px)": { width: "80%", },
-              "@media (max-width: 320px)": { width: "90%", },
-              
-              // Added @media queries for landscape orientation to adjust width
-              "@media (orientation: landscape) and (max-width: 1920px)": { width: "75%" },
-              "@media (orientation: landscape) and (max-width: 1600px)": { width: "85%" },
-              "@media (orientation: landscape) and (max-width: 1440px)": { width: "85%" },
-              "@media (orientation: landscape) and (max-width: 1200px)": { width: "85%" },
-              "@media (orientation: landscape) and (max-width: 1024px)": { width: "85%" },
-              "@media (orientation: landscape) and (max-width: 992px)": { width: "85%" },
-              "@media (orientation: landscape) and (max-width: 768px)": { width: "85%" },
-              "@media (orientation: landscape) and (max-width: 600px)": { width: "73%" },
-              "@media (orientation: landscape) and (max--width: 480px)": { width: "73%" },
-              "@media (orientation: landscape) and (max-width: 375px)": { width: "75%" },
-              "@media (orientation: landscape) and (max-width: 320px)": { width: "85%" },
-            }}>
-            <Slider {...settings}>
-              {materials.map((material) => (
-                <Box
-                  key={material.id}
+          <Box display="flex" justifyContent="center">
+            <CircularProgress sx={{ color: "#fff" }} />
+          </Box>
+        ) : materials.length > 0 ? (
+          <Slider ref={sliderRef} {...settings}>
+            {materials.map((material) => (
+              <Box key={material.id} sx={{ px: 1 }}>
+                <Card
+                  elevation={3}
                   sx={{
+                    margin: "12px",
+                    transition: "transform 0.2s ease-in-out",
+                    "&:hover": { transform: "scale(1.03)" },
                     display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: "10px",
-                    boxSizing: "border-box",
-                    margin: "0",
+                    flexDirection: "column",
+                    height: "100%",
+                    position: "relative",
                   }}
                 >
-                  <a
+                  <ButtonBase
                     onClick={() => handleClick(material.id)}
-                    style={{
-                      textDecoration: "none",
-                      position: "relative",
+                    sx={{
                       display: "block",
                       width: "100%",
-                      cursor: "pointer",
+                      flexGrow: 1,
+                      flexDirection: "column",
+                      alignItems: "stretch",
                     }}
                   >
                     <Box
                       sx={{
-                        position: "absolute",
-                        top: 10,
-                        left: 10,
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        borderRadius: "4px",
-                        px: 1,
-                        py: 0.5,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
-                      <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
-                        {material.views}
-                      </Typography>
-                    </Box>
-
-                    <Box
-                      sx={{
-                        height: isMobile ? "" : "100%",
+                        position: "relative",
                         width: "100%",
-                        aspectRatio: isMobile ? "9 / 16" : "9 / 16",
+                        aspectRatio: "9 / 16",
                         overflow: "hidden",
-                        borderRadius: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                        borderRadius: "8px 8px 0 0",
                       }}
                     >
-                      <img
-                        id={material.id}
-                        src={material.src}
+                      <CardMedia
+                        component="img"
+                        image={material.src}
                         alt={material.itemName}
-                        style={{
+                        sx={{
+                          objectFit: "cover",
                           width: "100%",
                           height: "100%",
-                          objectFit: "cover",
-                          borderRadius: "8px",
                         }}
                       />
+
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 10,
+                          left: 10,
+                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                          borderRadius: "4px",
+                          px: 1,
+                          py: 0.5,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          zIndex: 2,
+                        }}
+                      >
+                        <VisibilityIcon sx={{ fontSize: "16px", color: "white" }} />
+                        <Typography variant="body2" sx={{ color: "#fff", fontWeight: "bold" }}>
+                          {material.views}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </a>
-                </Box>
-              ))}
-            </Slider>
-          </Box>
+                  </ButtonBase>
+                </Card>
+              </Box>
+            ))}
+          </Slider>
+        ) : (
+          <Typography variant="body1" align="center" sx={{ color: "#fff" }}>
+            No most viewed items found.
+          </Typography>
         )}
-      </Box>
-    </Box>
+
+        {isDragging && (
+          <Box
+            sx={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              zIndex: 3,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+      </Container>
+    </StyledBox>
   );
 };
 
