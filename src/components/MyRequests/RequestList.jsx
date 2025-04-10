@@ -58,7 +58,6 @@ function RequestItemSummary({ item }) {
         <Box
           component="img"
           sx={{
-            borderRadius: 1,
             mr: 1,
             width: 60,
             height: 90,

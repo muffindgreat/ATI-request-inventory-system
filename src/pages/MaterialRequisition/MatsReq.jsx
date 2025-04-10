@@ -9,6 +9,7 @@ import {
   Divider,
   Grid,
   Container,
+  Autocomplete,
 } from "@mui/material";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import BackgroundImage from "../../components/UI/BackgroundImage";
@@ -52,6 +53,19 @@ const MatsReq = () => {
   const [availableEmails, setAvailableEmails] = useState([]);
 
   const showToast = useToast();
+
+  const programOptions = [
+    "Regular",
+    "Rice",
+    "NUPAP",
+    "CFIDP",
+    "Livestock",
+    "Corn",
+    "Organic Agriculture",
+    "HVCDP",
+    "RCEF",
+    "Various Programs",
+  ];
 
   useEffect(() => {
     const fetchavailableEmails = async () => {
@@ -111,7 +125,7 @@ const MatsReq = () => {
     setFormData({ ...formData, [id]: value });
   };
 
-  console.log(formData.materialRequested);
+  // console.log(formData.materialRequested);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -262,15 +276,21 @@ const MatsReq = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Program"
-                    variant="outlined"
-                    id="program"
-                    value={formData.program}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    required
-                    fullWidth
+                  <Autocomplete
+                    options={programOptions}
+                    value={formData.program || null}
+                    onChange={(e, newValue) => {
+                      setFormData({ ...formData, program: newValue });
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Program"
+                        variant="outlined"
+                        required
+                        fullWidth
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
