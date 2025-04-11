@@ -14,8 +14,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
     left: 0,
     width: "100%",
     height: "100%",
-    background: "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3))",
-
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
     zIndex: 1,
   },
   padding: theme.spacing(5, 2),
