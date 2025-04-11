@@ -16,6 +16,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 import RequestList from "../../components/MyRequests/RequestList";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
@@ -28,7 +29,7 @@ export default function MyRequests() {
   const [loading, setLoading] = useState(true);
 
   const handleChange = (event, newIndex) => setTabIndex(newIndex);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -104,6 +105,8 @@ export default function MyRequests() {
         }
       } else {
         console.log("⚠️ No user is currently logged in.");
+        setLoading(false);
+        navigate("/login");
       }
     });
 

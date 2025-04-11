@@ -14,10 +14,11 @@ const StyledBox = styled(Box)(({ theme }) => ({
     left: 0,
     width: "100%",
     height: "100%",
-    background: "linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.4))",
+    background: "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3))",
+
     zIndex: 1,
   },
-  padding: theme.spacing(2, 2),
+  padding: theme.spacing(5, 2),
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -26,60 +27,117 @@ const StyledBox = styled(Box)(({ theme }) => ({
   textAlign: "center",
 }));
 
-const AtisLogo = styled("img")(({ theme }) => ({
+// Logos
+const KoobLogo = styled("img")(({ theme }) => ({
   height: 100,
   position: "relative",
   zIndex: 2,
-  marginBottom: theme.spacing(1.5),
+  margin: 0, // removed extra spacing
+  padding: 0, // just in case
   [theme.breakpoints.down("sm")]: {
-    height: 50,
+    height: 100,
   },
 }));
 
-const TitleTextContainer = styled(Box)({
+const AtisLogo = styled("img")(({ theme }) => ({
+  height: 50,
+  position: "relative",
+  zIndex: 2,
+  marginRight: theme.spacing(1),
+  [theme.breakpoints.down("sm")]: {
+    height: 40,
+  },
+}));
+
+// Title container
+const TitleTextContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  alignItems: "center",
+  alignItems: "flex",
   color: "white",
   position: "relative",
   zIndex: 2,
-});
+  [theme.breakpoints.down("sm")]: {
+    alignItems: "center",
+  },
+}));
 
-const StyledTitle = styled(Typography)({
-  fontFamily: "'Lato', sans-serif",
+const TitleRow = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  marginBottom: theme.spacing(1),
+}));
+
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  fontFamily: "Montserrat, sans-serif",
   fontWeight: 400,
   color: "white",
   lineHeight: 1.2,
-  fontSize: "clamp(1.2rem, 4vw, 2rem)",
-});
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "1.5rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    fontSize: "2.5rem",
+  },
+}));
 
-const StyledTitle1 = styled(Typography)({
-  fontFamily: "'Lato', sans-serif",
+const StyledTitle1 = styled(Typography)(({ theme }) => ({
+  fontFamily: "Montserrat, sans-serif",
   fontWeight: 600,
   color: "white",
   lineHeight: 1.2,
-  fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
-});
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "2.5rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    fontSize: "3rem",
+  },
+}));
 
 const StyledSubtitle = styled(Typography)(({ theme }) => ({
-  fontFamily: "'Lato', sans-serif",
+  fontFamily: "Montserrat, sans-serif",
   color: "white",
   marginTop: theme.spacing(0),
   position: "relative",
   zIndex: 2,
-  fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)",
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "1rem",
+  },
+  [theme.breakpoints.up("md")]: {
+    fontSize: "1.2rem",
+  },
 }));
 
+// Main Component
 const Title = () => {
   return (
     <StyledBox>
-      <AtisLogo src="/atis.png" alt="ATI Logo" />
-      <TitleTextContainer>
-        <StyledTitle variant="h2">Agricultural Training Institute</StyledTitle>
-        <StyledTitle variant="h2">CALABARZON</StyledTitle>
-        <StyledTitle1 variant="h2">e-Library</StyledTitle1>
-      </TitleTextContainer>
+      {/* Top logo row */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 0, // no space between KoobLogo and title
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        {/* <KoobLogo src="/koob.png" alt="Koob Logo" /> */}
+        <TitleTextContainer>
+          <TitleRow>
+            <AtisLogo src="/atis.png" alt="ATI Logo" />
+            <StyledTitle variant="h2">
+              Agricultural Training Institute CALABARZON
+            </StyledTitle>
+          </TitleRow>
+          <StyledTitle1 variant="h2">E-Library</StyledTitle1>
+        </TitleTextContainer>
+      </Box>
+
+      {/* Subtitle below */}
       <StyledSubtitle variant="subtitle1">
         Your online portal to agricultural knowledge and learning materials.
       </StyledSubtitle>
