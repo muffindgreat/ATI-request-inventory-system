@@ -18,12 +18,12 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
     zIndex: 1,
   },
-  padding: theme.spacing(10, 2),
+  padding: theme.spacing(5, 2),
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  rowGap: theme.spacing(2),
+  rowGap: theme.spacing(1),
   textAlign: "center",
 }));
 
