@@ -8,7 +8,7 @@ import FeaturedSection from "../../components/LandingPage/Featured";
 import Title from "../../components/LandingPage/Name";
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  // const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -45,12 +45,12 @@ export default function Home() {
       >
         <Title />
         <FeaturedSection
-          currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}        
+          // currentSlide={currentSlide}
+          // setCurrentSlide={setCurrentSlide}        
         />
         <MostViewed 
-          currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}        
+          // currentSlide={currentSlide}
+          // setCurrentSlide={setCurrentSlide}        
         />
         <ItemSort />
         <Library />
