@@ -34,7 +34,7 @@ export default function Home() {
       <Box
         sx={{
           marginTop: {
-            xs: "56px", // Adjust for smaller screens (e.g., mobile)
+            xs: "72px", // Adjust for smaller screens (e.g., mobile)
             sm: "94px", // Default for larger screens
           },
           // paddingTop: { // Add paddingTop to create space below Navbar
