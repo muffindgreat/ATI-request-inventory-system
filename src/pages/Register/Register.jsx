@@ -4,6 +4,7 @@ import {
   Button,
   Box,
   Typography,
+  Divider,
   Link,
   Card,
   IconButton,
@@ -212,6 +213,7 @@ export default function Register() {
               )}
             </Button>
           </form>
+          <Divider sx={{ my: 2, borderBottomWidth: 2 }} />
           <Typography variant="body2">
             Already have an account?{" "}
             <Link href="/login" color="primary">
