@@ -14,15 +14,16 @@ const StyledBox = styled(Box)(({ theme }) => ({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    background: "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3))",
+
     zIndex: 1,
   },
-  padding: theme.spacing(10, 2),
+  padding: theme.spacing(5, 2),
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  rowGap: theme.spacing(2),
+  rowGap: theme.spacing(1),
   textAlign: "center",
 }));
 
@@ -53,7 +54,7 @@ const TitleTextContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  alignItems: "flex-start",
+  alignItems: "flex",
   color: "white",
   position: "relative",
   zIndex: 2,
@@ -83,7 +84,7 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
 
 const StyledTitle1 = styled(Typography)(({ theme }) => ({
   fontFamily: "Montserrat, sans-serif",
-  fontWeight: 700,
+  fontWeight: 600,
   color: "white",
   lineHeight: 1.2,
   [theme.breakpoints.down("sm")]: {
@@ -124,11 +125,11 @@ const Title = () => {
           zIndex: 2,
         }}
       >
-        <KoobLogo src="/koob.png" alt="Koob Logo" />
+        {/* <KoobLogo src="/koob.png" alt="Koob Logo" /> */}
         <TitleTextContainer>
           <TitleRow>
             <AtisLogo src="/atis.png" alt="ATI Logo" />
-            <StyledTitle variant="h2">ATI-CALABARZON</StyledTitle>
+            <StyledTitle variant="h2">ATI CALABARZON</StyledTitle>
           </TitleRow>
           <StyledTitle1 variant="h2">E-Library</StyledTitle1>
         </TitleTextContainer>
