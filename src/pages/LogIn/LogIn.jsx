@@ -203,7 +203,7 @@ export default function LogIn() {
           </form>
           <Typography
             variant="body2"
-            sx={{ cursor: "pointer", mb: 2 }}
+            sx={{ cursor: "pointer", mb: 1, mt: 1, display: "inline-block" }}
             color="primary"
             onClick={openForgotPasswordModal} // Use separate function to handle modal opening
           >
