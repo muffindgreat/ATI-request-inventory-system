@@ -3,7 +3,7 @@ import { Typography, Box, styled } from "@mui/material";
 
 // Background wrapper
 const StyledBox = styled(Box)(({ theme }) => ({
-  backgroundImage: `url('/books.jpg')`,
+  backgroundImage: `url('/pic.jpg')`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   position: "relative",
