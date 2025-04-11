@@ -7,7 +7,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { auth, db } from "../../config/firebaseConfig";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 import RequestList from "../../components/MyRequests/RequestList";
@@ -25,34 +32,34 @@ export default function MyRequests() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log("✅ User logged in:", user.email);
         try {
           const q = query(
             collection(db, "Request"),
             where("email", "==", user.email)
           );
           const querySnapshot = await getDocs(q);
+          console.log(
+            "📦 Fetched request documents:",
+            querySnapshot.docs.length
+          );
 
           const fetchedRequests = await Promise.all(
-            querySnapshot.docs.map(async (doc) => {
-              const data = doc.data();
+            querySnapshot.docs.map(async (requestDoc) => {
+              const data = requestDoc.data();
+              console.log("🔍 Request data:", data);
 
-              // Fetch inventory details for each requested material
               const materials = await Promise.all(
                 (data.materialRequested || []).map(async (mat) => {
-                  const inventoryQuery = query(
-                    collection(db, "Inventory"),
-                    where("title", "==", mat.title) // Match material with inventory
-                  );
-                  const inventorySnapshot = await getDocs(inventoryQuery);
-                  const inventoryDoc = inventorySnapshot.docs[0];
-                  const inventoryData =
-                    inventorySnapshot.docs.length > 0
-                      ? inventorySnapshot.docs[0].data()
-                      : {};
+                  const inventoryRef = doc(db, "Inventory", mat.itemID); // ✅ now this won't break
+                  const inventorySnap = await getDoc(inventoryRef);
+                  const inventoryData = inventorySnap.exists()
+                    ? inventorySnap.data()
+                    : {};
 
                   return {
-                    id: inventoryDoc?.id || null,
-                    name: mat.title,
+                    id: mat.itemID,
+                    name: inventorySnap.data()?.title,
                     type: mat.type,
                     quantity: mat.quantity,
                     imageUrl:
@@ -64,7 +71,7 @@ export default function MyRequests() {
               );
 
               return {
-                id: doc.id,
+                id: requestDoc.id,
                 reqNo: data.reqNo,
                 status: data.status,
                 date: data.date?.toDate
@@ -80,22 +87,24 @@ export default function MyRequests() {
                 receivedDate: data.receivedDate?.toDate
                   ? data.receivedDate.toDate().toLocaleString()
                   : "",
-
                 purpose: data.purpose || "",
                 program: data.program || "",
                 section: data.section || "",
                 remarks: data.remarks || "",
-                materials, // Updated with Inventory Data
+                materials,
               };
             })
           );
 
+          console.log("✅ Final processed requests:", fetchedRequests);
           setAllRequests(fetchedRequests);
         } catch (err) {
-          console.error("Error fetching requests:", err);
+          console.error("❌ Error fetching requests:", err);
         } finally {
           setLoading(false);
         }
+      } else {
+        console.log("⚠️ No user is currently logged in.");
       }
     });
 
