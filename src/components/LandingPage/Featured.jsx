@@ -328,10 +328,7 @@ const FeaturedSection = () => {
   </DialogContent>
 </Dialog>
 
-
-
-
-                {/* // Optional for viewing video
+                {/* // for viewing video
                 // {openImage?.endsWith(".mp4") ? (
                 //   <video
                 //     src={openImage}
