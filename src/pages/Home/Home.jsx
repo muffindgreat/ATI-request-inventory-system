@@ -35,8 +35,12 @@ export default function Home() {
         sx={{
           marginTop: {
             xs: "56px", // Adjust for smaller screens (e.g., mobile)
-            sm: "64px", // Default for larger screens
+            sm: "94px", // Default for larger screens
           },
+          // paddingTop: { // Add paddingTop to create space below Navbar
+          //   xs: "56px",
+          //   sm: "64px",
+          // },
         }}
       >
         <Title />
