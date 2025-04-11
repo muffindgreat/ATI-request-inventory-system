@@ -18,12 +18,28 @@ import { Link } from "react-router-dom";
 
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
-export default function RequestList({ items }) {
+import { useState, useEffect } from "react";
+
+export default function RequestList({ items, tabIndex }) {
+  const [expandedIndex, setExpandedIndex] = useState(null);
+
+  // Reset expanded when tabIndex changes
+  useEffect(() => {
+    setExpandedIndex(null);
+  }, [tabIndex]);
+
   return (
     <Box sx={{ mt: 2, width: "100%", overflow: "hidden" }}>
       {items.length > 0 ? (
         items.map((item, index) => (
-          <Accordion key={index} sx={{ my: 1, borderRadius: 2 }}>
+          <Accordion
+            key={index}
+            expanded={expandedIndex === index}
+            onChange={() =>
+              setExpandedIndex(expandedIndex === index ? null : index)
+            }
+            sx={{ my: 1, borderRadius: 2 }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               sx={{ width: "100%" }}

@@ -32,22 +32,16 @@ export default function MyRequests() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log("✅ User logged in:", user.email);
         try {
           const q = query(
             collection(db, "Request"),
             where("email", "==", user.email)
           );
           const querySnapshot = await getDocs(q);
-          console.log(
-            "📦 Fetched request documents:",
-            querySnapshot.docs.length
-          );
 
           const fetchedRequests = await Promise.all(
             querySnapshot.docs.map(async (requestDoc) => {
               const data = requestDoc.data();
-              console.log("🔍 Request data:", data);
 
               const materials = await Promise.all(
                 (data.materialRequested || []).map(async (mat) => {
@@ -96,8 +90,13 @@ export default function MyRequests() {
             })
           );
 
-          console.log("✅ Final processed requests:", fetchedRequests);
-          setAllRequests(fetchedRequests);
+          setAllRequests(
+            fetchedRequests.sort((a, b) => {
+              const dateA = new Date(a.date);
+              const dateB = new Date(b.date);
+              return dateB - dateA; // newest first
+            })
+          );
         } catch (err) {
           console.error("❌ Error fetching requests:", err);
         } finally {
@@ -150,6 +149,7 @@ export default function MyRequests() {
               ) : (
                 <RequestList
                   items={requestMap[tabIndex] || []}
+                  tabIndex={tabIndex}
                   sx={{ py: 5 }}
                 />
               )}

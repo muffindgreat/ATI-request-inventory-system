@@ -28,6 +28,7 @@ export default function RequestTabs({ tabIndex, handleChange }) {
         ".Mui-selected": {
           backgroundColor: "#78B99E",
           color: "#1A854B",
+          fontWeight: "bold",
         },
       }}
     >
