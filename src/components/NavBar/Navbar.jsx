@@ -43,6 +43,7 @@ function Navbar() {
         backgroundColor: "white",
         boxShadow: "none",
         padding: isMobile ? "8px 0" : "15px 0",
+        fontFamily: "'Lato', sans-serif", // Apply font to AppBar
       }}
     >
       <Container maxWidth="xl">
@@ -50,11 +51,19 @@ function Navbar() {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            px: isMobile ? 0 : 4, // Padding left & right
+            px: isMobile ? 0 : 4,
+            fontFamily: "'Lato', sans-serif", // Apply font to Toolbar
           }}
         >
-          {/* Responsive Logo */}
-          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+          {/* Logo */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexGrow: 1,
+              fontFamily: "'Lato', sans-serif", // Apply font to Box
+            }}
+          >
             <img
               src={navLogo}
               alt="Logo"
@@ -67,11 +76,18 @@ function Navbar() {
             />
           </Box>
 
-          {/* Navbar Home - Always Visible */}
+          {/* Navbar Home */}
           {!isTablet && <NavbarHome />}
 
-          {/* Right Side Controls */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          {/* Right-side Controls */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              fontFamily: "'Lato', sans-serif", // Apply font here
+            }}
+          >
             {isAuthenticated ? (
               <>
                 <NavbarCart />
@@ -87,7 +103,10 @@ function Navbar() {
                 variant="text"
                 color="success"
                 onClick={() => navigate("/login")}
-                sx={{ fontWeight: "bold" }}
+                sx={{
+                  fontWeight: "bold",
+                  fontFamily: "'Lato', sans-serif", // Font for login button
+                }}
               >
                 Login
               </Button>
@@ -96,7 +115,6 @@ function Navbar() {
         </Toolbar>
       </Container>
 
-      {/* Show drawer only if logged in */}
       {isAuthenticated && (
         <NavbarDrawer
           mobileOpen={mobileOpen}

@@ -89,6 +89,7 @@ function NavbarProfile() {
             borderRadius: "10px",
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             minWidth: "250px",
+            fontFamily: "'Lato', sans-serif", // Apply Lato font globally to menu
           },
         }}
       >
@@ -114,11 +115,19 @@ function NavbarProfile() {
           <Box>
             <Typography
               variant="subtitle1"
-              sx={{ color: "#1A854B", fontWeight: "bold" }}
+              sx={{
+                color: "#1A854B",
+                fontWeight: "bold",
+                fontFamily: "'Lato', sans-serif",
+              }}
             >
               {userData?.name || "User Name"}
             </Typography>
-            <Typography variant="body2" color="gray">
+            <Typography
+              variant="body2"
+              color="gray"
+              sx={{ fontFamily: "'Lato', sans-serif" }}
+            >
               {userData?.role || "User Role"}
             </Typography>
           </Box>
@@ -130,7 +139,12 @@ function NavbarProfile() {
             navigate("/user-profile");
             handleCloseUserMenu();
           }}
-          sx={{ color: "#1A854B", paddingY: "10px", paddingX: "16px" }}
+          sx={{
+            color: "#1A854B",
+            paddingY: "10px",
+            paddingX: "16px",
+            fontFamily: "'Lato', sans-serif", // Apply Lato font to menu items
+          }}
         >
           <PersonIcon sx={{ color: "#1A854B", marginRight: "12px" }} /> Profile
         </MenuItem>
@@ -140,7 +154,12 @@ function NavbarProfile() {
             navigate("/my-requests");
             handleCloseUserMenu();
           }}
-          sx={{ color: "#1A854B", paddingY: "10px", paddingX: "16px" }}
+          sx={{
+            color: "#1A854B",
+            paddingY: "10px",
+            paddingX: "16px",
+            fontFamily: "'Lato', sans-serif", // Apply Lato font to menu items
+          }}
         >
           <AssignmentIcon sx={{ color: "#1A854B", marginRight: "12px" }} /> My
           Requests
@@ -148,7 +167,12 @@ function NavbarProfile() {
 
         <MenuItem
           onClick={handleSignOut}
-          sx={{ color: "#1A854B", paddingY: "10px", paddingX: "16px" }}
+          sx={{
+            color: "#1A854B",
+            paddingY: "10px",
+            paddingX: "16px",
+            fontFamily: "'Lato', sans-serif", // Apply Lato font to menu items
+          }}
         >
           <ExitToAppIcon sx={{ color: "#2e7d32", marginRight: "12px" }} /> Sign
           Out

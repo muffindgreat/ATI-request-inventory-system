@@ -10,7 +10,7 @@ const FilterButton = ({ onFilter }) => {
   const handleClose = () => setAnchorEl(null);
 
   const handleFilter = (order) => {
-    onFilter(order); // Pass sorting order up
+    onFilter(order);
     handleClose();
   };
 
@@ -26,16 +26,35 @@ const FilterButton = ({ onFilter }) => {
           ml: isMobile ? 0 : 1,
           transition: "background-color 0.3s",
           "&:hover": {
-            bgcolor: "#9ACD32", // ✅ Yellow-green hover effect
+            bgcolor: "#9ACD32",
           },
         }}
       >
         <FilterListIcon fontSize={isMobile ? "small" : "medium"} />
       </IconButton>
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem onClick={() => handleFilter("asc")}>A - Z</MenuItem>
-        <MenuItem onClick={() => handleFilter("desc")}>Z - A</MenuItem>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            fontFamily: "'Lato', sans-serif",
+          },
+        }}
+      >
+        <MenuItem
+          onClick={() => handleFilter("asc")}
+          sx={{ fontFamily: "'Lato', sans-serif" }}
+        >
+          A - Z
+        </MenuItem>
+        <MenuItem
+          onClick={() => handleFilter("desc")}
+          sx={{ fontFamily: "'Lato', sans-serif" }}
+        >
+          Z - A
+        </MenuItem>
       </Menu>
     </>
   );
