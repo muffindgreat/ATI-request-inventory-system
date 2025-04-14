@@ -13,6 +13,7 @@ import LogIn from "./pages/LogIn/LogIn";
 import Register from "./pages/Register/Register";
 import Navbar from "./components/NavBar/Navbar";
 import MyRequests from "./pages/MyRequests/MyRequests";
+import MyRequests1 from "./pages/MyRequests/MyRequests1";
 import ItemInfo from "./pages/ItemInfo/ItemInfo";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import RequestCart from "./pages/RequestCart/RequestCart1";
@@ -70,6 +71,7 @@ function Layout() {
             <Route element={<ProtectedRoute isProtected={true} />}>
               <Route path="/request-cart" element={<RequestCart />} />
               <Route path="/my-requests" element={<MyRequests />} />
+              <Route path="/my-requests-1" element={<MyRequests1 />} />
               <Route path="/user-profile" element={<UserProfile />} />
               <Route path="/material-request-form" element={<MatsReq />} />
             </Route>
