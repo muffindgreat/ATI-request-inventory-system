@@ -156,8 +156,7 @@ const MostViewed = () => {
       try {
         const materialsQuery = query(
           collection(db, "Inventory"),
-          orderBy("views", "desc"),
-          limit(5)
+          orderBy("views", "desc")
         );
         const querySnapshot = await getDocs(materialsQuery);
 
@@ -172,7 +171,8 @@ const MostViewed = () => {
               itemName: data.title,
             };
           })
-          .filter((item) => item !== null);
+          .filter((item) => item !== null)
+          .slice(0, 5);
 
         setMaterials(imageList);
       } catch (error) {
