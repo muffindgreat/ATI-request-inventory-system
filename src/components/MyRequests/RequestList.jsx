@@ -89,7 +89,7 @@ function RequestItemSummary({ item }) {
       )}
 
       {/* Material Info */}
-      <Box sx={{ flexGrow: 1, ml: 1 }}>
+      <Box sx={{ flexGrow: 1, mx: 1 }}>
         <Box>
           <Typography
             component={Link}
