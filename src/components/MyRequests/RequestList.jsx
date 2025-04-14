@@ -68,7 +68,7 @@ function RequestItemSummary({ item }) {
   const additionalCount = item.materials.length - 1; // Calculate additional items
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", p: 2, width: "100%" }}>
+    <Box sx={{ display: "flex", alignItems: "center", p: 1, width: "100%" }}>
       {/* Material Image */}
       {firstMaterial && (
         <Box
@@ -198,7 +198,7 @@ function RequestMaterials({ materials }) {
         <Box key={index}>
           {index > 0 && <Divider sx={{ my: 1 }} />}
 
-          <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 1 }}>
             <Box
               component="img"
               sx={{
@@ -208,7 +208,6 @@ function RequestMaterials({ materials }) {
                 height: 90,
                 minWidth: 60,
                 minHeight: 90,
-                borderRadius: 1,
                 flexShrink: 0,
                 objectFit: "cover",
               }}
@@ -342,7 +341,7 @@ function RequestDetails({ item }) {
   ];
 
   return (
-    <Box sx={{ my: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+    <Box sx={{ p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
       <Stack spacing={1}>
         {statusStages.map(({ key, label, icon, show }) =>
           show !== false ? (
