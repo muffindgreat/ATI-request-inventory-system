@@ -46,7 +46,9 @@ export default function RequestList({ items, tabIndex }) {
             >
               <RequestItemSummary item={item} />
             </AccordionSummary>
-            <AccordionDetails sx={{ bgcolor: "#f9f9f9", borderRadius: 2 }}>
+            <AccordionDetails
+              sx={{ p: 2, bgcolor: "#f9f9f9", borderRadius: 2 }}
+            >
               {item.materials.length > 1 && (
                 <RequestMaterials materials={item.materials.slice(1)} />
               )}
