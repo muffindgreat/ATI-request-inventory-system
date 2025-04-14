@@ -34,7 +34,9 @@ const CategoryDropdown = ({ onSelect }) => {
   };
 
   return (
-    <FormControl sx={{ width: "250px", height: "45px" }}>
+    <FormControl
+      sx={{ width: "250px", height: "45px", fontFamily: "'Lato', sans-serif" }}
+    >
       <Select
         value={categories.includes(selectedCategory) ? selectedCategory : ""}
         onChange={handleChange}
@@ -43,6 +45,7 @@ const CategoryDropdown = ({ onSelect }) => {
           backgroundColor: "white",
           height: "45px",
           borderRadius: "15px",
+          fontFamily: "'Lato', sans-serif",
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: "rgba(0, 0, 0, 0.23)",
           },
@@ -55,12 +58,17 @@ const CategoryDropdown = ({ onSelect }) => {
             style: {
               maxHeight: 200,
               overflowY: "auto",
+              fontFamily: "'Lato', sans-serif",
             },
           },
         }}
       >
         {categories.map((category, index) => (
-          <MenuItem key={index} value={category}>
+          <MenuItem
+            key={index}
+            value={category}
+            sx={{ fontFamily: "'Lato', sans-serif" }}
+          >
             {category}
           </MenuItem>
         ))}

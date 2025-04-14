@@ -1,4 +1,3 @@
-// Top imports remain the same
 import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
@@ -9,22 +8,27 @@ import {
   Typography,
   CircularProgress,
   Container,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useNavigate } from "react-router-dom";
-import { db } from "../../config/firebaseConfig";
 import { collection, query, limit, onSnapshot } from "firebase/firestore";
+import { db } from "../../config/firebaseConfig";
 
 // --- Styled Components ---
 const StyledBox = styled(Box)(({ theme }) => ({
   position: "relative",
   width: "100%",
   background: "#faf9f6",
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(4),
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
+  [theme.breakpoints.up("sm")]: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
 }));
 
 const StyledBannerContainer = styled(Box)({
@@ -33,19 +37,24 @@ const StyledBannerContainer = styled(Box)({
   overflow: "hidden",
 });
 
-const BannerImageContainer = styled(Box)({
+const BannerImageContainer = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isMobile",
+})(({ theme, isMobile }) => ({
   width: "100%",
-  height: 450, //Sizing of the image inside the container
+  height: isMobile ? 200 : 400,
+  position: "relative",
+  overflow: "hidden",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  overflow: "hidden",
-});
+  backgroundColor: "#eaeaea",
+}));
 
 const BannerImage = styled("img")({
   width: "100%",
   height: "100%",
-  objectFit: "cover", // make image fill container
+  objectFit: "cover",
+  display: "block",
 });
 
 const StyledSlider = styled(Slider)`
@@ -68,29 +77,54 @@ const ArrowButton = styled(IconButton)(({ theme, direction }) => ({
   top: "50%",
   transform: "translateY(-50%)",
   zIndex: 10,
-  width: 40,
-  height: 40,
+  width: 30,
+  height: 30,
   backgroundColor: "white",
   color: "#333",
-  boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
   "&:hover": {
     backgroundColor: "#f0f0f0",
   },
   ...(direction === "left" && {
-    left: theme.spacing(2),
+    left: theme.spacing(1),
   }),
   ...(direction === "right" && {
-    right: theme.spacing(2),
+    right: theme.spacing(1),
   }),
+  [theme.breakpoints.up("sm")]: {
+    width: 40,
+    height: 40,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+    ...(direction === "left" && {
+      left: theme.spacing(2),
+    }),
+    ...(direction === "right" && {
+      right: theme.spacing(2),
+    }),
+  },
 }));
 
 // --- Main Component ---
-const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
+const FeaturedSection = () => {
   const [featuredItems, setFeaturedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-  const theme = useTheme();
+  const [openImage, setOpenImage] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const clickTimeout = useRef(null);
   const sliderRef = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+  const isFullScreen = isMobile || isLargeScreen;
+
+  const handleImageClick = (url) => {
+    if (!isDragging) {
+      if (clickTimeout.current) clearTimeout(clickTimeout.current);
+      clickTimeout.current = setTimeout(() => {
+        setOpenImage(url);
+      }, 150);
+    }
+  };
 
   const settings = {
     infinite: true,
@@ -99,26 +133,23 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
-    arrows: false,
+    arrows: !isMobile,
     dots: false,
-    beforeChange: (oldIndex, newIndex) => {
-      setCurrentSlide(newIndex);
+    beforeChange: () => {
+      setIsDragging(true);
+      if (clickTimeout.current) clearTimeout(clickTimeout.current);
+    },
+    afterChange: () => {
+      setTimeout(() => setIsDragging(false), 100);
+    },
+    onSwipe: () => {
+      setIsDragging(true);
+      if (clickTimeout.current) clearTimeout(clickTimeout.current);
     },
   };
 
-  const goToPrev = () => {
-    sliderRef.current?.slickPrev();
-  };
-
-  const goToNext = () => {
-    sliderRef.current?.slickNext();
-  };
-
-  useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.slickGoTo(currentSlide);
-    }
-  }, [currentSlide]);
+  const goToPrev = () => sliderRef.current?.slickPrev();
+  const goToNext = () => sliderRef.current?.slickNext();
 
   useEffect(() => {
     const carouselQuery = query(collection(db, "Carousel"), limit(5));
@@ -128,7 +159,9 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
       (querySnapshot) => {
         const items = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          imageUrl: doc.data().imageUrl,
+          imageUrl: doc.data().imageUrl,                  // Remove this for applying video format
+          // mediaUrl: doc.data().mediaUrl,               // Use For Video .mp4 format 
+          // mediaType: doc.data().mediaType || "image"   // Use For Video .mp4 format
         }));
         setFeaturedItems(items);
         setIsLoading(false);
@@ -146,7 +179,7 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
     <StyledBox>
       <Container maxWidth="lg">
         <StyledBannerContainer>
-          {featuredItems.length > 1 && (
+          {featuredItems.length > 1 && !isMobile && (
             <>
               <ArrowButton direction="left" onClick={goToPrev}>
                 <ArrowBackIosNew fontSize="small" />
@@ -163,14 +196,30 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
           ) : featuredItems.length > 0 ? (
             <StyledSlider ref={sliderRef} {...settings}>
               {featuredItems.map((item) => (
-                <Box
-                  key={item.id}
-                >
-                  <BannerImageContainer>
+                <Box key={item.id}>
+                  <BannerImageContainer isMobile={isMobile}>
                     <BannerImage
                       src={item.imageUrl || "/placeholder.jpg"}
                       alt={`Featured ${item.id}`}
+                      onClick={() => handleImageClick(item.imageUrl)}
+                      style={{ cursor: "pointer" }}
                     />
+                     {/*Change The Banner Image to this for applying video .mp4 format  */}
+                     {/* {item.mediaType === "video" ? (
+                      <video
+                        src={item.mediaUrl}
+                        controls
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onClick={() => handleImageClick(item.mediaUrl)}
+                      />
+                    ) : (
+                      <BannerImage
+                        src={item.mediaUrl || "/placeholder.jpg"}
+                        alt={`Featured ${item.id}`}
+                        onClick={() => handleImageClick(item.mediaUrl)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    )} */}
                   </BannerImageContainer>
                 </Box>
               ))}
@@ -180,6 +229,130 @@ const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
               <Typography variant="body1">No featured items found.</Typography>
             </Box>
           )}
+<Dialog
+  open={Boolean(openImage)}
+  onClose={() => setOpenImage(null)}
+  maxWidth={false}
+  PaperProps={{
+    sx: {
+      margin: {
+        xs: '0 auto',
+        sm: '16px auto',
+        md: '32px auto',
+        lg: '48px auto',
+      },
+      width: {
+        xs: '100%',
+        sm: '95%',
+        md: '90%',
+        lg: '80%',
+        xl: '70%',
+      },
+      maxWidth: '100%',
+      height: 'auto',
+      maxHeight: '90vh',
+      backgroundColor: '#000',
+      borderRadius: {
+        xs: 0,
+        sm: 2,
+      },
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }}
+>
+  <DialogContent
+    sx={{
+      p: 0,
+      position: 'relative',
+      overflow: 'auto',
+      width: '100%',
+      backgroundColor: '#000',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+<IconButton
+  onClick={() => setOpenImage(null)}
+  sx={{
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 26,
+    height: 26,
+    padding: 0,
+    borderRadius: '50%',
+    color: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Default background color
+    transition: 'background-color 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.3)', // Change background on hover
+    },
+    fontSize: 24,
+    fontWeight: 'bold',
+    lineHeight: 1,
+    zIndex: 10, // Ensures the button is above the content
+  }}
+>
+  ×
+</IconButton>
+
+
+    {/* Media Content */}
+    {openImage?.endsWith('.mp4') ? (
+      <video
+        src={openImage}
+        controls
+        autoPlay
+        style={{
+          width: '100%',
+          height: 'auto',
+          maxHeight: '90vh',
+          objectFit: 'contain',
+        }}
+      />
+    ) : (
+      <img
+        src={openImage}
+        alt="Full View"
+        style={{
+          width: '100%',
+          height: 'auto',
+          maxHeight: '90vh',
+          objectFit: 'contain',
+        }}
+      />
+    )}
+  </DialogContent>
+</Dialog>
+
+                {/* // for viewing video
+                // {openImage?.endsWith(".mp4") ? (
+                //   <video
+                //     src={openImage}
+                //     controls
+                //     autoPlay
+                //     style={{
+                //       width: "100%",
+                //       height: "auto",
+                //       maxHeight: "90vh",
+                //       objectFit: "contain",
+                //     }}
+                //   />
+                // ) : (
+                //   <img
+                //     src={openImage}
+                //     alt="Full View"
+                //     style={{
+                //       width: "100%",
+                //       height: "auto",
+                //       maxHeight: "90vh",
+                //       objectFit: "contain",
+                //     }}
+                //   />
+                // )} */}
         </StyledBannerContainer>
       </Container>
     </StyledBox>

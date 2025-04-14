@@ -87,7 +87,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const MostViewed = ({ currentSlide, setCurrentSlide }) => {
+const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -127,7 +127,6 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
       }
     },
     afterChange: (index) => {
-      setCurrentSlide(index);
       setTimeout(() => setIsDragging(false), 100);
     },
     onSwipe: () => {
@@ -151,12 +150,6 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
       { breakpoint: 320, settings: { slidesToShow: 1 } },
     ],
   };
-
-  useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.slickGoTo(currentSlide);
-    }
-  }, [currentSlide]);
 
   useEffect(() => {
     const fetchMaterials = async () => {

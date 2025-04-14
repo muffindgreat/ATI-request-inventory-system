@@ -22,27 +22,28 @@ import Footer from "./components/Footer/Footer";
 import Loader from "./components/Loader/Loader";
 import { auth } from "./config/firebaseConfig";
 import { ToastContainer } from "react-toastify";
+import "./app.css"; // Import your app.css file
 
 function Layout() {
   const location = useLocation();
   const hideNavbarAndFooterRoutes = ["/login", "/register"];
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user);
-    const style = document.createElement("style");
+      const style = document.createElement("style");
       style.textContent = `
         html, body, #root {
           margin: 0;
           padding: 0;
-          height: 100vh; 
+          height: 100vh;
           width: 100vw;
           overflow-x: hidden;
+          font-family: 'Lato', sans-serif;  /* Apply Lato Regular font globally */
         }
       `;
       document.head.appendChild(style);
-  
     });
     return () => unsubscribe();
   }, []);
