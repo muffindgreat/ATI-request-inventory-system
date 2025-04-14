@@ -30,7 +30,7 @@ const AtisLogo = styled("img")(({ theme }) => ({
   height: 100,
   position: "relative",
   zIndex: 2,
-  marginBottom: theme.spacing(1.5),
+  marginBottom: theme.spacing(0),
   [theme.breakpoints.down("sm")]: {
     height: 50,
   },
@@ -69,6 +69,7 @@ const StyledSubtitle = styled(Typography)(({ theme }) => ({
   position: "relative",
   zIndex: 2,
   fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)",
+  lineHeight: 1.2, // Adjust the line height here to reduce spacing between lines
 }));
 
 const Title = () => {
