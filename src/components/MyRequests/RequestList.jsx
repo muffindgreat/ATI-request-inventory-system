@@ -57,7 +57,7 @@ export default function RequestList({ items, tabIndex }) {
           </Accordion>
         ))
       ) : (
-        <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>
+        <Typography sx={{ textAlign: "center", my: 2, color: "gray" }}>
           No requests found
         </Typography>
       )}
