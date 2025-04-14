@@ -29,7 +29,7 @@ export default function RequestList({ items, tabIndex }) {
   }, [tabIndex]);
 
   return (
-    <Box sx={{ mt: 2, width: "100%", overflow: "hidden" }}>
+    <Box sx={{ width: "100%", overflow: "hidden" }}>
       {items.length > 0 ? (
         items.map((item, index) => (
           <Accordion

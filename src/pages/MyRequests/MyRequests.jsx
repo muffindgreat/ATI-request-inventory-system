@@ -146,9 +146,9 @@ export default function MyRequests() {
           <CustomCardHeader title="My Requests" showBackButton />
           <CardContent>
             <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               {loading ? (
-                <CircularProgress />
+                <CircularProgress sx={{ my: 2 }} />
               ) : (
                 <RequestList
                   items={requestMap[tabIndex] || []}
