@@ -134,8 +134,8 @@ const SearchFilterBar = () => {
             {searchTerm
               ? "No materials found matching your search."
               : selectedCategory
-              ? "No images found in this category."
-              : "No images available."}
+              ? "No materials found in this category."
+              : "No materials available."}
           </Typography>
         </Box>
       )}
