@@ -16,7 +16,7 @@ const Footer = () => {
     >
       <Container maxWidth="lg">
         <Typography variant="body2">
-          © {new Date().getFullYear()} ATI CALABARZON E-Library. All rights
+          © {new Date().getFullYear()} ATI CALABARZON e-Library. All rights
           reserved.
         </Typography>
       </Container>

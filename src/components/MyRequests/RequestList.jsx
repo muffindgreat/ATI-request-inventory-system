@@ -29,7 +29,7 @@ export default function RequestList({ items, tabIndex }) {
   }, [tabIndex]);
 
   return (
-    <Box sx={{ mt: 2, width: "100%", overflow: "hidden" }}>
+    <Box sx={{ width: "100%", overflow: "hidden" }}>
       {items.length > 0 ? (
         items.map((item, index) => (
           <Accordion
@@ -46,7 +46,9 @@ export default function RequestList({ items, tabIndex }) {
             >
               <RequestItemSummary item={item} />
             </AccordionSummary>
-            <AccordionDetails sx={{ bgcolor: "#f9f9f9", borderRadius: 2 }}>
+            <AccordionDetails
+              sx={{ p: 2, bgcolor: "#f9f9f9", borderRadius: 2 }}
+            >
               {item.materials.length > 1 && (
                 <RequestMaterials materials={item.materials.slice(1)} />
               )}
@@ -55,7 +57,7 @@ export default function RequestList({ items, tabIndex }) {
           </Accordion>
         ))
       ) : (
-        <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>
+        <Typography sx={{ textAlign: "center", my: 2, color: "gray" }}>
           No requests found
         </Typography>
       )}
@@ -68,7 +70,7 @@ function RequestItemSummary({ item }) {
   const additionalCount = item.materials.length - 1; // Calculate additional items
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", p: 2, width: "100%" }}>
+    <Box sx={{ display: "flex", alignItems: "center", p: 1, width: "100%" }}>
       {/* Material Image */}
       {firstMaterial && (
         <Box
@@ -89,7 +91,7 @@ function RequestItemSummary({ item }) {
       )}
 
       {/* Material Info */}
-      <Box sx={{ flexGrow: 1, ml: 1 }}>
+      <Box sx={{ flexGrow: 1, mx: 1 }}>
         <Box>
           <Typography
             component={Link}
@@ -198,7 +200,7 @@ function RequestMaterials({ materials }) {
         <Box key={index}>
           {index > 0 && <Divider sx={{ my: 1 }} />}
 
-          <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", my: 1, p: 1 }}>
             <Box
               component="img"
               sx={{
@@ -208,7 +210,6 @@ function RequestMaterials({ materials }) {
                 height: 90,
                 minWidth: 60,
                 minHeight: 90,
-                borderRadius: 1,
                 flexShrink: 0,
                 objectFit: "cover",
               }}
@@ -342,7 +343,7 @@ function RequestDetails({ item }) {
   ];
 
   return (
-    <Box sx={{ my: 2, p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
+    <Box sx={{ p: 2, border: "1px solid #ddd", borderRadius: 2 }}>
       <Stack spacing={1}>
         {statusStages.map(({ key, label, icon, show }) =>
           show !== false ? (
