@@ -21,6 +21,7 @@ import {
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Import AuthContext
+import { Helmet } from "react-helmet-async";
 import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
@@ -112,6 +113,9 @@ export default function LogIn() {
         height: "100vh",
       }}
     >
+      <Helmet>
+        <title>ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage imageUrl={bgImage} />
 
       <Box

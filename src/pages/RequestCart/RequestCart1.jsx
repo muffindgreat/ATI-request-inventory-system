@@ -3,6 +3,7 @@ import { Card, Box, Collapse } from "@mui/material";
 import { getDoc, doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../config/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { Helmet } from "react-helmet-async";
 import CartItemList from "./CartItemList";
 import CartOrderSummary from "./CartOrderSummary";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
@@ -179,6 +180,9 @@ export default function ReqCart1() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", px: 3 }}>
+      <Helmet>
+        <title>Request Cart | ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage />
       <Box
         sx={{

@@ -23,6 +23,7 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
+import { Helmet } from "react-helmet-async";
 import useToast from "../../components/Toastify/useToast";
 
 const ItemInfo = () => {
@@ -154,6 +155,9 @@ const ItemInfo = () => {
         overflow: "hidden",
       }}
     >
+      <Helmet>
+        <title>Item Info | ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage />
       <Container
         maxWidth="md"

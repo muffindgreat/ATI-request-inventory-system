@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-
+import { Helmet } from "react-helmet-async";
 import RequestList from "../../components/MyRequests/RequestList";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
 import BackgroundImage from "../../components/UI/BackgroundImage";
@@ -139,6 +139,9 @@ export default function MyRequests() {
         overflow: "hidden",
       }}
     >
+      <Helmet>
+        <title>My Requests | ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage />
 
       <Container maxWidth="lg" sx={{ pt: { xs: 12, sm: 14, md: 16 }, mb: 10 }}>

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import FeaturedSection from "../../components/LandingPage/Featured";
 import Title from "../../components/LandingPage/Name";
+import { Helmet } from "react-helmet-async";
 
 export default function Home() {
   // const [currentSlide, setCurrentSlide] = useState(0);
@@ -30,6 +31,9 @@ export default function Home() {
 
   return (
     <>
+      <Helmet>
+        <title>Home | ATI CALABARZON e-Library</title>
+      </Helmet>
       <Navbar />
       <Box
         sx={{
@@ -45,12 +49,12 @@ export default function Home() {
       >
         <Title />
         <FeaturedSection
-          // currentSlide={currentSlide}
-          // setCurrentSlide={setCurrentSlide}        
+        // currentSlide={currentSlide}
+        // setCurrentSlide={setCurrentSlide}
         />
-        <MostViewed 
-          // currentSlide={currentSlide}
-          // setCurrentSlide={setCurrentSlide}        
+        <MostViewed
+        // currentSlide={currentSlide}
+        // setCurrentSlide={setCurrentSlide}
         />
         <ItemSort />
         <Library />
