@@ -187,6 +187,13 @@ function RequestItemSummary({ item }) {
           sx={{ fontWeight: "bold" }}
         >
           Qty: {formatQuantity(firstMaterial.quantity)}
+          {firstMaterial.previousQuantity &&
+            firstMaterial.previousQuantity !== firstMaterial.quantity && (
+              <span style={{ color: "gray", fontWeight: "normal" }}>
+                {" "}
+                (Requested: {formatQuantity(firstMaterial.previousQuantity)})
+              </span>
+            )}
         </Typography>
       </Stack>
     </Box>
@@ -279,6 +286,13 @@ function RequestMaterials({ materials }) {
               sx={{ fontWeight: "bold", px: 1, borderRadius: 1 }}
             >
               Qty: {formatQuantity(material.quantity)}
+              {material.previousQuantity &&
+                material.previousQuantity !== material.quantity && (
+                  <span style={{ color: "gray", fontWeight: "normal" }}>
+                    {" "}
+                    (Requested: {formatQuantity(material.previousQuantity)})
+                  </span>
+                )}
             </Typography>
           </Box>
         </Box>

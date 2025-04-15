@@ -57,6 +57,7 @@ export default function MyRequests() {
                     name: inventorySnap.data()?.title,
                     type: mat.type,
                     quantity: mat.quantity,
+                    previousQuantity: mat.previousQuantity ?? null,
                     imageUrl:
                       inventoryData.imageUrl ||
                       "https://via.placeholder.com/150",
