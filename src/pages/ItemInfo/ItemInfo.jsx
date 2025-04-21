@@ -218,6 +218,21 @@ const ItemInfo = () => {
                 {item.title}
               </Typography>
               <>
+                {item.bannerProgram?.length > 0 && (
+                  <Stack
+                    direction="row"
+                    sx={{ my: 1, flexWrap: "wrap", gap: 1 }}
+                  >
+                    {item.bannerProgram.map((program, i) => (
+                      <Chip
+                        key={i}
+                        label={program}
+                        color="primary"
+                        size="small"
+                      />
+                    ))}
+                  </Stack>
+                )}
                 <Typography
                   variant="body1"
                   color="textSecondary"
@@ -249,19 +264,6 @@ const ItemInfo = () => {
               <Typography variant="body2" color="textSecondary">
                 Downloads: {item.downloads || 0}
               </Typography>
-
-              {item.bannerProgram?.length > 0 && (
-                <Stack direction="row" sx={{ mt: 1, flexWrap: "wrap", gap: 1 }}>
-                  {item.bannerProgram.map((program, i) => (
-                    <Chip
-                      key={i}
-                      label={program}
-                      color="primary"
-                      size="small"
-                    />
-                  ))}
-                </Stack>
-              )}
 
               <Box
                 sx={{
