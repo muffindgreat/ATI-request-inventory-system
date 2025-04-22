@@ -39,8 +39,6 @@ const ItemInfo = () => {
   const showToast = useToast();
 
   useEffect(() => {
-    console.log("Current User from AuthContext:", currentUser); // ✅ Debugging user state
-
     const fetchAndUpdateViews = async () => {
       if (hasUpdated.current) return;
       hasUpdated.current = true;
@@ -80,8 +78,6 @@ const ItemInfo = () => {
   }, [id, currentUser]);
 
   const addToCart = async () => {
-    console.log("Current User in addToCart:", currentUser); // ✅ Debugging user state
-
     if (!currentUser) {
       showToast("Please log in to add items to your cart.", "error");
       return;
@@ -111,7 +107,6 @@ const ItemInfo = () => {
 
         showToast("Item added to request cart!", "success");
       } else {
-        console.log("User document does not exist.");
         showToast("Network Error", "error");
       }
     } catch (error) {

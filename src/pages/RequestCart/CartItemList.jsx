@@ -54,8 +54,6 @@ const CartItemList = ({
     }
   };
 
-  console.log(cartItems);
-
   return (
     <CardContent
       sx={{

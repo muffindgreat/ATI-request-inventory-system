@@ -83,7 +83,6 @@ export default function ReqCart1() {
 
               unsubscribers.push(...unsubscribeItemSnapshots);
             } else {
-              console.log("Cart is empty.");
               setCartItems([]);
             }
           }
@@ -131,7 +130,6 @@ export default function ReqCart1() {
         );
 
         await updateDoc(userRef, { cart: updatedCart });
-        console.log("Quantity updated in Firestore");
 
         setCartItems((prev) =>
           prev.map((item) =>
@@ -168,7 +166,6 @@ export default function ReqCart1() {
         );
 
         await updateDoc(userRef, { cart: updatedCart });
-        console.log("Items removed from Firestore");
 
         // Update local state: Remove items from cartItems (without affecting selectedItems)
         setCartItems((prev) => prev.filter((item) => !ids.includes(item.id)));

@@ -15,6 +15,8 @@ import {
   getDoc,
   getDocs,
 } from "firebase/firestore";
+import useToast from "../../components/Toastify/useToast";
+
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -28,6 +30,7 @@ export default function MyRequests() {
   const [allRequests, setAllRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const showToast = useToast();
   const handleChange = (event, newIndex) => setTabIndex(newIndex);
   const navigate = useNavigate();
   useEffect(() => {
@@ -54,7 +57,7 @@ export default function MyRequests() {
 
                   return {
                     id: mat.itemID,
-                    name: inventorySnap.data()?.title,
+                    name: inventorySnap.data()?.title || "Unknown Material",
                     type: mat.type,
                     quantity: mat.quantity,
                     previousQuantity: mat.previousQuantity ?? null,
@@ -100,12 +103,15 @@ export default function MyRequests() {
             })
           );
         } catch (err) {
-          console.error("❌ Error fetching requests:", err);
+          showToast(
+            "Failed to fetch your requests. Please try again later.",
+            "error"
+          );
         } finally {
           setLoading(false);
         }
       } else {
-        console.log("⚠️ No user is currently logged in.");
+        showToast("Session expired. Please log in again.", "warning");
         setLoading(false);
         navigate("/login");
       }
