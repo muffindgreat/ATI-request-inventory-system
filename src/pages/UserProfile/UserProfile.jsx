@@ -67,15 +67,17 @@ const UserProfile = () => {
             setProfilePic(fetchedData?.profilePic || null);
             setOriginalData(fetchedData);
           } else {
-            // If user doc doesn't exist, show error and redirect
             showToast("User not found. Redirecting to login...", "error");
             navigate("/login");
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          showToast(
+            "Failed to fetch user data. Redirecting to login...",
+            "error"
+          );
+          navigate("/login");
         }
       } else {
-        // If not authenticated, redirect to login
         navigate("/login");
       }
     });
@@ -114,7 +116,6 @@ const UserProfile = () => {
         setOriginalData({ ...userData, profilePic });
         setIsEditing(false);
       } catch (error) {
-        console.error("Error updating user data:", error);
         showToast("Network Error", "error");
       }
     }
