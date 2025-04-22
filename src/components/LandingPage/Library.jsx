@@ -3,50 +3,56 @@ import { Grid, Container, CircularProgress, Button } from "@mui/material";
 import { collection, getDocs } from "firebase/firestore";
 import ImageCard from "../Items/ImageCard";
 
-const Library = ({ selectedCategory, searchTerm, sortOrder, db, onImagesReceived }) => {
+const Library = ({
+  selectedCategory,
+  searchTerm,
+  sortOrder,
+  db,
+  onImagesReceived,
+}) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(8); // Show 8 initially
 
   useEffect(() => {
-      const fetchImages = async () => {
-        try {
-          const querySnapshot = await getDocs(collection(db, "Inventory"));
-          const imageList = querySnapshot.docs
-            .map((doc) => {
-              const data = doc.data();
-              if (data.isDisplay === false) return null;
-              if (!data.title || !data.imageUrl || !data.bannerProgram) {
-                return null;
-              }
-              return {
-                id: doc.id,
-                src: data.imageUrl,
-                views: data.views || 0,
-                category:
-                  Array.isArray(data.bannerProgram) && data.bannerProgram.length > 0
-                    ? data.bannerProgram[0]
-                    : "Unknown",
-                itemName: data.title,
-              };
-            })
-            .filter(Boolean);
-    
-          setImages(imageList);
-    
-          if (onImagesReceived) {
-            onImagesReceived(imageList); // ✅ This line is the fix
-          }
-    
-        } catch (error) {
-          console.error("Error fetching images:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-    
-      fetchImages();
-    }, [db]);
+    const fetchImages = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Inventory"));
+        const imageList = querySnapshot.docs
+          .map((doc) => {
+            const data = doc.data();
+            if (data.isDisplay === false) return null;
+            if (!data.title || !data.imageUrl || !data.bannerProgram) {
+              return null;
+            }
+            return {
+              id: doc.id,
+              src: data.imageUrl,
+              views: data.views || 0,
+              categories:
+                Array.isArray(data.bannerProgram) &&
+                data.bannerProgram.length > 0
+                  ? data.bannerProgram
+                  : ["Unknown"],
+              itemName: data.title,
+            };
+          })
+          .filter(Boolean);
+
+        setImages(imageList);
+
+        if (onImagesReceived) {
+          onImagesReceived(imageList); // ✅ This line is the fix
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [db]);
 
   if (loading) {
     return (
@@ -59,7 +65,7 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db, onImagesReceived
   // ✅ Apply filtering
   let filteredImages = images.filter((img) => {
     const categoryMatch =
-      selectedCategory === null || img.category === selectedCategory;
+      selectedCategory === null || img.categories.includes(selectedCategory);
     const searchMatch =
       searchTerm === "" ||
       img.itemName?.toLowerCase().includes(searchTerm.toLowerCase());

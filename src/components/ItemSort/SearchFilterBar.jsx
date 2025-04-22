@@ -47,7 +47,7 @@ const SearchFilterBar = () => {
       (searchTerm
         ? image.itemName.toLowerCase().includes(searchTerm.toLowerCase())
         : true) &&
-      (selectedCategory ? image.category === selectedCategory : true)
+      (selectedCategory ? image.categories.includes(selectedCategory) : true)
   );
 
   const isNoImagesAvailable =
