@@ -20,6 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { db } from "../../config/firebaseConfig";
 import { collection, getDocs, orderBy, query, limit } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import "@fontsource/lato/400.css"; // Import Lato Regular font
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -41,7 +42,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Black overlay with 60% opacity
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     zIndex: 0,
   },
   "& > *": {
@@ -51,44 +52,44 @@ const StyledBox = styled(Box)(({ theme }) => ({
   "& .slick-dots": {
     position: "absolute",
     display: "flex",
-    justifyContent: "center", // Center the dots
+    justifyContent: "center",
     listStyle: "none",
     padding: 0,
     margin: 0,
   },
   "& .slick-dots li": {
-    margin: "0px 16px", // Adjust horizontal spacing
+    margin: "0px 16px",
   },
   "& .slick-dots li button": {
     padding: 0,
     border: "none",
     background: "transparent",
-    width: "32px", // Smaller dot width
-    height: "8px", // Smaller dot height
-    borderRadius: "8px", // Make them circles
+    width: "32px",
+    height: "8px",
+    borderRadius: "8px",
   },
   "& .slick-dots li button:before": {
     content: '""',
     display: "block",
     width: "32px",
     height: "8px",
-    background: theme.palette.grey[400], // Light grey color
+    background: theme.palette.grey[400],
     transition: "all 0.3s ease",
     borderRadius: "8px",
     opacity: 0.6,
   },
   "& .slick-dots li.slick-active button:before": {
-    background: "#1E874A", // Primary color for active dot
-    width: "32px", // Slightly larger active dot
+    background: "#1E874A",
+    width: "32px",
     height: "8px",
     opacity: 1,
     borderRadius: "8px",
   },
 }));
 
-const MostViewed = ({ currentSlide, setCurrentSlide }) => {
+const MostViewed = () => {
   const [materials, setMaterials] = useState([]);
-  const [loading, setLoading] = useState(true); //isLoading
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -98,14 +99,13 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
   const sliderRef = useRef();
 
   const handleClick = (id) => {
-    // Introduce a small delay before navigating if not dragging
     if (!isDragging) {
       if (clickTimeout.current) {
         clearTimeout(clickTimeout.current);
       }
       clickTimeout.current = setTimeout(() => {
         navigate(`/item-info/${id}`);
-      }, 200); // Adjust the delay (in milliseconds) as needed
+      }, 200);
     }
   };
 
@@ -127,7 +127,6 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
       }
     },
     afterChange: (index) => {
-      setCurrentSlide(index);
       setTimeout(() => setIsDragging(false), 100);
     },
     onSwipe: () => {
@@ -153,25 +152,18 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
   };
 
   useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.slickGoTo(currentSlide);
-    }
-  }, [currentSlide]);
-
-  useEffect(() => {
     const fetchMaterials = async () => {
       try {
         const materialsQuery = query(
           collection(db, "Inventory"),
-          orderBy("views", "desc"),
-          limit(5)
+          orderBy("views", "desc")
         );
         const querySnapshot = await getDocs(materialsQuery);
 
         const imageList = querySnapshot.docs
           .map((doc) => {
             const data = doc.data();
-            if (data.isDisplay === false) return null; // Skip if isDisplay is false
+            if (data.isDisplay === false) return null;
             return {
               id: doc.id,
               src: data.imageUrl,
@@ -179,7 +171,8 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
               itemName: data.title,
             };
           })
-          .filter((item) => item !== null);
+          .filter((item) => item !== null)
+          .slice(0, 5);
 
         setMaterials(imageList);
       } catch (error) {
@@ -201,10 +194,10 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
           align="center"
           sx={{
             textAlign: "center",
-            // fontWeight: "bold",
             color: "#fff",
             position: "relative",
             zIndex: 2,
+            fontFamily: "Lato, sans-serif",
             fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
             "@media (max-width: 600px)": {
               fontSize: "2rem",
@@ -284,7 +277,11 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
                         />
                         <Typography
                           variant="body2"
-                          sx={{ color: "#fff", fontWeight: "bold" }}
+                          sx={{
+                            color: "#fff",
+                            fontWeight: "bold",
+                            fontFamily: "Lato, sans-serif",
+                          }}
                         >
                           {material.views}
                         </Typography>
@@ -296,7 +293,11 @@ const MostViewed = ({ currentSlide, setCurrentSlide }) => {
             ))}
           </Slider>
         ) : (
-          <Typography variant="body1" align="center" sx={{ color: "#fff" }}>
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ color: "#fff", fontFamily: "Lato, sans-serif" }}
+          >
             No most viewed items found.
           </Typography>
         )}

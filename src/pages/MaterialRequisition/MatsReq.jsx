@@ -30,6 +30,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Helmet } from "react-helmet-async";
 import useToast from "../../components/Toastify/useToast";
 import emailjs from "@emailjs/browser";
 
@@ -109,7 +110,8 @@ const MatsReq = () => {
             section: data.section || "",
           });
         } else {
-          console.log("No user data found");
+          showToast("User data not found. Please log in again.", "error");
+          navigate("/login");
         }
       } else {
         setFormData(null);
@@ -124,8 +126,6 @@ const MatsReq = () => {
 
     setFormData({ ...formData, [id]: value });
   };
-
-  // console.log(formData.materialRequested);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,7 +143,10 @@ const MatsReq = () => {
 
       // Ensure materialRequested is defined and valid
       if (!Array.isArray(formData.materialRequested)) {
-        console.error("Error: materialRequested must be an array.");
+        showToast(
+          "Invalid request data. Please review your selections.",
+          "error"
+        );
         return;
       }
 
@@ -155,8 +158,6 @@ const MatsReq = () => {
         materialRequested: formData.materialRequested || [],
         date: serverTimestamp(),
       };
-
-      console.log("Submitting request:", trimmedData); // Debugging line
 
       const totalQuantity = formData.materialRequested.reduce((sum, item) => {
         return sum + (parseInt(item.quantity) || 0);
@@ -187,10 +188,8 @@ const MatsReq = () => {
         myOrders: updatedMyOrders,
         cart: updatedCart,
       });
-
-      console.log("Request successfully created and updated user's cart!");
     } catch (error) {
-      console.error("Error processing request:", error);
+      showToast("An error occurred while submitting your request.", "error");
     } finally {
       navigate("/my-requests");
       setLoading(false);
@@ -205,7 +204,6 @@ const MatsReq = () => {
         orders: formData.materialRequested,
         totalQuantity,
       };
-      console.log(templateParams);
 
       try {
         const result = await emailjs.send(
@@ -214,7 +212,6 @@ const MatsReq = () => {
           templateParams,
           "MMXB1DNl_6rj4C-J8"
         );
-        console.log(`Email sent to ${email}:`, result.text);
       } catch (err) {
         console.error(`Failed to send email to ${email}:`, err);
       }
@@ -232,6 +229,9 @@ const MatsReq = () => {
         overflow: "hidden",
       }}
     >
+      <Helmet>
+        <title>Materials Requisition Form | ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage />
       <Container
         maxWidth="lg"

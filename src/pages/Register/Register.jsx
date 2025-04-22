@@ -4,6 +4,7 @@ import {
   Button,
   Box,
   Typography,
+  Divider,
   Link,
   Card,
   IconButton,
@@ -19,6 +20,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import logo from "/atilogs.png";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import bgImage from "/image.png";
@@ -100,6 +102,9 @@ export default function Register() {
       overflow="hidden"
       minHeight="100vh"
     >
+      <Helmet>
+        <title>ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage imageUrl={bgImage} />
 
       <Box
@@ -212,6 +217,7 @@ export default function Register() {
               )}
             </Button>
           </form>
+          <Divider sx={{ my: 2, borderBottomWidth: 2 }} />
           <Typography variant="body2">
             Already have an account?{" "}
             <Link href="/login" color="primary">

@@ -10,6 +10,7 @@ import {
 import { auth, db } from "../../config/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { Helmet } from "react-helmet-async";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import ProfileAvatar from "./ProfileAvatar";
@@ -130,6 +131,9 @@ const UserProfile = () => {
         overflow: "hidden",
       }}
     >
+      <Helmet>
+        <title>Profile | ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage />
       <Container maxWidth="md" sx={{ pt: { xs: 12, sm: 14, md: 16 }, mb: 10 }}>
         <Card elevation={3} sx={{ borderRadius: 2 }}>

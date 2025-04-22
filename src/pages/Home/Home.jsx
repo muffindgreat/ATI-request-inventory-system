@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import FeaturedSection from "../../components/LandingPage/Featured";
 import Title from "../../components/LandingPage/Name";
+import { Helmet } from "react-helmet-async";
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  // const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -30,23 +31,30 @@ export default function Home() {
 
   return (
     <>
+      <Helmet>
+        <title>Home | ATI CALABARZON e-Library</title>
+      </Helmet>
       <Navbar />
       <Box
         sx={{
           marginTop: {
-            xs: "56px", // Adjust for smaller screens (e.g., mobile)
-            sm: "64px", // Default for larger screens
+            xs: "72px", // Adjust for smaller screens (e.g., mobile)
+            sm: "94px", // Default for larger screens
           },
+          // paddingTop: { // Add paddingTop to create space below Navbar
+          //   xs: "56px",
+          //   sm: "64px",
+          // },
         }}
       >
         <Title />
         <FeaturedSection
-          currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}        
+        // currentSlide={currentSlide}
+        // setCurrentSlide={setCurrentSlide}
         />
-        <MostViewed 
-          currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}        
+        <MostViewed
+        // currentSlide={currentSlide}
+        // setCurrentSlide={setCurrentSlide}
         />
         <ItemSort />
         <Library />

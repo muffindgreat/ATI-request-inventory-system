@@ -1,254 +1,359 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  Container,
   Box,
-  ButtonBase,
+  IconButton,
   styled,
-  CircularProgress,
   useMediaQuery,
   useTheme,
+  Typography,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { db } from "../../config/firebaseConfig";
-import {
-  collection,
-  query,
-  where,
-  limit,
-  onSnapshot,
-} from "firebase/firestore";
+import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { collection, query, limit, onSnapshot } from "firebase/firestore";
+import { db } from "../../config/firebaseConfig";
 
+// --- Styled Components ---
 const StyledBox = styled(Box)(({ theme }) => ({
-  background: "#faf9f6",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
+  position: "relative",
   width: "100%",
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(4),
-  "& .slick-dots": {
-    position: "absolute",
-    display: "flex",
-    justifyContent: "center",
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-  },
-  "& .slick-dots li": {
-    margin: "0px 16px",
-  },
-  "& .slick-dots li button": {
-    padding: 0,
-    border: "none",
-    background: "transparent",
-    width: "32px",
-    height: "8px",
-    borderRadius: "8px",
-  },
-  "& .slick-dots li button:before": {
-    content: '""',
-    display: "block",
-    width: "32px",
-    height: "8px",
-    background: theme.palette.grey[400],
-    transition: "all 0.3s ease",
-    borderRadius: "8px",
-    opacity: 0.6,
-  },
-  "& .slick-dots li.slick-active button:before": {
-    background: "#1E874A",
-    width: "32px",
-    height: "8px",
-    opacity: 1,
-    borderRadius: "8px",
+  background: "#faf9f6",
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
+  [theme.breakpoints.up("sm")]: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
   },
 }));
 
-const FeaturedSection = ({ currentSlide, setCurrentSlide }) => {
+const StyledBannerContainer = styled(Box)({
+  width: "100%",
+  position: "relative",
+  overflow: "hidden",
+});
+
+const BannerImageContainer = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isMobile",
+})(({ theme, isMobile }) => ({
+  width: "100%",
+  height: isMobile ? 200 : 400,
+  position: "relative",
+  overflow: "hidden",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  backgroundColor: "#eaeaea",
+}));
+
+const BannerImage = styled("img")({
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+});
+
+const StyledSlider = styled(Slider)`
+  & .slick-list {
+    overflow: hidden;
+  }
+  & .slick-track {
+    display: flex !important;
+  }
+  & .slick-slide > div {
+    height: 100%;
+  }
+  & .slick-dots {
+    display: none !important;
+  }
+`;
+
+const ArrowButton = styled(IconButton)(({ theme, direction }) => ({
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  zIndex: 10,
+  width: 30,
+  height: 30,
+  backgroundColor: "white",
+  color: "#333",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+  "&:hover": {
+    backgroundColor: "#f0f0f0",
+  },
+  ...(direction === "left" && {
+    left: theme.spacing(1),
+  }),
+  ...(direction === "right" && {
+    right: theme.spacing(1),
+  }),
+  [theme.breakpoints.up("sm")]: {
+    width: 40,
+    height: 40,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+    ...(direction === "left" && {
+      left: theme.spacing(2),
+    }),
+    ...(direction === "right" && {
+      right: theme.spacing(2),
+    }),
+  },
+}));
+
+// --- Main Component ---
+const FeaturedSection = () => {
   const [featuredItems, setFeaturedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const [openImage, setOpenImage] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const clickTimeout = useRef(null);
-  const sliderRef = useRef();
+  const sliderRef = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+  const isFullScreen = isMobile || isLargeScreen;
 
-  const handleClick = (id) => {
+  const handleImageClick = (url) => {
     if (!isDragging) {
-      if (clickTimeout.current) {
-        clearTimeout(clickTimeout.current);
-      }
+      if (clickTimeout.current) clearTimeout(clickTimeout.current);
       clickTimeout.current = setTimeout(() => {
-        navigate(`/item-info/${id}`);
-      }, 200);
+        setOpenImage(url);
+      }, 150);
     }
   };
 
   const settings = {
-    dots: true,
     infinite: true,
-    speed: 300,
-    slidesToShow: isMobile ? 1 : isTablet ? 2 : 3,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
-    arrows: false,
-    centerMode: true,
-    variableWidth: false,
-    swipeToSlide: true,
+    autoplaySpeed: 5000,
+    arrows: !isMobile,
+    dots: false,
     beforeChange: () => {
       setIsDragging(true);
-      if (clickTimeout.current) {
-        clearTimeout(clickTimeout.current);
-      }
+      if (clickTimeout.current) clearTimeout(clickTimeout.current);
     },
-    afterChange: (index) => {
-      setCurrentSlide(index);
+    afterChange: () => {
       setTimeout(() => setIsDragging(false), 100);
     },
     onSwipe: () => {
       setIsDragging(true);
-      if (clickTimeout.current) {
-        clearTimeout(clickTimeout.current);
-      }
+      if (clickTimeout.current) clearTimeout(clickTimeout.current);
     },
-    pauseOnHover: false,
-    responsive: [
-      { breakpoint: 1920, settings: { slidesToShow: 5 } },
-      { breakpoint: 1600, settings: { slidesToShow: 4 } },
-      { breakpoint: 1440, settings: { slidesToShow: 4 } },
-      { breakpoint: 1200, settings: { slidesToShow: 3 } },
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 992, settings: { slidesToShow: 3 } },
-      { breakpoint: 768, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 2 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } },
-      { breakpoint: 375, settings: { slidesToShow: 1 } },
-      { breakpoint: 320, settings: { slidesToShow: 1 } },
-    ],
   };
 
-  useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.slickGoTo(currentSlide);
-    }
-  }, [currentSlide]);
+  const goToPrev = () => sliderRef.current?.slickPrev();
+  const goToNext = () => sliderRef.current?.slickNext();
 
   useEffect(() => {
-    const featuredQuery = query(
-      collection(db, "Inventory"),
-      where("isFeatured", "==", true),
-      limit(5)
-    );
+    const carouselQuery = query(collection(db, "Carousel"), limit(5));
 
     const unsubscribe = onSnapshot(
-      featuredQuery,
+      carouselQuery,
       (querySnapshot) => {
         const items = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data(),
+          imageUrl: doc.data().imageUrl,                  // Remove this for applying video format
+          // mediaUrl: doc.data().mediaUrl,               // Use For Video .mp4 format 
+          // mediaType: doc.data().mediaType || "image"   // Use For Video .mp4 format
         }));
         setFeaturedItems(items);
         setIsLoading(false);
       },
       (error) => {
-        console.error("Error fetching featured items in real-time:", error);
+        console.error("Error fetching carousel images:", error);
         setIsLoading(false);
       }
     );
 
-    return () => unsubscribe(); // Cleanup
+    return () => unsubscribe();
   }, []);
 
   return (
     <StyledBox>
       <Container maxWidth="lg">
-        <Typography
-          variant="h4"
-          gutterBottom
-          align="center"
-          sx={{
-            textAlign: "center",
-            color: "#1E874A",
-            position: "relative",
-            zIndex: 2,
-            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            "@media (max-width: 600px)": {
-              fontSize: "2rem",
-            },
-          }}
-        >
-          Featured Items
-        </Typography>
-        {isLoading ? (
-          <Box display="flex" justifyContent="center">
-            <CircularProgress />
-          </Box>
-        ) : featuredItems.length > 0 ? (
-          <Slider ref={sliderRef} {...settings}>
-            {featuredItems.map((item) => (
-              <Box key={item.id} sx={{ px: 1 }}>
-                <Card
-                  elevation={3}
-                  sx={{
-                    margin: "12px",
-                    transition: "transform 0.2s ease-in-out",
-                    "&:hover": { transform: "scale(1.03)" },
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                    padding: 0,
-                  }}
-                >
-                  <ButtonBase
-                    onClick={() => handleClick(item.id)}
-                    sx={{
-                      display: "block",
-                      width: "100%",
-                      flexGrow: 1,
-                      flexDirection: "column",
-                      alignItems: "stretch",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        position: "relative",
-                        width: "100%",
-                        aspectRatio: "9 / 16",
-                        overflow: "hidden",
-                        borderRadius: "8px 8px 0 0",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        image={item.imageUrl || "/placeholder.jpg"}
-                        alt={item.title || "Featured item"}
-                        sx={{
-                          objectFit: "cover",
-                          width: "100%",
-                          height: "100%",
-                        }}
+        <StyledBannerContainer>
+          {featuredItems.length > 1 && !isMobile && (
+            <>
+              <ArrowButton direction="left" onClick={goToPrev}>
+                <ArrowBackIosNew fontSize="small" />
+              </ArrowButton>
+              <ArrowButton direction="right" onClick={goToNext}>
+                <ArrowForwardIos fontSize="small" />
+              </ArrowButton>
+            </>
+          )}
+          {isLoading ? (
+            <Box display="flex" justifyContent="center" py={4}>
+              <CircularProgress />
+            </Box>
+          ) : featuredItems.length > 0 ? (
+            <StyledSlider ref={sliderRef} {...settings}>
+              {featuredItems.map((item) => (
+                <Box key={item.id}>
+                  <BannerImageContainer isMobile={isMobile}>
+                    <BannerImage
+                      src={item.imageUrl || "/placeholder.jpg"}
+                      alt={`Featured ${item.id}`}
+                      onClick={() => handleImageClick(item.imageUrl)}
+                      style={{ cursor: "pointer" }}
+                    />
+                     {/*Change The Banner Image to this for applying video .mp4 format  */}
+                     {/* {item.mediaType === "video" ? (
+                      <video
+                        src={item.mediaUrl}
+                        controls
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onClick={() => handleImageClick(item.mediaUrl)}
                       />
-                    </Box>
-                  </ButtonBase>
-                </Card>
-              </Box>
-            ))}
-          </Slider>
-        ) : (
-          <Typography variant="body1" align="center">
-            No featured items found.
-          </Typography>
-        )}
+                    ) : (
+                      <BannerImage
+                        src={item.mediaUrl || "/placeholder.jpg"}
+                        alt={`Featured ${item.id}`}
+                        onClick={() => handleImageClick(item.mediaUrl)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    )} */}
+                  </BannerImageContainer>
+                </Box>
+              ))}
+            </StyledSlider>
+          ) : (
+            <Box py={4} textAlign="center">
+              <Typography variant="body1">No featured items found.</Typography>
+            </Box>
+          )}
+<Dialog
+  open={Boolean(openImage)}
+  onClose={() => setOpenImage(null)}
+  maxWidth={false}
+  PaperProps={{
+    sx: {
+      margin: {
+        xs: '0 auto',
+        sm: '16px auto',
+        md: '32px auto',
+        lg: '48px auto',
+      },
+      width: {
+        xs: '100%',
+        sm: '95%',
+        md: '90%',
+        lg: '80%',
+        xl: '70%',
+      },
+      maxWidth: '100%',
+      height: 'auto',
+      maxHeight: '90vh',
+      backgroundColor: '#000',
+      borderRadius: {
+        xs: 0,
+        sm: 2,
+      },
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }}
+>
+  <DialogContent
+    sx={{
+      p: 0,
+      position: 'relative',
+      overflow: 'auto',
+      width: '100%',
+      backgroundColor: '#000',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+<IconButton
+  onClick={() => setOpenImage(null)}
+  sx={{
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 26,
+    height: 26,
+    padding: 0,
+    borderRadius: '50%',
+    color: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Default background color
+    transition: 'background-color 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.3)', // Change background on hover
+    },
+    fontSize: 24,
+    fontWeight: 'bold',
+    lineHeight: 1,
+    zIndex: 10, // Ensures the button is above the content
+  }}
+>
+  ×
+</IconButton>
+
+
+    {/* Media Content */}
+    {openImage?.endsWith('.mp4') ? (
+      <video
+        src={openImage}
+        controls
+        autoPlay
+        style={{
+          width: '100%',
+          height: 'auto',
+          maxHeight: '90vh',
+          objectFit: 'contain',
+        }}
+      />
+    ) : (
+      <img
+        src={openImage}
+        alt="Full View"
+        style={{
+          width: '100%',
+          height: 'auto',
+          maxHeight: '90vh',
+          objectFit: 'contain',
+        }}
+      />
+    )}
+  </DialogContent>
+</Dialog>
+
+                {/* // for viewing video
+                // {openImage?.endsWith(".mp4") ? (
+                //   <video
+                //     src={openImage}
+                //     controls
+                //     autoPlay
+                //     style={{
+                //       width: "100%",
+                //       height: "auto",
+                //       maxHeight: "90vh",
+                //       objectFit: "contain",
+                //     }}
+                //   />
+                // ) : (
+                //   <img
+                //     src={openImage}
+                //     alt="Full View"
+                //     style={{
+                //       width: "100%",
+                //       height: "auto",
+                //       maxHeight: "90vh",
+                //       objectFit: "contain",
+                //     }}
+                //   />
+                // )} */}
+        </StyledBannerContainer>
       </Container>
     </StyledBox>
   );

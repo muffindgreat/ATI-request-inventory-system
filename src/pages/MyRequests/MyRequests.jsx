@@ -7,9 +7,19 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { auth, db } from "../../config/firebaseConfig";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  query,
+  where,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
+import useToast from "../../components/Toastify/useToast";
 
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import RequestList from "../../components/MyRequests/RequestList";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
 import BackgroundImage from "../../components/UI/BackgroundImage";
@@ -20,8 +30,9 @@ export default function MyRequests() {
   const [allRequests, setAllRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const showToast = useToast();
   const handleChange = (event, newIndex) => setTabIndex(newIndex);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -33,28 +44,23 @@ export default function MyRequests() {
           const querySnapshot = await getDocs(q);
 
           const fetchedRequests = await Promise.all(
-            querySnapshot.docs.map(async (doc) => {
-              const data = doc.data();
+            querySnapshot.docs.map(async (requestDoc) => {
+              const data = requestDoc.data();
 
-              // Fetch inventory details for each requested material
               const materials = await Promise.all(
                 (data.materialRequested || []).map(async (mat) => {
-                  const inventoryQuery = query(
-                    collection(db, "Inventory"),
-                    where("title", "==", mat.title) // Match material with inventory
-                  );
-                  const inventorySnapshot = await getDocs(inventoryQuery);
-                  const inventoryDoc = inventorySnapshot.docs[0];
-                  const inventoryData =
-                    inventorySnapshot.docs.length > 0
-                      ? inventorySnapshot.docs[0].data()
-                      : {};
+                  const inventoryRef = doc(db, "Inventory", mat.itemID); // ✅ now this won't break
+                  const inventorySnap = await getDoc(inventoryRef);
+                  const inventoryData = inventorySnap.exists()
+                    ? inventorySnap.data()
+                    : {};
 
                   return {
-                    id: inventoryDoc?.id || null,
-                    name: mat.title,
+                    id: mat.itemID,
+                    name: inventorySnap.data()?.title || "Unknown Material",
                     type: mat.type,
                     quantity: mat.quantity,
+                    previousQuantity: mat.previousQuantity ?? null,
                     imageUrl:
                       inventoryData.imageUrl ||
                       "https://via.placeholder.com/150",
@@ -64,7 +70,7 @@ export default function MyRequests() {
               );
 
               return {
-                id: doc.id,
+                id: requestDoc.id,
                 reqNo: data.reqNo,
                 status: data.status,
                 date: data.date?.toDate
@@ -80,22 +86,34 @@ export default function MyRequests() {
                 receivedDate: data.receivedDate?.toDate
                   ? data.receivedDate.toDate().toLocaleString()
                   : "",
-
                 purpose: data.purpose || "",
                 program: data.program || "",
                 section: data.section || "",
                 remarks: data.remarks || "",
-                materials, // Updated with Inventory Data
+                materials,
               };
             })
           );
 
-          setAllRequests(fetchedRequests);
+          setAllRequests(
+            fetchedRequests.sort((a, b) => {
+              const dateA = new Date(a.date);
+              const dateB = new Date(b.date);
+              return dateB - dateA; // newest first
+            })
+          );
         } catch (err) {
-          console.error("Error fetching requests:", err);
+          showToast(
+            "Failed to fetch your requests. Please try again later.",
+            "error"
+          );
         } finally {
           setLoading(false);
         }
+      } else {
+        showToast("Session expired. Please log in again.", "warning");
+        setLoading(false);
+        navigate("/login");
       }
     });
 
@@ -128,6 +146,9 @@ export default function MyRequests() {
         overflow: "hidden",
       }}
     >
+      <Helmet>
+        <title>My Requests | ATI CALABARZON e-Library</title>
+      </Helmet>
       <BackgroundImage />
 
       <Container maxWidth="lg" sx={{ pt: { xs: 12, sm: 14, md: 16 }, mb: 10 }}>
@@ -135,12 +156,13 @@ export default function MyRequests() {
           <CustomCardHeader title="My Requests" showBackButton />
           <CardContent>
             <RequestTabs tabIndex={tabIndex} handleChange={handleChange} />
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               {loading ? (
-                <CircularProgress />
+                <CircularProgress sx={{ my: 2 }} />
               ) : (
                 <RequestList
                   items={requestMap[tabIndex] || []}
+                  tabIndex={tabIndex}
                   sx={{ py: 5 }}
                 />
               )}

@@ -24,13 +24,14 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
     iconColor: "#2e7d32",
     textColor: "#2e7d32",
     drawerBackgroundColor: "white",
+    fontFamily: "'Lato', sans-serif",
   };
 
   // Handle Sign Out
   const handleSignOut = async () => {
     try {
-      await signOut(auth); // Sign out the user
-      navigate("/login"); // Redirect to login page
+      await signOut(auth);
+      navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -45,6 +46,7 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
         "& .MuiDrawer-paper": {
           backgroundColor: styles.drawerBackgroundColor,
           color: styles.textColor,
+          fontFamily: styles.fontFamily, // Apply Lato font to drawer
         },
       }}
     >
@@ -55,7 +57,15 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
               <ListItemIcon>
                 <HomeIcon sx={{ color: styles.iconColor }} />
               </ListItemIcon>
-              <ListItemText primary="Home" sx={{ color: styles.textColor }} />
+              <ListItemText
+                primary="Home"
+                primaryTypographyProps={{
+                  sx: {
+                    color: styles.textColor,
+                    fontFamily: styles.fontFamily,
+                  },
+                }}
+              />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -65,7 +75,12 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
               </ListItemIcon>
               <ListItemText
                 primary="Profile"
-                sx={{ color: styles.textColor }}
+                primaryTypographyProps={{
+                  sx: {
+                    color: styles.textColor,
+                    fontFamily: styles.fontFamily,
+                  },
+                }}
               />
             </ListItemButton>
           </ListItem>
@@ -76,7 +91,12 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
               </ListItemIcon>
               <ListItemText
                 primary="My Requests"
-                sx={{ color: styles.textColor }}
+                primaryTypographyProps={{
+                  sx: {
+                    color: styles.textColor,
+                    fontFamily: styles.fontFamily,
+                  },
+                }}
               />
             </ListItemButton>
           </ListItem>
@@ -88,7 +108,12 @@ function NavbarDrawer({ mobileOpen, handleDrawerToggle }) {
               </ListItemIcon>
               <ListItemText
                 primary="Sign Out"
-                sx={{ color: styles.textColor }}
+                primaryTypographyProps={{
+                  sx: {
+                    color: styles.textColor,
+                    fontFamily: styles.fontFamily,
+                  },
+                }}
               />
             </ListItemButton>
           </ListItem>
