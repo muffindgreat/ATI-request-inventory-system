@@ -10,10 +10,12 @@ const CategoryDropdown = ({ onSelect }) => {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "Category"), (snapshot) => {
-      const categoryList = [
-        "All Categories",
-        ...snapshot.docs.map((doc) => doc.data().bannerProgram),
-      ];
+      const activeCategories = snapshot.docs
+        .map((doc) => doc.data())
+        .filter((data) => data.status === "Active")
+        .map((data) => data.bannerProgram);
+
+      const categoryList = ["All Categories", ...activeCategories];
       const sortedCategoryList = categoryList.sort((a, b) =>
         a.localeCompare(b)
       );
@@ -24,6 +26,7 @@ const CategoryDropdown = ({ onSelect }) => {
         sortedCategoryList.includes(prev) ? prev : "All Categories"
       );
     });
+
     return () => unsubscribe();
   }, []);
 
