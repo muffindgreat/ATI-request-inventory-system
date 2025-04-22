@@ -81,7 +81,7 @@ const Library = ({ selectedCategory, searchTerm, sortOrder, db, onImagesReceived
     <Container sx={{ pt: 3, textAlign: "center" }}>
       <Grid container spacing={2} justifyContent="center">
         {visibleImages.map((img) => (
-          <Grid item key={img.id} xs={10} sm={6} md={4} lg={3} xl={2.4}>
+          <Grid item key={img.id} xs={4} sm={6} md={4} lg={3} xl={2.4}>
             <ImageCard
               id={img.id}
               src={img.src || "https://via.placeholder.com/150"}
