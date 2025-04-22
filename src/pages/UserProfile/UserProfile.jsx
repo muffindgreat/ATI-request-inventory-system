@@ -11,6 +11,7 @@ import { auth, db } from "../../config/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import ProfileAvatar from "./ProfileAvatar";
@@ -43,16 +44,17 @@ const UserProfile = () => {
     confirm: false,
   });
 
+  const navigate = useNavigate();
   const showToast = useToast();
 
   useEffect(() => {
+    // Listen for auth changes and fetch user profile data
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
           const userRef = doc(db, "User", user.uid);
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
-            console.log("User Data Found:", userSnap.data());
             const fetchedData = userSnap.data();
             setUserData({
               firstName: fetchedData?.firstName || "",
@@ -65,13 +67,16 @@ const UserProfile = () => {
             setProfilePic(fetchedData?.profilePic || null);
             setOriginalData(fetchedData);
           } else {
-            console.log("No such user document in 'User' collection!");
+            // If user doc doesn't exist, show error and redirect
+            showToast("User not found. Redirecting to login...", "error");
+            navigate("/login");
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       } else {
-        console.log("No authenticated user found.");
+        // If not authenticated, redirect to login
+        navigate("/login");
       }
     });
 
@@ -89,7 +94,7 @@ const UserProfile = () => {
   const handleSave = async () => {
     const user = auth.currentUser;
     if (user) {
-      // Check if firstName and lastName are valid strings
+      // Validate name fields
       const { firstName, lastName } = userData;
       if (
         typeof firstName !== "string" ||
@@ -102,6 +107,7 @@ const UserProfile = () => {
       }
 
       try {
+        // Update user document in Firestore
         const userRef = doc(db, "User", user.uid);
         await updateDoc(userRef, { ...userData, profilePic });
         showToast("User data updated successfully!", "success");
@@ -115,6 +121,7 @@ const UserProfile = () => {
   };
 
   const handleCancel = () => {
+    // Reset form changes
     setUserData(originalData);
     setProfilePic(originalData.profilePic);
     setIsEditing(false);
