@@ -40,6 +40,8 @@ const MatsReq = () => {
   const [dateError, setDateError] = useState("");
   const location = useLocation();
   const { selectedItems } = location.state || {};
+
+  // Initial form state
   const [formData, setFormData] = useState({
     reqNo: "AUTO-12345",
     date: today,
@@ -50,9 +52,9 @@ const MatsReq = () => {
     remarks: "",
     status: "Pending",
   });
+
   const [loading, setLoading] = useState(false);
   const [availableEmails, setAvailableEmails] = useState([]);
-
   const showToast = useToast();
 
   const programOptions = [
@@ -68,6 +70,7 @@ const MatsReq = () => {
     "Various Programs",
   ];
 
+  // Fetch active admin emails from Firestore
   useEffect(() => {
     const fetchavailableEmails = async () => {
       try {
@@ -91,6 +94,7 @@ const MatsReq = () => {
     fetchavailableEmails();
   }, []);
 
+  // Monitor auth state and fetch user details on login
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -123,7 +127,6 @@ const MatsReq = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-
     setFormData({ ...formData, [id]: value });
   };
 
@@ -141,8 +144,9 @@ const MatsReq = () => {
     try {
       const { userID, ...formDataWithoutUserID } = formData;
 
-      // Ensure materialRequested is defined and valid
+      // Validate `materialRequested` before proceeding
       if (!Array.isArray(formData.materialRequested)) {
+        console.error("Error: materialRequested must be an array.");
         showToast(
           "Invalid request data. Please review your selections.",
           "error"
@@ -159,36 +163,37 @@ const MatsReq = () => {
         date: serverTimestamp(),
       };
 
+      // Calculate total quantity requested
       const totalQuantity = formData.materialRequested.reduce((sum, item) => {
         return sum + (parseInt(item.quantity) || 0);
       }, 0);
 
+      // Notify all active admins via email
       await sendEmailsToAdmins(totalQuantity);
 
-      // Add new request to "Request" collection and get the new document ID
+      // Add new request document in Firestore
       const requestRef = await addDoc(collection(db, "Request"), trimmedData);
       const reqID = requestRef.id;
 
-      // Reference to the user document
       const userRef = doc(db, "User", userID);
       const userDoc = await getDoc(userRef);
       const userData = userDoc.exists() ? userDoc.data() : {};
 
-      // Ensure `myOrders` is an array before updating
       const updatedMyOrders = userData.myOrders ? arrayUnion(reqID) : [reqID];
 
-      // Remove selected items from the cart
+      // Remove selected items from cart
       const updatedCart = (userData.cart || []).filter(
         (cartItem) =>
           !selectedItems.some((selected) => selected.itemID === cartItem.itemId)
       );
 
-      // Update user document with new cart and myOrders
+      // Update user document with new orders and cart
       await updateDoc(userRef, {
         myOrders: updatedMyOrders,
         cart: updatedCart,
       });
     } catch (error) {
+      console.error("Error processing request:", error);
       showToast("An error occurred while submitting your request.", "error");
     } finally {
       navigate("/my-requests");
@@ -196,6 +201,7 @@ const MatsReq = () => {
     }
   };
 
+  // Sends email notifications to admins using EmailJS
   const sendEmailsToAdmins = async (totalQuantity) => {
     for (const email of availableEmails) {
       const templateParams = {
@@ -206,7 +212,7 @@ const MatsReq = () => {
       };
 
       try {
-        const result = await emailjs.send(
+        await emailjs.send(
           "service_jsnb4fe",
           "template_nkq3oik",
           templateParams,
@@ -233,13 +239,7 @@ const MatsReq = () => {
         <title>Materials Requisition Form | ATI CALABARZON e-Library</title>
       </Helmet>
       <BackgroundImage />
-      <Container
-        maxWidth="lg"
-        sx={{
-          pt: { xs: 12, sm: 14, md: 16 }, // Adjust padding top based on screen size
-          mb: 10,
-        }}
-      >
+      <Container maxWidth="lg" sx={{ pt: { xs: 12, sm: 14, md: 16 }, mb: 10 }}>
         <Card
           sx={{
             maxWidth: 2000,
@@ -253,6 +253,7 @@ const MatsReq = () => {
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
+                {/* Requisition Form Number */}
                 <Grid item xs={12} sm={6}>
                   <TextField
                     label="Requisition Form No."
@@ -263,6 +264,7 @@ const MatsReq = () => {
                     disabled
                   />
                 </Grid>
+                {/* Request Date (auto-filled) */}
                 <Grid item xs={12} sm={6}>
                   <TextField
                     label="Date Requested"
@@ -275,6 +277,7 @@ const MatsReq = () => {
                     InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
+                {/* Program selection */}
                 <Grid item xs={12} sm={6}>
                   <Autocomplete
                     options={programOptions}
@@ -293,6 +296,7 @@ const MatsReq = () => {
                     )}
                   />
                 </Grid>
+                {/* Date Needed with future date validation */}
                 <Grid item xs={12} sm={6}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -304,7 +308,7 @@ const MatsReq = () => {
                         if (newValue && newValue.isBefore(dayjs(), "day")) {
                           setDateError("Please select today or a future date.");
                           handleChange({
-                            target: { id: "dateNeeded", value: "" }, // Reset invalid date
+                            target: { id: "dateNeeded", value: "" },
                           });
                         } else {
                           setDateError("");
@@ -329,6 +333,7 @@ const MatsReq = () => {
                     />
                   </LocalizationProvider>
                 </Grid>
+                {/* Purpose field */}
                 <Grid item xs={12}>
                   <TextField
                     label="Purpose"
@@ -341,6 +346,7 @@ const MatsReq = () => {
                     fullWidth
                   />
                 </Grid>
+                {/* Optional remarks */}
                 <Grid item xs={12}>
                   <TextField
                     label="Remarks (Optional)"
@@ -355,10 +361,12 @@ const MatsReq = () => {
                   />
                 </Grid>
               </Grid>
+
               <Grid item xs={12}>
                 <Divider sx={{ width: "100%", my: 2 }} />
               </Grid>
 
+              {/* Submit button */}
               <CardActions sx={{ justifyContent: "flex-end" }}>
                 <Button
                   variant="contained"
