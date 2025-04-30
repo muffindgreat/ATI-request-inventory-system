@@ -254,7 +254,7 @@ const MatsReq = () => {
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 {/* Requisition Form Number */}
-                <Grid item xs={12} sm={6}>
+                {/* <Grid item xs={12} sm={6}>
                   <TextField
                     label="Requisition Form No."
                     variant="outlined"
@@ -263,9 +263,9 @@ const MatsReq = () => {
                     fullWidth
                     disabled
                   />
-                </Grid>
+                </Grid> */}
                 {/* Request Date (auto-filled) */}
-                <Grid item xs={12} sm={6}>
+                {/* <Grid item xs={12} sm={12}>
                   <TextField
                     label="Date Requested"
                     variant="outlined"
@@ -276,7 +276,7 @@ const MatsReq = () => {
                     disabled
                     InputLabelProps={{ shrink: true }}
                   />
-                </Grid>
+                </Grid> */}
                 {/* Program selection */}
                 <Grid item xs={12} sm={6}>
                   <Autocomplete

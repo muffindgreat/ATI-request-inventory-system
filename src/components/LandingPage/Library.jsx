@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Container, CircularProgress, Button } from "@mui/material";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore"; // Use onSnapshot for real-time updates
 import ImageCard from "../Items/ImageCard";
+import { db } from "../../config/firebaseConfig";
 
 const Library = ({
   selectedCategory,
   searchTerm,
   sortOrder,
-  db,
   onImagesReceived,
 }) => {
   const [images, setImages] = useState([]);
@@ -15,43 +15,47 @@ const Library = ({
   const [visibleCount, setVisibleCount] = useState(8); // Show 8 initially
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Inventory"));
-        const imageList = querySnapshot.docs
-          .map((doc) => {
-            const data = doc.data();
-            if (data.isDisplay === false) return null;
-            if (!data.title || !data.imageUrl || !data.bannerProgram) {
-              return null;
-            }
-            return {
-              id: doc.id,
-              src: data.imageUrl,
-              views: data.views || 0,
-              categories:
-                Array.isArray(data.bannerProgram) &&
-                data.bannerProgram.length > 0
-                  ? data.bannerProgram
-                  : ["Unknown"],
-              itemName: data.title,
-            };
-          })
-          .filter(Boolean);
+    const unsubscribe = onSnapshot(
+      collection(db, "Inventory"),
+      (querySnapshot) => {
+        try {
+          const imageList = querySnapshot.docs
+            .map((doc) => {
+              const data = doc.data();
+              // Check if isDisplay is false and skip the document
+              if (data.isDisplay === false) return null;
+              if (!data.title || !data.imageUrl || !data.bannerProgram) {
+                return null;
+              }
+              return {
+                id: doc.id,
+                src: data.imageUrl,
+                views: data.views || 0,
+                categories:
+                  Array.isArray(data.bannerProgram) &&
+                  data.bannerProgram.length > 0
+                    ? data.bannerProgram
+                    : ["Unknown"],
+                itemName: data.title,
+              };
+            })
+            .filter(Boolean);
 
-        setImages(imageList);
+          setImages(imageList);
 
-        if (onImagesReceived) {
-          onImagesReceived(imageList); // ✅ This line is the fix
+          if (onImagesReceived) {
+            onImagesReceived(imageList); // ✅ This line is the fix
+          }
+        } catch (error) {
+          console.error("Error fetching images:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      } finally {
-        setLoading(false);
       }
-    };
+    );
 
-    fetchImages();
+    // Cleanup the subscription on unmount
+    return () => unsubscribe();
   }, [db]);
 
   if (loading) {
@@ -62,13 +66,19 @@ const Library = ({
     );
   }
 
-  // ✅ Apply filtering
+  if (!images.length) {
+    return <CircularProgress />;
+  }
+
   let filteredImages = images.filter((img) => {
     const categoryMatch =
       selectedCategory === null || img.categories.includes(selectedCategory);
     const searchMatch =
+      searchTerm === undefined ||
       searchTerm === "" ||
-      img.itemName?.toLowerCase().includes(searchTerm.toLowerCase());
+      (img.itemName &&
+        img.itemName.toLowerCase().includes(searchTerm.toLowerCase()));
+
     return categoryMatch && searchMatch;
   });
 

@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 import { auth, db } from "../../config/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
@@ -19,8 +19,10 @@ import ProfileForm from "./ProfileForm";
 import PasswordModal from "./PasswordModal";
 import ProfileActions from "./ProfileActions";
 import useToast from "../../components/Toastify/useToast";
+import { useAuth } from "../../context/AuthContext";
 
 const UserProfile = () => {
+  const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     firstName: "",
@@ -48,39 +50,43 @@ const UserProfile = () => {
   const showToast = useToast();
 
   useEffect(() => {
-    // Listen for auth changes and fetch user profile data
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userRef = doc(db, "User", user.uid);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            const fetchedData = userSnap.data();
-            setUserData({
-              firstName: fetchedData?.firstName || "",
-              lastName: fetchedData?.lastName || "",
-              email: fetchedData?.email || user.email || "",
-              designation: fetchedData?.designation || "",
-              section: fetchedData?.section || "",
-              phoneNumber: fetchedData?.phoneNumber || "",
-            });
-            setProfilePic(fetchedData?.profilePic || null);
-            setOriginalData(fetchedData);
-          } else {
-            showToast("User not found. Redirecting to login...", "error");
-            navigate("/login");
-          }
-        } catch (error) {
-          showToast(
-            "Failed to fetch user data. Redirecting to login...",
-            "error"
-          );
+    if (!currentUser) {
+      showToast("No user found. Redirecting to login...", "error");
+      navigate("/login");
+      return;
+    }
+
+    const userRef = doc(db, "User", currentUser.uid);
+
+    const unsubscribe = onSnapshot(
+      userRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const fetchedData = docSnap.data();
+          setUserData({
+            firstName: fetchedData?.firstName || "",
+            lastName: fetchedData?.lastName || "",
+            email: fetchedData?.email || currentUser.email || "",
+            designation: fetchedData?.designation || "",
+            section: fetchedData?.section || "",
+            phoneNumber: fetchedData?.phoneNumber || "",
+          });
+          setProfilePic(fetchedData?.profilePic || null);
+          setOriginalData(fetchedData);
+        } else {
+          showToast("User not found. Redirecting to login...", "error");
           navigate("/login");
         }
-      } else {
+      },
+      (error) => {
+        console.error("Error fetching user data: ", error);
+        showToast(
+          "Failed to fetch user data. Redirecting to login...",
+          "error"
+        );
         navigate("/login");
       }
-    });
+    );
 
     return () => unsubscribe();
   }, []);
