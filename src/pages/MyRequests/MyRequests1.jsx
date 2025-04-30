@@ -17,7 +17,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { auth, db } from "../../config/firebaseConfig";
-
+import useToast from "../../components/Toastify/useToast";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
 import RequestList from "../../components/MyRequests/RequestList";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
@@ -28,6 +28,7 @@ export default function MyRequests() {
   const [allRequests, setAllRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const handleChange = (event, newIndex) => setTabIndex(newIndex);
 
@@ -98,6 +99,7 @@ export default function MyRequests() {
         );
       } catch (err) {
         console.error("Error loading requests", err);
+        showToast("Failed to load your requests. Please try again.", "error");
       } finally {
         setLoading(false);
       }

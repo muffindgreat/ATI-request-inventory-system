@@ -8,9 +8,10 @@ import {
   Divider,
 } from "@mui/material";
 import { auth, db } from "../../config/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
 import ProfileAvatar from "./ProfileAvatar";
@@ -18,8 +19,10 @@ import ProfileForm from "./ProfileForm";
 import PasswordModal from "./PasswordModal";
 import ProfileActions from "./ProfileActions";
 import useToast from "../../components/Toastify/useToast";
+import { useAuth } from "../../context/AuthContext";
 
 const UserProfile = () => {
+  const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     firstName: "",
@@ -43,37 +46,47 @@ const UserProfile = () => {
     confirm: false,
   });
 
+  const navigate = useNavigate();
   const showToast = useToast();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userRef = doc(db, "User", user.uid);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            console.log("User Data Found:", userSnap.data());
-            const fetchedData = userSnap.data();
-            setUserData({
-              firstName: fetchedData?.firstName || "",
-              lastName: fetchedData?.lastName || "",
-              email: fetchedData?.email || user.email || "",
-              designation: fetchedData?.designation || "",
-              section: fetchedData?.section || "",
-              phoneNumber: fetchedData?.phoneNumber || "",
-            });
-            setProfilePic(fetchedData?.profilePic || null);
-            setOriginalData(fetchedData);
-          } else {
-            console.log("No such user document in 'User' collection!");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+    if (!currentUser) {
+      showToast("No user found. Redirecting to login...", "error");
+      navigate("/login");
+      return;
+    }
+
+    const userRef = doc(db, "User", currentUser.uid);
+
+    const unsubscribe = onSnapshot(
+      userRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const fetchedData = docSnap.data();
+          setUserData({
+            firstName: fetchedData?.firstName || "",
+            lastName: fetchedData?.lastName || "",
+            email: fetchedData?.email || currentUser.email || "",
+            designation: fetchedData?.designation || "",
+            section: fetchedData?.section || "",
+            phoneNumber: fetchedData?.phoneNumber || "",
+          });
+          setProfilePic(fetchedData?.profilePic || null);
+          setOriginalData(fetchedData);
+        } else {
+          showToast("User not found. Redirecting to login...", "error");
+          navigate("/login");
         }
-      } else {
-        console.log("No authenticated user found.");
+      },
+      (error) => {
+        console.error("Error fetching user data: ", error);
+        showToast(
+          "Failed to fetch user data. Redirecting to login...",
+          "error"
+        );
+        navigate("/login");
       }
-    });
+    );
 
     return () => unsubscribe();
   }, []);
@@ -89,7 +102,7 @@ const UserProfile = () => {
   const handleSave = async () => {
     const user = auth.currentUser;
     if (user) {
-      // Check if firstName and lastName are valid strings
+      // Validate name fields
       const { firstName, lastName } = userData;
       if (
         typeof firstName !== "string" ||
@@ -102,19 +115,20 @@ const UserProfile = () => {
       }
 
       try {
+        // Update user document in Firestore
         const userRef = doc(db, "User", user.uid);
         await updateDoc(userRef, { ...userData, profilePic });
         showToast("User data updated successfully!", "success");
         setOriginalData({ ...userData, profilePic });
         setIsEditing(false);
       } catch (error) {
-        console.error("Error updating user data:", error);
         showToast("Network Error", "error");
       }
     }
   };
 
   const handleCancel = () => {
+    // Reset form changes
     setUserData(originalData);
     setProfilePic(originalData.profilePic);
     setIsEditing(false);

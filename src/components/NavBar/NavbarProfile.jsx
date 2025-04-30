@@ -30,7 +30,7 @@ function NavbarProfile() {
         if (user) {
           const userRef = doc(db, "User", user.uid);
 
-          // Real-time listener for user data changes
+          // Listen for user profile changes
           unsubscribe = onSnapshot(userRef, (docSnap) => {
             if (docSnap.exists()) {
               const data = docSnap.data();
@@ -39,10 +39,10 @@ function NavbarProfile() {
                 role: data.designation,
                 email: data.email,
                 phoneNumber: data.phoneNumber,
-                profilePic: data.profilePic || null, // Store profile picture URL if available
+                profilePic: data.profilePic || null,
               });
             } else {
-              console.log("No user data found");
+              signOut(auth).then(() => navigate("/login"));
             }
           });
         } else {
@@ -65,7 +65,6 @@ function NavbarProfile() {
 
   return (
     <>
-      {/* Dynamic Profile Icon in Navbar */}
       <Tooltip title="User Profile">
         <IconButton onClick={handleOpenUserMenu}>
           {userData?.profilePic ? (
@@ -89,11 +88,10 @@ function NavbarProfile() {
             borderRadius: "10px",
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             minWidth: "250px",
-            fontFamily: "'Lato', sans-serif", // Apply Lato font globally to menu
+            fontFamily: "'Lato', sans-serif",
           },
         }}
       >
-        {/* Profile Header with Dynamic Avatar */}
         <Box
           sx={{
             display: "flex",
@@ -133,7 +131,6 @@ function NavbarProfile() {
           </Box>
         </Box>
 
-        {/* Menu Items */}
         <MenuItem
           onClick={() => {
             navigate("/user-profile");
@@ -143,7 +140,7 @@ function NavbarProfile() {
             color: "#1A854B",
             paddingY: "10px",
             paddingX: "16px",
-            fontFamily: "'Lato', sans-serif", // Apply Lato font to menu items
+            fontFamily: "'Lato', sans-serif",
           }}
         >
           <PersonIcon sx={{ color: "#1A854B", marginRight: "12px" }} /> Profile
@@ -158,7 +155,7 @@ function NavbarProfile() {
             color: "#1A854B",
             paddingY: "10px",
             paddingX: "16px",
-            fontFamily: "'Lato', sans-serif", // Apply Lato font to menu items
+            fontFamily: "'Lato', sans-serif",
           }}
         >
           <AssignmentIcon sx={{ color: "#1A854B", marginRight: "12px" }} /> My
@@ -171,7 +168,7 @@ function NavbarProfile() {
             color: "#1A854B",
             paddingY: "10px",
             paddingX: "16px",
-            fontFamily: "'Lato', sans-serif", // Apply Lato font to menu items
+            fontFamily: "'Lato', sans-serif",
           }}
         >
           <ExitToAppIcon sx={{ color: "#2e7d32", marginRight: "12px" }} /> Sign

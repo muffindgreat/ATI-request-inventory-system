@@ -159,15 +159,14 @@ const FeaturedSection = () => {
       (querySnapshot) => {
         const items = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          imageUrl: doc.data().imageUrl,                  // Remove this for applying video format
-          // mediaUrl: doc.data().mediaUrl,               // Use For Video .mp4 format 
+          imageUrl: doc.data().imageUrl, // Remove this for applying video format
+          // mediaUrl: doc.data().mediaUrl,               // Use For Video .mp4 format
           // mediaType: doc.data().mediaType || "image"   // Use For Video .mp4 format
         }));
         setFeaturedItems(items);
         setIsLoading(false);
       },
       (error) => {
-        console.error("Error fetching carousel images:", error);
         setIsLoading(false);
       }
     );
@@ -204,8 +203,8 @@ const FeaturedSection = () => {
                       onClick={() => handleImageClick(item.imageUrl)}
                       style={{ cursor: "pointer" }}
                     />
-                     {/*Change The Banner Image to this for applying video .mp4 format  */}
-                     {/* {item.mediaType === "video" ? (
+                    {/*Change The Banner Image to this for applying video .mp4 format  */}
+                    {/* {item.mediaType === "video" ? (
                       <video
                         src={item.mediaUrl}
                         controls
@@ -229,106 +228,105 @@ const FeaturedSection = () => {
               <Typography variant="body1">No featured items found.</Typography>
             </Box>
           )}
-<Dialog
-  open={Boolean(openImage)}
-  onClose={() => setOpenImage(null)}
-  maxWidth={false}
-  PaperProps={{
-    sx: {
-      margin: {
-        xs: '0 auto',
-        sm: '16px auto',
-        md: '32px auto',
-        lg: '48px auto',
-      },
-      width: {
-        xs: '100%',
-        sm: '95%',
-        md: '90%',
-        lg: '80%',
-        xl: '70%',
-      },
-      maxWidth: '100%',
-      height: 'auto',
-      maxHeight: '90vh',
-      backgroundColor: '#000',
-      borderRadius: {
-        xs: 0,
-        sm: 2,
-      },
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  }}
->
-  <DialogContent
-    sx={{
-      p: 0,
-      position: 'relative',
-      overflow: 'auto',
-      width: '100%',
-      backgroundColor: '#000',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-<IconButton
-  onClick={() => setOpenImage(null)}
-  sx={{
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 26,
-    height: 26,
-    padding: 0,
-    borderRadius: '50%',
-    color: '#fff',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Default background color
-    transition: 'background-color 0.3s ease',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.3)', // Change background on hover
-    },
-    fontSize: 24,
-    fontWeight: 'bold',
-    lineHeight: 1,
-    zIndex: 10, // Ensures the button is above the content
-  }}
->
-  ×
-</IconButton>
+          <Dialog
+            open={Boolean(openImage)}
+            onClose={() => setOpenImage(null)}
+            maxWidth={false}
+            PaperProps={{
+              sx: {
+                margin: {
+                  xs: "0 auto",
+                  sm: "16px auto",
+                  md: "32px auto",
+                  lg: "48px auto",
+                },
+                width: {
+                  xs: "100%",
+                  sm: "95%",
+                  md: "90%",
+                  lg: "80%",
+                  xl: "70%",
+                },
+                maxWidth: "100%",
+                height: "auto",
+                maxHeight: "90vh",
+                backgroundColor: "#000",
+                borderRadius: {
+                  xs: 0,
+                  sm: 2,
+                },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            }}
+          >
+            <DialogContent
+              sx={{
+                p: 0,
+                position: "relative",
+                overflow: "auto",
+                width: "100%",
+                backgroundColor: "#000",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <IconButton
+                onClick={() => setOpenImage(null)}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  width: 26,
+                  height: 26,
+                  padding: 0,
+                  borderRadius: "50%",
+                  color: "#fff",
+                  backgroundColor: "rgba(0, 0, 0, 0.4)",
+                  transition: "background-color 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.3)",
+                  },
+                  fontSize: 24,
+                  fontWeight: "bold",
+                  lineHeight: 1,
+                  zIndex: 10,
+                }}
+              >
+                ×
+              </IconButton>
 
+              {/* Media Content */}
+              {openImage?.endsWith(".mp4") ? (
+                <video
+                  src={openImage}
+                  controls
+                  autoPlay
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "90vh",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                <img
+                  src={openImage}
+                  alt="Full View"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "90vh",
+                    objectFit: "contain",
+                  }}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
 
-    {/* Media Content */}
-    {openImage?.endsWith('.mp4') ? (
-      <video
-        src={openImage}
-        controls
-        autoPlay
-        style={{
-          width: '100%',
-          height: 'auto',
-          maxHeight: '90vh',
-          objectFit: 'contain',
-        }}
-      />
-    ) : (
-      <img
-        src={openImage}
-        alt="Full View"
-        style={{
-          width: '100%',
-          height: 'auto',
-          maxHeight: '90vh',
-          objectFit: 'contain',
-        }}
-      />
-    )}
-  </DialogContent>
-</Dialog>
-
-                {/* // for viewing video
+          {/* // for viewing video
                 // {openImage?.endsWith(".mp4") ? (
                 //   <video
                 //     src={openImage}
