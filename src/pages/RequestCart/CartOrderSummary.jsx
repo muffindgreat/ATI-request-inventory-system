@@ -159,7 +159,7 @@ export default function CartOrderSummary({
                     key={item.id || index}
                     sx={{
                       backgroundColor: index % 2 === 0 ? "#e0e0e0" : "#ffffff",
-                      cursor: "pointer",
+                      cursor: isExpanded ? "default" : "pointer",
                       transition: "max-height 0.3s ease-in-out",
                       maxHeight: isExpanded ? "100px" : "50px",
                       overflow: "hidden",

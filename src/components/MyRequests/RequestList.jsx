@@ -106,6 +106,7 @@ function RequestItemSummary({ item }) {
               overflow: "hidden", // Truncate after 2 lines
               color: "inherit",
               textDecoration: "none",
+              width: "fit-content",
             }}
           >
             {firstMaterial ? firstMaterial.name : "No materials"}

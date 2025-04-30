@@ -27,7 +27,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const AtisLogo = styled("img")(({ theme }) => ({
-  height: 100,
+  height: 110,
   position: "relative",
   zIndex: 2,
   marginBottom: theme.spacing(0),
@@ -44,6 +44,7 @@ const TitleTextContainer = styled(Box)({
   color: "white",
   position: "relative",
   zIndex: 2,
+  marginTop: -10,
 });
 
 const StyledTitle = styled(Typography)({
