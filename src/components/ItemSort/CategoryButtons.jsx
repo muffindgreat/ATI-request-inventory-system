@@ -15,15 +15,16 @@ const CategoryDropdown = ({ onSelect }) => {
         .filter((data) => data.status === "Active")
         .map((data) => data.bannerProgram);
 
-      const categoryList = ["All Categories", ...activeCategories];
-      const sortedCategoryList = categoryList.sort((a, b) =>
+      const sortedActiveCategories = activeCategories.sort((a, b) =>
         a.localeCompare(b)
       );
-      setCategories(sortedCategoryList);
+
+      const categoryList = ["All Categories", ...sortedActiveCategories];
+      setCategories(categoryList);
 
       // Ensure selected category is valid
       setSelectedCategory((prev) =>
-        sortedCategoryList.includes(prev) ? prev : "All Categories"
+        categoryList.includes(prev) ? prev : "All Categories"
       );
     });
 

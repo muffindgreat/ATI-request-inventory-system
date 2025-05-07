@@ -130,8 +130,30 @@ const MatsReq = () => {
     setFormData({ ...formData, [id]: value });
   };
 
+  const isValidDate = (dateStr) => {
+    // Check format: MM-DD-YYYY
+    if (!/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+      return false;
+    }
+
+    const [month, day, year] = dateStr.split("-").map(Number);
+    const date = new Date(`${year}-${month}-${day}`);
+
+    // Check if the constructed date matches the original values
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() + 1 === month &&
+      date.getDate() === day
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isValidDate(formData.dateNeeded)) {
+      showToast("Invalid Date Needed. Please try again", "error");
+      return;
+    }
 
     if (!selectedItems || selectedItems.length === 0) {
       showToast("No items selected in the cart", "error");
