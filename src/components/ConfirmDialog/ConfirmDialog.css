@@ -1,0 +1,17 @@
+.confirm-dialog-content {
+    width: 30em;
+    transition: width 0.3s ease;
+  }
+  
+  @media (max-width: 768px) {
+    .confirm-dialog-content {
+      width: 25em;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .confirm-dialog-content {
+      width: 20em;
+      text-align: center;
+    }
+  }

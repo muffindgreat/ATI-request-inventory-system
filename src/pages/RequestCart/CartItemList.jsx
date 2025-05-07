@@ -385,6 +385,7 @@ const CartItemList = ({
         </>
       )}
     </CardContent>
+    
   );
 };
 
