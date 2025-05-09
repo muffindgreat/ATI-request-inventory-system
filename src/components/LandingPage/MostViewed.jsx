@@ -97,6 +97,9 @@ const MostViewed = () => {
   const [isDragging, setIsDragging] = useState(false);
   const clickTimeout = useRef(null);
   const sliderRef = useRef();
+  const formatViews = (views) => {
+    return Intl.NumberFormat("en", { notation: "compact" }).format(views);
+  };
 
   const handleClick = (id) => {
     if (!isDragging) {
@@ -283,7 +286,7 @@ const MostViewed = () => {
                             fontFamily: "Lato, sans-serif",
                           }}
                         >
-                          {material.views}
+                          {formatViews(material.views)}
                         </Typography>
                       </Box>
                     </Box>
