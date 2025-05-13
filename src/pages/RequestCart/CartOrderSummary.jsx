@@ -21,6 +21,7 @@ export default function CartOrderSummary({
   cartItems,
   selectedItems,
   totalItems,
+  pendingUpdates, // Add pendingUpdates prop
 }) {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState([]);
@@ -59,10 +60,10 @@ export default function CartOrderSummary({
   // Recalculate total quantity whenever selectedItems or cartItems change
   useEffect(() => {
     const total = cartItems
-      .filter((item) => selectedItems.includes(item.id))
-      .reduce((sum, item) => sum + item.quantity, 0);
-    setTotalQuantity(total);
-  }, [cartItems, selectedItems]);
+      .filter((item) => selectedItems.includes(item.id)) // Filter selected items
+      .reduce((sum, item) => sum + (item.localQuantity || item.quantity), 0); // Use localQuantity if available
+    setTotalQuantity(total); // Update total quantity
+  }, [cartItems, selectedItems]); // Recalculate when cartItems or selectedItems change
 
   const handleOpenCheckoutConfirm = () => {
     setOpenConfirm(true); // Open the confirmation dialog
@@ -85,13 +86,15 @@ export default function CartOrderSummary({
   const getSelectedCartItems = () => {
     return cartItems
       .filter((item) => selectedItems.includes(item.id)) // Filter selected items
-      .map(({ id, name, quantity, type }) => ({
+      .map(({ id, name, localQuantity, quantity, type }) => ({
         itemID: id,
-        quantity,
+        quantity: localQuantity || quantity, // Use localQuantity if available
         title: name,
         type,
       }));
   };
+
+  const isLoading = Object.keys(pendingUpdates).length > 0; // Check if there are pending updates
 
   return (
     <>
@@ -202,7 +205,8 @@ export default function CartOrderSummary({
                           opacity: isExpanded ? 1 : 0.8,
                         }}
                       >
-                        {item.quantity} pcs
+                        {item.localQuantity || item.quantity} pcs{" "}
+                        {/* Use localQuantity */}
                       </TableCell>
                     </TableRow>
                   );
@@ -257,7 +261,8 @@ export default function CartOrderSummary({
                 .filter((item) => selectedItems.includes(item.id))
                 .map((item) => (
                   <li key={item.id}>
-                    {item.name} - {item.quantity} pcs
+                    {item.name} - {item.localQuantity || item.quantity} pcs{" "}
+                    {/* Use localQuantity */}
                   </li>
                 ))}
             </ul>
@@ -265,6 +270,7 @@ export default function CartOrderSummary({
         } // Dynamically list selected items and their quantities
         onConfirm={handleConfirmCheckout}
         onCancel={() => setOpenConfirm(false)}
+        loading={isLoading} // Pass loading state
       />
     </>
   );

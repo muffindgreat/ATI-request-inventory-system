@@ -41,6 +41,8 @@ const MatsReq = () => {
   const location = useLocation();
   const { selectedItems } = location.state || {};
 
+  console.log(selectedItems);
+
   // Initial form state
   const [formData, setFormData] = useState({
     reqNo: "AUTO-12345",
