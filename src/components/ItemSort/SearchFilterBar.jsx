@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom"; // Import hooks from react-router-dom
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Box,
   Stack,
@@ -16,7 +16,7 @@ import ImageLibrary from "../LandingPage/Library";
 const SearchFilterBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc"); // Default sorting A-Z
+  const [sortOrder, setSortOrder] = useState("asc");
   const isMobile = useMediaQuery("(max-width:600px)");
   const [navbarHeight, setNavbarHeight] = useState(70);
   const [images, setImages] = useState([]); // Add images state
@@ -39,19 +39,43 @@ const SearchFilterBar = () => {
     setSearchTerm(query);
   }, [searchParams]);
 
+  useEffect(() => {
+    const queryCategory = searchParams.get("category") || null;
+    const querySort = searchParams.get("sort") || "asc";
+
+    setSelectedCategory(queryCategory);
+    setSortOrder(querySort);
+  }, [searchParams]);
+
   const handleSearchChange = (event) => {
     const value = event.target.value;
     setSearchTerm(value);
 
-    // Update the query parameter in the URL
-    if (value) {
-      setSearchParams({ search: value });
-    } else {
-      setSearchParams({});
-    }
+    // Preserve the category and sort query parameters while updating the search query
+    const currentCategory = searchParams.get("category");
+    const currentSort = searchParams.get("sort");
+    const newParams = {};
+    if (currentCategory) newParams.category = currentCategory;
+    if (currentSort) newParams.sort = currentSort;
+    if (value) newParams.search = value;
+
+    setSearchParams(newParams);
   };
 
-  const handleFilterChange = (order) => setSortOrder(order); // Update sorting order
+  const handleFilterChange = (order) => {
+    setSortOrder(order);
+
+    // Preserve the search and category query parameters while updating the sort query
+    const currentSearch = searchParams.get("search");
+    const currentCategory = searchParams.get("category");
+    const newParams = {};
+    if (currentSearch) newParams.search = currentSearch;
+    if (currentCategory) newParams.category = currentCategory;
+    newParams.sort = order;
+
+    setSearchParams(newParams);
+  };
+
   const handleCategorySelect = (category) => setSelectedCategory(category);
 
   // Callback to get images from ImageLibrary
@@ -63,13 +87,22 @@ const SearchFilterBar = () => {
   const hasSearchedOrFiltered = searchTerm || selectedCategory;
 
   // Check if no images match the criteria (Search term or Category)
-  const filteredImages = images.filter(
-    (image) =>
-      (searchTerm
-        ? image.itemName.toLowerCase().includes(searchTerm.toLowerCase())
-        : true) &&
-      (selectedCategory ? image.categories.includes(selectedCategory) : true)
-  );
+  const filteredImages = images
+    .filter(
+      (image) =>
+        (searchTerm
+          ? image.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+          : true) &&
+        (selectedCategory ? image.categories.includes(selectedCategory) : true)
+    )
+    .sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.itemName.localeCompare(b.itemName);
+      } else if (sortOrder === "desc") {
+        return b.itemName.localeCompare(a.itemName);
+      }
+      return 0;
+    });
 
   const isNoImagesAvailable =
     filteredImages.length === 0 && hasSearchedOrFiltered;

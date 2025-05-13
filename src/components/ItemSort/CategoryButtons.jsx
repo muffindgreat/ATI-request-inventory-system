@@ -43,12 +43,15 @@ const CategoryDropdown = ({ onSelect }) => {
     const category = event.target.value;
     setSelectedCategory(category);
 
-    // Update the query parameter in the URL
+    // Preserve the search query parameter while updating the category query
+    const currentSearch = searchParams.get("search");
     if (category === "All Categories") {
       searchParams.delete("category");
     } else {
       searchParams.set("category", category);
     }
+    if (currentSearch) searchParams.set("search", currentSearch);
+
     setSearchParams(searchParams);
 
     onSelect(category === "All Categories" ? null : category);
