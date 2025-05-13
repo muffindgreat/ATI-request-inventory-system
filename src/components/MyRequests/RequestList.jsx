@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -6,19 +7,34 @@ import {
   Stack,
   Chip,
   Divider,
+  Button,
 } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"; // ✅ Import Expand Icon
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneIcon from "@mui/icons-material/Done";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import Tooltip from "@mui/material/Tooltip";
 import { Link } from "react-router-dom";
+import ModalComponent from "../ModalComponent/ModalComponent";
+import TextField from "@mui/material/TextField";
+import { useState, useEffect } from "react"; // Combined import
+import { styled } from "@mui/material/styles";
+import Rating from "@mui/material/Rating";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import Checkbox from "@mui/material/Checkbox";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../config/firebaseConfig";
 
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
-
-import { useState, useEffect } from "react";
 
 export default function RequestList({ items, tabIndex }) {
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -330,7 +346,122 @@ function formatDate(dateString) {
     day: "numeric", // 18
   }).format(date);
 }
+
+const StyledRating = styled(Rating)(({ theme }) => ({
+  "& .MuiRating-iconEmpty .MuiSvgIcon-root": {
+    color: theme.palette.action.disabled,
+  },
+}));
+
+const customIcons = {
+  1: {
+    icon: <SentimentVeryDissatisfiedIcon color="error" />, // Icon for "Poor"
+    label: "Poor",
+  },
+  2: {
+    icon: <SentimentDissatisfiedIcon color="error" />, // Icon for "Fair"
+    label: "Fair",
+  },
+  3: {
+    icon: <SentimentSatisfiedIcon color="warning" />, // Icon for "Satisfactory"
+    label: "Satisfactory",
+  },
+  4: {
+    icon: <SentimentSatisfiedAltIcon color="success" />, // Icon for "Very Satisfactory"
+    label: "Very Satisfactory",
+  },
+  5: {
+    icon: <SentimentVerySatisfiedIcon color="success" />, // Icon for "Excellent"
+    label: "Excellent",
+  },
+};
+
+function IconContainer(props) {
+  const { value, ...other } = props;
+  return <span {...other}>{customIcons[value].icon}</span>;
+} // Ensure this closing bracket is present
 function RequestDetails({ item }) {
+  const [openModal, setOpenModal] = useState(false); // State to control modal visibility
+  const [feedback, setFeedback] = useState("");
+  const [feedbackResearch, setFeedbackResearch] = useState(""); // State for research feedback
+  const [feedbackPurpose, setFeedbackPurpose] = useState("");
+  const [serviceRating, setServiceRating] = useState(0);
+  const [courtesyRating, setCourtesyRating] = useState(0);
+  const [timelinessRating, setTimelinessRating] = useState(""); // Default value
+  const [researchChecked, setResearchChecked] = useState(false); // Default unchecked
+  const [purposeChecked, setPurposeChecked] = useState(false); // Default unchecked
+  const [respondentName, setRespondentName] = useState(""); // Default empty
+  const [respondentAgency, setRespondentAgency] = useState("");
+  const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    // Reset all input fields
+    setRespondentName(""); // Clear name field
+    setRespondentAgency(""); // Clear agency/school field
+    setFeedbackResearch(""); // Clear research feedback
+    setFeedbackPurpose(""); // Clear purpose feedback
+    setServiceRating(0); // Reset service rating
+    setCourtesyRating(0); // Reset courtesy rating
+    setTimelinessRating(""); // Reset timeliness rating
+    setFeedback(""); // Clear comments
+
+    // Close the modal
+    setOpenModal(false);
+  };
+
+  const handleSubmitFeedback = async () => {
+    // Validation for required fields
+    if (
+      !feedbackResearch.trim() ||
+      !feedbackPurpose.trim() ||
+      !timelinessRating ||
+      !serviceRating ||
+      !courtesyRating
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    // Prepare feedback data
+    const feedbackData = {
+      respondentName, // Optional
+      respondentAgency, // Optional
+      feedbackResearch, // Required
+      feedbackPurpose, // Required
+      serviceRating, // Required
+      courtesyRating, // Required
+      timelinessRating, // Required
+      feedback, // Optional
+    };
+
+    try {
+      // Dynamically update the document in the "Request" collection
+      const requestDocRef = doc(db, "Request", item.id); // Use dynamic ID from item
+      await updateDoc(requestDocRef, { rate: feedbackData });
+
+      alert("Feedback submitted successfully!");
+      setIsFeedbackSubmitted(true); // Disable the feedback button
+      handleCloseModal(); // Close the modal
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("Failed to submit feedback. Please try again.");
+    }
+
+    // Reset form fields
+    setRespondentName(""); // Reset name field
+    setRespondentAgency(""); // Reset agency/school field
+    setFeedbackResearch(""); // Clear the research feedback input
+    setFeedbackPurpose(""); // Clear the purpose feedback input
+    setServiceRating(null); // Reset the rating
+    setCourtesyRating(null); // Reset the courtesy rating
+    setTimelinessRating(""); // Reset timeliness
+    setFeedback(""); // Clear comments
+  };
+
   const statusStages = [
     {
       key: "date",
@@ -390,6 +521,150 @@ function RequestDetails({ item }) {
       <Typography variant="body2">
         <strong>Program:</strong> {item.program || "Not specified"}
       </Typography>
+
+      {/* Feedback Button */}
+      {item.status === "Received" && (
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={handleOpenModal}
+          disabled={isFeedbackSubmitted} // Disable the button if feedback is submitted
+        >
+          {isFeedbackSubmitted ? "Feedback Submitted" : "Provide Feedback"}
+        </Button>
+      )}
+
+      {/* Feedback Modal */}
+      <ModalComponent
+        open={openModal}
+        handleClose={handleCloseModal}
+        title="Feedback Form"
+        content={
+          <div sx={{ my: 10 }}>
+            <Typography variant="body1" sx={{ mt: 2, mb: 1 }}>
+              Respondent's Contact Information: (Optional)
+            </Typography>
+            <TextField
+              label="Name"
+              value={respondentName}
+              onChange={(e) => setRespondentName(e.target.value)} // Update state
+              placeholder="Enter your name"
+              fullWidth
+              variant="outlined"
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Agency/School"
+              value={respondentAgency}
+              onChange={(e) => setRespondentAgency(e.target.value)} // Update state
+              placeholder="Enter your agency or school"
+              fullWidth
+              variant="outlined"
+              sx={{ mb: 2 }}
+            />
+
+            <Typography variant="body1" sx={{ mb: 1, mt: 1 }}>
+              Please provide your feedback for this request:
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 1, mt: 1 }}>
+              Research on (Topic)
+            </Typography>
+            <TextField
+              value={feedbackResearch}
+              onChange={(e) => setFeedbackResearch(e.target.value)}
+              rows="4"
+              placeholder="Enter your feedback here..."
+              fullWidth
+              variant="standard"
+              required
+            />
+
+            <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
+              Avail information material distributed by ATI Purpose:
+            </Typography>
+            <TextField
+              value={feedbackPurpose}
+              onChange={(e) => setFeedbackPurpose(e.target.value)}
+              rows="4"
+              placeholder="Enter your feedback here..."
+              fullWidth
+              variant="standard"
+              required
+            />
+
+            <Typography variant="body1" sx={{ mb: 1, mt: 3 }}>
+              Quality of service
+            </Typography>
+            <StyledRating
+              name="highlight-selected-only"
+              value={serviceRating}
+              onChange={(event, newValue) => setServiceRating(newValue)} // Update rating state
+              IconContainerComponent={IconContainer}
+              getLabelText={(value) => customIcons[value]?.label}
+              highlightSelectedOnly
+            />
+
+            <Typography variant="body1" sx={{ mt: 1 }}>
+              Timeliness of service
+            </Typography>
+            <RadioGroup
+              row
+              value={timelinessRating}
+              onChange={(e) => setTimelinessRating(e.target.value)} // Update timeliness state
+              sx={{ gap: 1 }} // Add spacing between radio buttons
+            >
+              <FormControlLabel
+                value="On time"
+                control={<Radio />}
+                label="On time"
+              />
+              <FormControlLabel value="Late" control={<Radio />} label="Late" />
+            </RadioGroup>
+
+            <Typography variant="body1" sx={{ mb: 1, mt: 1 }}>
+              Courtesy of service
+            </Typography>
+            <StyledRating
+              name="courtesy-rating"
+              value={courtesyRating}
+              onChange={(event, newValue) => setCourtesyRating(newValue)} // Update courtesy rating state
+              IconContainerComponent={IconContainer}
+              getLabelText={(value) => customIcons[value]?.label}
+              highlightSelectedOnly
+            />
+            <Typography variant="body1" sx={{ mt: 2, mb: 1 }}>
+              Do you have any comments/Suggestions on improving our service
+              delivery? If yes, please state below
+            </Typography>
+            <TextField
+              multiline
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              rows={4}
+              placeholder="Write your comments or suggestions here..."
+              fullWidth
+            />
+
+            <div style={{ marginTop: "16px", textAlign: "right" }}>
+              <Button
+                variant="outlined"
+                sx={{ mr: 2 }}
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmitFeedback}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        }
+      />
     </Box>
   );
 }
