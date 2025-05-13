@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom"; // Import hooks from react-router-dom
 import {
   Box,
   Stack,
@@ -20,6 +21,9 @@ const SearchFilterBar = () => {
   const [navbarHeight, setNavbarHeight] = useState(70);
   const [images, setImages] = useState([]); // Add images state
 
+  const [searchParams, setSearchParams] = useSearchParams(); // Hook to manage query params
+  const navigate = useNavigate(); // Hook to navigate programmatically
+
   useEffect(() => {
     const navbar = document.getElementById("navbar");
     if (navbar) {
@@ -29,7 +33,24 @@ const SearchFilterBar = () => {
     }
   }, [isMobile]);
 
-  const handleSearchChange = (event) => setSearchTerm(event.target.value);
+  // Sync searchTerm with the query parameter
+  useEffect(() => {
+    const query = searchParams.get("search") || "";
+    setSearchTerm(query);
+  }, [searchParams]);
+
+  const handleSearchChange = (event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+
+    // Update the query parameter in the URL
+    if (value) {
+      setSearchParams({ search: value });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   const handleFilterChange = (order) => setSortOrder(order); // Update sorting order
   const handleCategorySelect = (category) => setSelectedCategory(category);
 

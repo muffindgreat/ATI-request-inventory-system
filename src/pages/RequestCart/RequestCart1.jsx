@@ -57,6 +57,9 @@ export default function ReqCart1() {
                         quantity: matchingCartItem
                           ? matchingCartItem.quantity
                           : 1,
+                        localQuantity: matchingCartItem
+                          ? matchingCartItem.quantity
+                          : 1, // Initialize localQuantity
                         status: itemData.status,
                         isDisplay:
                           itemData.isDisplay !== undefined
@@ -104,10 +107,15 @@ export default function ReqCart1() {
   const handleQuantityChange = (id, newQuantity) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
+        item.id === id
+          ? {
+              ...item,
+              localQuantity: Math.max(1, newQuantity), // Update local quantity immediately
+            }
+          : item
       )
     );
-    setPendingUpdates((prev) => ({ ...prev, [id]: true }));
+    setPendingUpdates((prev) => ({ ...prev, [id]: true })); // Mark as pending update
   };
 
   const handleConfirmQuantityChange = async (id, newQuantity) => {
@@ -133,7 +141,13 @@ export default function ReqCart1() {
 
         setCartItems((prev) =>
           prev.map((item) =>
-            item.id === id ? { ...item, quantity: newQuantity } : item
+            item.id === id
+              ? {
+                  ...item,
+                  quantity: newQuantity, // Update database quantity
+                  localQuantity: newQuantity, // Sync local quantity with database
+                }
+              : item
           )
         );
 
@@ -173,6 +187,15 @@ export default function ReqCart1() {
     } catch (error) {
       console.error("Error removing items:", error);
     }
+  };
+
+  const toggleSelectItem = (id) => {
+    setSelectedItems(
+      (prev) =>
+        prev.includes(id)
+          ? prev.filter((item) => item !== id) // Deselect item
+          : [...prev, id] // Select item
+    );
   };
 
   return (
@@ -215,18 +238,12 @@ export default function ReqCart1() {
             cartItems={cartItems}
             selectedItems={selectedItems}
             setSelectedItems={setSelectedItems}
-            toggleSelectItem={(id) =>
-              setSelectedItems((prev) =>
-                prev.includes(id)
-                  ? prev.filter((item) => item !== id)
-                  : [...prev, id]
-              )
-            }
-            handleQuantityChange={handleQuantityChange}
+            toggleSelectItem={toggleSelectItem}
+            handleQuantityChange={handleQuantityChange} // Pass handleQuantityChange
             handleConfirmQuantityChange={handleConfirmQuantityChange}
             pendingUpdates={pendingUpdates}
             handleDelete={handleDelete}
-            loading={loading} // Pass loading state to CartItemList
+            loading={loading}
           />
         </Card>
         <Collapse
@@ -239,8 +256,9 @@ export default function ReqCart1() {
         >
           {selectedItems.length > 0 && (
             <CartOrderSummary
-              cartItems={cartItems}
+              cartItems={cartItems} // Pass updated cartItems
               selectedItems={selectedItems}
+              pendingUpdates={pendingUpdates} // Pass pendingUpdates
             />
           )}
         </Collapse>

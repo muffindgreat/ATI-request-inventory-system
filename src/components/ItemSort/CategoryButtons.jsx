@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { MenuItem, Select, FormControl, useMediaQuery } from "@mui/material";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
+import { useSearchParams } from "react-router-dom"; // Import useSearchParams
 
 const CategoryDropdown = ({ onSelect }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams(); // Hook to manage query params
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "Category"), (snapshot) => {
@@ -31,9 +33,24 @@ const CategoryDropdown = ({ onSelect }) => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // Sync selected category with the query parameter
+    const categoryFromParams = searchParams.get("category") || "All Categories";
+    setSelectedCategory(categoryFromParams);
+  }, [searchParams]);
+
   const handleChange = (event) => {
     const category = event.target.value;
     setSelectedCategory(category);
+
+    // Update the query parameter in the URL
+    if (category === "All Categories") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", category);
+    }
+    setSearchParams(searchParams);
+
     onSelect(category === "All Categories" ? null : category);
   };
 

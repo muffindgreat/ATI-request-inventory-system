@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Card,
@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
-import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 
@@ -22,30 +21,50 @@ const CartItemList = ({
   selectedItems,
   setSelectedItems,
   toggleSelectItem,
-  handleQuantityChange,
   handleConfirmQuantityChange,
+  handleQuantityChange,
   handleDelete,
-  loading, // Assuming 'loading' is passed as a prop
+  loading,
 }) => {
   const [quantityInputs, setQuantityInputs] = useState({});
-  const [pendingUpdates, setPendingUpdates] = useState({});
+  const debounceTimers = useRef({}); // Use a ref to store timers
 
   const handleInputChange = (id, value) => {
     const numericValue = Number(value);
     if (!isNaN(numericValue)) {
-      const clampedValue = Math.min(99999, Math.max(1, numericValue));
-
+      const clampedValue = Math.min(99999, Math.max(0, numericValue)); // Allow 0 as the minimum value
       setQuantityInputs((prev) => ({ ...prev, [id]: clampedValue }));
-      setPendingUpdates((prev) => ({ ...prev, [id]: true }));
+
+      // Call handleQuantityChange to update localQuantity immediately
+      handleQuantityChange(id, clampedValue);
+
+      // Uncheck the checkbox if quantity is set to 0
+      if (clampedValue === 0 && selectedItems.includes(id)) {
+        setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+      }
+
+      // Clear any existing timer for this item
+      if (debounceTimers.current[id]) {
+        clearTimeout(debounceTimers.current[id]);
+      }
+
+      // Set a new timer for 3 seconds to confirm the change
+      debounceTimers.current[id] = setTimeout(() => {
+        handleConfirmQuantityChange(id, clampedValue); // Update the database
+        delete debounceTimers.current[id]; // Clean up the timer after execution
+      }, 3000);
     }
   };
 
-  const handleConfirmChange = async (id) => {
-    if (quantityInputs[id] !== undefined) {
-      await handleConfirmQuantityChange(id, quantityInputs[id]);
-      setPendingUpdates((prev) => ({ ...prev, [id]: false }));
-    }
-  };
+  useEffect(() => {
+    // Cleanup timers when the component unmounts
+    return () => {
+      Object.values(debounceTimers.current).forEach((timer) => {
+        clearTimeout(timer);
+      });
+      debounceTimers.current = {}; // Ensure all timers are cleared
+    };
+  }, []);
 
   const handleRemoveItem = (itemId) => {
     handleDelete(itemId);
@@ -58,12 +77,9 @@ const CartItemList = ({
     <CardContent
       sx={{
         padding: 0,
-        // "&:last-child": {
-        //   paddingBottom: 0,
-        // },
       }}
     >
-      {loading ? ( // Show loading spinner when loading is true
+      {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
           <CircularProgress />
         </Box>
@@ -95,7 +111,9 @@ const CartItemList = ({
                   .filter(
                     (item) =>
                       item.status !== "Unavailable" &&
-                      (item.isDisplay === undefined || item.isDisplay === true)
+                      (item.isDisplay === undefined ||
+                        item.isDisplay === true) &&
+                      (quantityInputs[item.id] ?? item.quantity) > 0 // Exclude items with quantity 0
                   )
                   .map((item) => item.id);
 
@@ -121,14 +139,17 @@ const CartItemList = ({
                   cartItems.filter(
                     (item) =>
                       item.status !== "Unavailable" &&
-                      (item.isDisplay === undefined || item.isDisplay === true)
+                      (item.isDisplay === undefined ||
+                        item.isDisplay === true) &&
+                      (quantityInputs[item.id] ?? item.quantity) > 0 // Exclude items with quantity 0
                   ).length > 0 &&
                   cartItems
                     .filter(
                       (item) =>
                         item.status !== "Unavailable" &&
                         (item.isDisplay === undefined ||
-                          item.isDisplay === true)
+                          item.isDisplay === true) &&
+                        (quantityInputs[item.id] ?? item.quantity) > 0 // Exclude items with quantity 0
                     )
                     .every((item) => selectedItems.includes(item.id))
                 }
@@ -193,7 +214,9 @@ const CartItemList = ({
                   checked={selectedItems.includes(item.id)}
                   disabled={
                     item.status === "Unavailable" ||
-                    (item.isDisplay !== undefined && item.isDisplay === false)
+                    (item.isDisplay !== undefined &&
+                      item.isDisplay === false) ||
+                    (quantityInputs[item.id] ?? item.quantity) === 0 // Disable if quantity is 0
                   }
                   onChange={() => toggleSelectItem(item.id)}
                 />
@@ -283,17 +306,22 @@ const CartItemList = ({
 
                         {/* Quantity Input */}
                         <TextField
-                          value={quantityInputs[item.id] ?? item.quantity}
+                          value={
+                            quantityInputs[item.id] ??
+                            item.localQuantity ??
+                            item.quantity
+                          }
                           onChange={(e) =>
                             handleInputChange(item.id, e.target.value)
                           }
+                          onFocus={(e) => e.target.select()} // Select the value when the field is focused
                           type="number"
                           disabled={
                             item.status === "Unavailable" ||
                             (item.isDisplay !== undefined &&
                               item.isDisplay === false)
                           }
-                          inputProps={{ min: 1, max: 99999, maxLength: 5 }}
+                          inputProps={{ min: 0, max: 99999, maxLength: 5 }} // Allow 0 as the minimum value
                           variant="standard"
                           size="small"
                           sx={{
@@ -356,17 +384,6 @@ const CartItemList = ({
                         >
                           <AddIcon fontSize="small" />
                         </IconButton>
-
-                        {/* Confirmation Check Button */}
-                        {pendingUpdates[item.id] && (
-                          <IconButton
-                            size="small"
-                            sx={{ color: "blue", padding: "2px", ml: 1 }}
-                            onClick={() => handleConfirmChange(item.id)}
-                          >
-                            <CheckIcon fontSize="small" />
-                          </IconButton>
-                        )}
                       </Box>
                     </Box>
                   </Box>
@@ -385,7 +402,6 @@ const CartItemList = ({
         </>
       )}
     </CardContent>
-    
   );
 };
 

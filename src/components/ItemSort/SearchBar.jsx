@@ -1,8 +1,18 @@
-import { TextField, InputAdornment, useMediaQuery } from "@mui/material";
+import {
+  TextField,
+  InputAdornment,
+  IconButton,
+  useMediaQuery,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const SearchBar = ({ value, onChange }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
+
+  const handleClear = () => {
+    onChange({ target: { value: "" } });
+  };
 
   return (
     <TextField
@@ -11,6 +21,7 @@ const SearchBar = ({ value, onChange }) => {
       size="small"
       value={value}
       onChange={onChange}
+      autoComplete="off"
       fullWidth={isMobile}
       sx={{
         bgcolor: "white",
@@ -29,6 +40,13 @@ const SearchBar = ({ value, onChange }) => {
         startAdornment: (
           <InputAdornment position="start">
             <SearchIcon />
+          </InputAdornment>
+        ),
+        endAdornment: value && (
+          <InputAdornment position="end">
+            <IconButton onClick={handleClear} edge="end">
+              <ClearIcon />
+            </IconButton>
           </InputAdornment>
         ),
       }}

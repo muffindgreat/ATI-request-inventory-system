@@ -41,6 +41,8 @@ const MatsReq = () => {
   const location = useLocation();
   const { selectedItems } = location.state || {};
 
+  console.log(selectedItems);
+
   // Initial form state
   const [formData, setFormData] = useState({
     reqNo: "AUTO-12345",
@@ -54,6 +56,7 @@ const MatsReq = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [openDatePicker, setOpenDatePicker] = useState(false);
   const [availableEmails, setAvailableEmails] = useState([]);
   const showToast = useToast();
 
@@ -223,6 +226,15 @@ const MatsReq = () => {
     }
   };
 
+  const formattedDateNeeded = new Date(formData.dateNeeded).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+
   // Sends email notifications to admins using EmailJS
   const sendEmailsToAdmins = async (totalQuantity) => {
     for (const email of availableEmails) {
@@ -230,6 +242,7 @@ const MatsReq = () => {
         to_email: email,
         requestee: `${formData.firstName} ${formData.lastName}`,
         orders: formData.materialRequested,
+        dateNeeded: formattedDateNeeded,
         totalQuantity,
       };
 
@@ -323,6 +336,9 @@ const MatsReq = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label="Date Needed"
+                      open={openDatePicker}
+                      onOpen={() => setOpenDatePicker(true)}
+                      onClose={() => setOpenDatePicker(false)}
                       value={
                         formData.dateNeeded ? dayjs(formData.dateNeeded) : null
                       }
@@ -350,6 +366,10 @@ const MatsReq = () => {
                           required: true,
                           error: !!dateError,
                           helperText: dateError,
+                          inputProps: {
+                            readOnly: true, // This disables manual typing
+                            onClick: () => setOpenDatePicker(true),
+                          },
                         },
                       }}
                     />
