@@ -593,8 +593,9 @@ function RequestDetails({ item }) {
             />
 
             <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
-              Avail information material distributed by ATI Purpose*:
+              Avail information material distributed by ATI
             </Typography>
+            <Typography>Purpose:</Typography>
             <TextField
               value={feedbackPurpose}
               onChange={(e) => setFeedbackPurpose(e.target.value)}
