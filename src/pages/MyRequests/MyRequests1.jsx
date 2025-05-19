@@ -89,6 +89,7 @@ export default function MyRequests() {
               program: data.program || "",
               section: data.section || "",
               remarks: data.remarks || "",
+              rate: data.rate || undefined,
               materials,
             };
           })

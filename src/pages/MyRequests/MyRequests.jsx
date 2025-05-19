@@ -6,50 +6,59 @@ import {
   CardContent,
   CircularProgress,
 } from "@mui/material";
-import { auth, db } from "../../config/firebaseConfig";
+import { db } from "../../config/firebaseConfig";
 import {
   collection,
   query,
   where,
   doc,
   getDoc,
-  getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import useToast from "../../components/Toastify/useToast";
 
-import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import RequestList from "../../components/MyRequests/RequestList";
 import RequestTabs from "../../components/MyRequests/RequestTabs";
 import BackgroundImage from "../../components/UI/BackgroundImage";
 import CustomCardHeader from "../../components/UI/CustomCardHeader";
+import { useAuth } from "../../context/AuthContext";
 
 export default function MyRequests() {
   const [tabIndex, setTabIndex] = useState(0);
   const [allRequests, setAllRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { currentUser } = useAuth(); // Use AuthContext for the current user
   const showToast = useToast();
-  const handleChange = (event, newIndex) => setTabIndex(newIndex);
   const navigate = useNavigate();
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const q = query(
-            collection(db, "Request"),
-            where("email", "==", user.email)
-          );
-          const querySnapshot = await getDocs(q);
 
+  const handleChange = (event, newIndex) => setTabIndex(newIndex);
+
+  useEffect(() => {
+    if (!currentUser) {
+      showToast("Session expired. Please log in again.", "warning");
+      navigate("/login");
+      return;
+    }
+
+    const q = query(
+      collection(db, "Request"),
+      where("email", "==", currentUser.email)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      async (querySnapshot) => {
+        try {
           const fetchedRequests = await Promise.all(
             querySnapshot.docs.map(async (requestDoc) => {
               const data = requestDoc.data();
 
               const materials = await Promise.all(
                 (data.materialRequested || []).map(async (mat) => {
-                  const inventoryRef = doc(db, "Inventory", mat.itemID); // ✅ now this won't break
+                  const inventoryRef = doc(db, "Inventory", mat.itemID);
                   const inventorySnap = await getDoc(inventoryRef);
                   const inventoryData = inventorySnap.exists()
                     ? inventorySnap.data()
@@ -90,6 +99,7 @@ export default function MyRequests() {
                 program: data.program || "",
                 section: data.section || "",
                 remarks: data.adminRemarks || "",
+                rate: data.rate || undefined,
                 materials,
               };
             })
@@ -110,15 +120,19 @@ export default function MyRequests() {
         } finally {
           setLoading(false);
         }
-      } else {
-        showToast("Session expired. Please log in again.", "warning");
+      },
+      (error) => {
+        console.error("Error fetching requests:", error);
+        showToast(
+          "Failed to fetch your requests. Please try again later.",
+          "error"
+        );
         setLoading(false);
-        navigate("/login");
       }
-    });
+    );
 
     return () => unsubscribe();
-  }, []);
+  }, [currentUser]);
 
   const pendingRequests = allRequests.filter((req) => req.status === "Pending");
   const processedRequests = allRequests.filter(

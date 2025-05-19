@@ -33,6 +33,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Checkbox from "@mui/material/Checkbox";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
+import useToast from "../../components/Toastify/useToast";
 
 const formatQuantity = (num) => new Intl.NumberFormat().format(num);
 
@@ -379,7 +380,8 @@ const customIcons = {
 function IconContainer(props) {
   const { value, ...other } = props;
   return <span {...other}>{customIcons[value].icon}</span>;
-} // Ensure this closing bracket is present
+}
+
 function RequestDetails({ item }) {
   const [openModal, setOpenModal] = useState(false); // State to control modal visibility
   const [feedback, setFeedback] = useState("");
@@ -393,10 +395,13 @@ function RequestDetails({ item }) {
   const [respondentName, setRespondentName] = useState(""); // Default empty
   const [respondentAgency, setRespondentAgency] = useState("");
   const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
 
   const handleOpenModal = () => {
     setOpenModal(true);
   };
+
+  const showToast = useToast();
 
   const handleCloseModal = () => {
     // Reset all input fields
@@ -422,7 +427,7 @@ function RequestDetails({ item }) {
       !serviceRating ||
       !courtesyRating
     ) {
-      alert("Please fill in all required fields.");
+      showToast("Please fill in all required fields.", "error");
       return;
     }
 
@@ -436,19 +441,22 @@ function RequestDetails({ item }) {
       courtesyRating, // Required
       timelinessRating, // Required
       feedback, // Optional
+      date: new Date().toISOString(), // Add current timestamp
     };
 
     try {
+      setIsSubmitting(true); // Set loading state to true
       // Dynamically update the document in the "Request" collection
       const requestDocRef = doc(db, "Request", item.id); // Use dynamic ID from item
       await updateDoc(requestDocRef, { rate: feedbackData });
-
-      alert("Feedback submitted successfully!");
+      showToast("Feedback submitted successfully!", "success");
       setIsFeedbackSubmitted(true); // Disable the feedback button
       handleCloseModal(); // Close the modal
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("Failed to submit feedback. Please try again.");
+      showToast("Failed to submit feedback. Please try again.", "error");
+    } finally {
+      setIsSubmitting(false); // Reset loading state
     }
 
     // Reset form fields
@@ -522,6 +530,8 @@ function RequestDetails({ item }) {
         <strong>Program:</strong> {item.program || "Not specified"}
       </Typography>
 
+      {console.log(item)}
+
       {/* Feedback Button */}
       {item.status === "Received" && (
         <Button
@@ -529,9 +539,9 @@ function RequestDetails({ item }) {
           color="primary"
           sx={{ mt: 2 }}
           onClick={handleOpenModal}
-          disabled={isFeedbackSubmitted} // Disable the button if feedback is submitted
+          disabled={item.rate !== undefined}
         >
-          {isFeedbackSubmitted ? "Feedback Submitted" : "Provide Feedback"}
+          {item.rate !== undefined ? "Feedback Submitted" : "Provide Feedback"}
         </Button>
       )}
 
@@ -547,6 +557,7 @@ function RequestDetails({ item }) {
             </Typography>
             <TextField
               label="Name"
+              autoComplete="off"
               value={respondentName}
               onChange={(e) => setRespondentName(e.target.value)} // Update state
               placeholder="Enter your name"
@@ -556,6 +567,7 @@ function RequestDetails({ item }) {
             />
             <TextField
               label="Agency/School"
+              autoComplete="off"
               value={respondentAgency}
               onChange={(e) => setRespondentAgency(e.target.value)} // Update state
               placeholder="Enter your agency or school"
@@ -568,12 +580,12 @@ function RequestDetails({ item }) {
               Please provide your feedback for this request:
             </Typography>
             <Typography variant="body1" sx={{ mb: 1, mt: 1 }}>
-              Research on (Topic)
+              Research on (Topic)*
             </Typography>
             <TextField
               value={feedbackResearch}
               onChange={(e) => setFeedbackResearch(e.target.value)}
-              rows="4"
+              autoComplete="off"
               placeholder="Enter your feedback here..."
               fullWidth
               variant="standard"
@@ -581,12 +593,12 @@ function RequestDetails({ item }) {
             />
 
             <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
-              Avail information material distributed by ATI Purpose:
+              Avail information material distributed by ATI Purpose*:
             </Typography>
             <TextField
               value={feedbackPurpose}
               onChange={(e) => setFeedbackPurpose(e.target.value)}
-              rows="4"
+              autoComplete="off"
               placeholder="Enter your feedback here..."
               fullWidth
               variant="standard"
@@ -594,7 +606,7 @@ function RequestDetails({ item }) {
             />
 
             <Typography variant="body1" sx={{ mb: 1, mt: 3 }}>
-              Quality of service
+              Quality of service*
             </Typography>
             <StyledRating
               name="highlight-selected-only"
@@ -606,7 +618,7 @@ function RequestDetails({ item }) {
             />
 
             <Typography variant="body1" sx={{ mt: 1 }}>
-              Timeliness of service
+              Timeliness of service*
             </Typography>
             <RadioGroup
               row
@@ -623,7 +635,7 @@ function RequestDetails({ item }) {
             </RadioGroup>
 
             <Typography variant="body1" sx={{ mb: 1, mt: 1 }}>
-              Courtesy of service
+              Courtesy of service*
             </Typography>
             <StyledRating
               name="courtesy-rating"
@@ -642,6 +654,7 @@ function RequestDetails({ item }) {
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               rows={4}
+              autoComplete="off"
               placeholder="Write your comments or suggestions here..."
               fullWidth
             />
@@ -651,6 +664,7 @@ function RequestDetails({ item }) {
                 variant="outlined"
                 sx={{ mr: 2 }}
                 onClick={handleCloseModal}
+                disabled={isSubmitting} // Disable Cancel button while submitting
               >
                 Cancel
               </Button>
@@ -658,8 +672,10 @@ function RequestDetails({ item }) {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmitFeedback}
+                loading={isSubmitting}
+                loadingPosition="start"
               >
-                Submit
+                {isSubmitting ? "Submitting..." : "Submit"}{" "}
               </Button>
             </div>
           </div>
