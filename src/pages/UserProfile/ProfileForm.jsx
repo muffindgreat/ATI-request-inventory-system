@@ -6,7 +6,7 @@ const fieldLabels = {
   lastName: "Last Name",
   email: "Email",
   designation: "Designation",
-  section: "Section",
+  section: "Section/Office",
   phoneNumber: "Phone Number",
 };
 
