@@ -253,7 +253,7 @@ export default function CartOrderSummary({
         message={
           <>
             <Typography>
-              Are you sure you want to proceed to checkout with the following
+              Are you sure you want to proceed to checkout the following
               items?
             </Typography>
             <ul>
