@@ -396,6 +396,8 @@ function RequestDetails({ item }) {
   const [respondentAgency, setRespondentAgency] = useState("");
   const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
+  const [serviceHover, setServiceHover] = useState(-1);
+  const [courtesyHover, setCourtesyHover] = useState(-1);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -421,8 +423,9 @@ function RequestDetails({ item }) {
   const handleSubmitFeedback = async () => {
     // Validation for required fields
     if (
-      !feedbackResearch.trim() ||
-      !feedbackPurpose.trim() ||
+      // Remove feedbackResearch and feedbackPurpose from required validation
+      //!feedbackResearch.trim() ||
+      //!feedbackPurpose.trim() ||
       !timelinessRating ||
       !serviceRating ||
       !courtesyRating
@@ -435,8 +438,8 @@ function RequestDetails({ item }) {
     const feedbackData = {
       respondentName, // Optional
       respondentAgency, // Optional
-      feedbackResearch, // Required
-      feedbackPurpose, // Required
+      feedbackResearch, // Optional
+      feedbackPurpose, // Optional
       serviceRating, // Required
       courtesyRating, // Required
       timelinessRating, // Required
@@ -580,7 +583,7 @@ function RequestDetails({ item }) {
               Please provide your feedback for this request:
             </Typography>
             <Typography variant="body1" sx={{ mb: 1, mt: 1 }}>
-              Research on (Topic)*
+              Research on (Topic)
             </Typography>
             <TextField
               value={feedbackResearch}
@@ -593,7 +596,7 @@ function RequestDetails({ item }) {
             />
 
             <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
-              Avail information material distributed by ATI
+              Avail information material distributed by ATI Purpose:
             </Typography>
             <Typography>Purpose:</Typography>
             <TextField
@@ -612,11 +615,21 @@ function RequestDetails({ item }) {
             <StyledRating
               name="highlight-selected-only"
               value={serviceRating}
-              onChange={(event, newValue) => setServiceRating(newValue)} // Update rating state
+              onChange={(event, newValue) => setServiceRating(newValue)}
               IconContainerComponent={IconContainer}
               getLabelText={(value) => customIcons[value]?.label}
               highlightSelectedOnly
+              onChangeActive={(event, newHover) => setServiceHover(newHover)}
             />
+            {(serviceHover !== -1 || serviceRating !== null) && (
+              <Typography variant="caption" sx={{ ml: 1 }}>
+                {
+                  customIcons[
+                    serviceHover !== -1 ? serviceHover : serviceRating
+                  ]?.label
+                }
+              </Typography>
+            )}
 
             <Typography variant="body1" sx={{ mt: 1 }}>
               Timeliness of service*
@@ -641,11 +654,21 @@ function RequestDetails({ item }) {
             <StyledRating
               name="courtesy-rating"
               value={courtesyRating}
-              onChange={(event, newValue) => setCourtesyRating(newValue)} // Update courtesy rating state
+              onChange={(event, newValue) => setCourtesyRating(newValue)}
               IconContainerComponent={IconContainer}
               getLabelText={(value) => customIcons[value]?.label}
               highlightSelectedOnly
+              onChangeActive={(event, newHover) => setCourtesyHover(newHover)}
             />
+            {(courtesyHover !== -1 || courtesyRating !== null) && (
+              <Typography variant="caption" sx={{ ml: 1 }}>
+                {
+                  customIcons[
+                    courtesyHover !== -1 ? courtesyHover : courtesyRating
+                  ]?.label
+                }
+              </Typography>
+            )}
             <Typography variant="body1" sx={{ mt: 2, mb: 1 }}>
               Do you have any comments/Suggestions on improving our service
               delivery? If yes, please state below
