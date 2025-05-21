@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Container, CircularProgress, Button } from "@mui/material";
+import {
+  Grid,
+  Container,
+  CircularProgress,
+  Button,
+  useMediaQuery,
+} from "@mui/material";
 import { collection, onSnapshot } from "firebase/firestore"; // Use onSnapshot for real-time updates
 import ImageCard from "../Items/ImageCard";
 import { db } from "../../config/firebaseConfig";
+import { useTheme } from "@mui/material";
 
 const Library = ({
   selectedCategory,
@@ -13,6 +20,13 @@ const Library = ({
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(8); // Show 8 initially
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only("xs"));
+  const isSm = useMediaQuery(theme.breakpoints.only("sm"));
+  const isMd = useMediaQuery(theme.breakpoints.only("md"));
+  const isLg = useMediaQuery(theme.breakpoints.only("lg"));
+  const isXl = useMediaQuery(theme.breakpoints.only("xl"));
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -58,6 +72,14 @@ const Library = ({
     return () => unsubscribe();
   }, [db]);
 
+  useEffect(() => {
+    if (isXs) setVisibleCount(9);
+    else if (isSm) setVisibleCount(9);
+    else if (isMd) setVisibleCount(9);
+    else if (isLg) setVisibleCount(12);
+    else if (isXl) setVisibleCount(15);
+  }, [isXs, isSm, isMd, isLg, isXl]);
+
   if (loading) {
     return (
       <Container sx={{ pt: 3, textAlign: "center" }}>
@@ -97,7 +119,7 @@ const Library = ({
     <Container sx={{ pt: 3, textAlign: "center" }}>
       <Grid container spacing={2} justifyContent="center">
         {visibleImages.map((img) => (
-          <Grid item key={img.id} xs={4} sm={6} md={4} lg={3} xl={2.4}>
+          <Grid item key={img.id} xs={4} sm={4} md={4} lg={3} xl={2.4}>
             <ImageCard
               id={img.id}
               src={img.src || "https://via.placeholder.com/150"}
@@ -112,7 +134,11 @@ const Library = ({
       {/* Show More Button */}
       {visibleCount < filteredImages.length && (
         <Button
-          onClick={() => setVisibleCount((prev) => prev + 8)}
+          onClick={() =>
+            setVisibleCount((prev) =>
+              isXl ? prev + 15 : isLg ? prev + 12 : isSm ? prev + 9 : prev + 9
+            )
+          }
           variant="contained"
           sx={{
             mt: 3,
