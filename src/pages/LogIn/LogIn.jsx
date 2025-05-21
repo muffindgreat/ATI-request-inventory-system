@@ -126,7 +126,15 @@ export default function LogIn() {
           transform: { xs: "translateX(-50%)", md: "none" },
         }}
       >
-        <img src={logo} alt="Logo" style={{ width: 350 }} />
+        <img
+          sx={{
+            cursor: "pointer",
+          }}
+          src={logo}
+          alt="Logo"
+          style={{ width: 350 }}
+          onClick={() => navigate("/home")}
+        />
       </Box>
 
       <Container
