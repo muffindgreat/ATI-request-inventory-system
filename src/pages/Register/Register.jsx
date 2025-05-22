@@ -116,12 +116,13 @@ export default function Register() {
         }}
       >
         <img
+          sx={{
+            cursor: "pointer",
+          }}
           src={logo}
           alt="Logo"
-          style={{
-            width: "100%",
-            maxWidth: 350,
-          }}
+          style={{ width: 350 }}
+          onClick={() => navigate("/home")}
         />
       </Box>
 
