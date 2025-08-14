@@ -1,22 +1,53 @@
 import React from "react";
 import { CardActions, Button } from "@mui/material";
 
+const requiredFields = [
+  "firstName",
+  "lastName",
+  "email",
+  "designation",
+  "section",
+  "phoneNumber",
+];
+
 const ProfileActions = ({
   isEditing,
   handleSave,
   handleCancel,
   setIsEditing,
-}) => (
-  <CardActions sx={{ justifyContent: "flex-end", padding: 2 }}>
-    {isEditing ? (
-      <>
-        <Button
-          variant="outlined"
-          sx={{ borderRadius: 1, textTransform: "none" }}
-          onClick={handleCancel}
-        >
-          Cancel
-        </Button>
+  userData, // <-- add userData prop
+}) => {
+  // Check if any required field is empty
+  const hasEmptyField = requiredFields.some(
+    (key) => !userData || !userData[key]
+  );
+
+  return (
+    <CardActions sx={{ justifyContent: "flex-end", padding: 2 }}>
+      {isEditing ? (
+        <>
+          <Button
+            variant="outlined"
+            sx={{ borderRadius: 1, textTransform: "none" }}
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#2E7D32",
+              color: "white",
+              borderRadius: 1,
+              textTransform: "none",
+            }}
+            onClick={handleSave}
+            disabled={hasEmptyField} // <-- disable if any field is empty
+          >
+            Save
+          </Button>
+        </>
+      ) : (
         <Button
           variant="contained"
           sx={{
@@ -25,26 +56,13 @@ const ProfileActions = ({
             borderRadius: 1,
             textTransform: "none",
           }}
-          onClick={handleSave}
+          onClick={() => setIsEditing(true)}
         >
-          Save
+          Edit Profile
         </Button>
-      </>
-    ) : (
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: "#2E7D32",
-          color: "white",
-          borderRadius: 1,
-          textTransform: "none",
-        }}
-        onClick={() => setIsEditing(true)}
-      >
-        Edit Profile
-      </Button>
-    )}
-  </CardActions>
-);
+      )}
+    </CardActions>
+  );
+};
 
 export default ProfileActions;

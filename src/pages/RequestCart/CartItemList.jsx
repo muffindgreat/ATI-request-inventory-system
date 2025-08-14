@@ -32,7 +32,7 @@ const CartItemList = ({
   const handleInputChange = (id, value) => {
     const numericValue = Number(value);
     if (!isNaN(numericValue)) {
-      const clampedValue = Math.min(99999, Math.max(0, numericValue)); // Allow 0 as the minimum value
+      const clampedValue = Math.min(9999, Math.max(0, numericValue)); // Allow 0 as the minimum value
       setQuantityInputs((prev) => ({ ...prev, [id]: clampedValue }));
 
       // Call handleQuantityChange to update localQuantity immediately
@@ -272,118 +272,134 @@ const CartItemList = ({
                         {item.type || "Unknown"}
                       </Typography>
 
-                      {/* Quantity Controls */}
+                      {/* Quantity Controls & Stocks Info */}
                       <Box
                         sx={{
-                          display: "inline-flex",
+                          display: "flex",
                           alignItems: "center",
-                          backgroundColor: "#e0e0e0",
-                          borderRadius: "6px",
-                          padding: "1px 4px",
+                          gap: 2,
                           mt: 1,
                         }}
                       >
-                        <IconButton
-                          size="small"
-                          disabled={
-                            item.status === "Unavailable" ||
-                            (item.isDisplay !== undefined &&
-                              item.isDisplay === false)
-                          }
-                          sx={{
-                            color: "green",
-                            padding: "2px",
-                          }}
-                          onClick={() =>
-                            handleInputChange(
-                              item.id,
-                              (quantityInputs[item.id] ?? item.quantity) - 1
-                            )
-                          }
-                        >
-                          <RemoveIcon fontSize="small" />
-                        </IconButton>
-
-                        {/* Quantity Input */}
-                        <TextField
-                          value={
-                            quantityInputs[item.id] ??
-                            item.localQuantity ??
-                            item.quantity
-                          }
-                          onChange={(e) =>
-                            handleInputChange(item.id, e.target.value)
-                          }
-                          onFocus={(e) => e.target.select()} // Select the value when the field is focused
-                          type="number"
-                          disabled={
-                            item.status === "Unavailable" ||
-                            (item.isDisplay !== undefined &&
-                              item.isDisplay === false)
-                          }
-                          inputProps={{ min: 0, max: 99999, maxLength: 5 }} // Allow 0 as the minimum value
-                          variant="standard"
-                          size="small"
-                          sx={{
-                            width: "50px",
-                            textAlign: "center",
-                            padding: 0,
-                            userSelect: "none",
-                            pointerEvents:
-                              item.status === "Unavailable" ||
-                              (item.isDisplay !== undefined &&
-                                item.isDisplay === false)
-                                ? "none"
-                                : "auto",
-                            opacity:
-                              item.status === "Unavailable" ||
-                              (item.isDisplay !== undefined &&
-                                item.isDisplay === false)
-                                ? 0.5
-                                : 1,
-                            "& .MuiInputBase-root": {
-                              borderBottom: "none !important",
-                              padding: "0 !important",
-                              minHeight: "auto",
-                            },
-                            "& .MuiInput-underline:before, & .MuiInput-underline:after":
-                              {
-                                display: "none",
-                              },
-                            "& .MuiInputBase-input": {
-                              textAlign: "center",
-                              padding: "0 !important",
-                              fontSize: "0.85rem",
-                              MozAppearance: "textfield",
-                              "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
-                                {
-                                  WebkitAppearance: "none",
-                                  margin: 0,
+                        {/* Quantity Controls */}
+                        <div>
+                          <Box
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              backgroundColor: "#e0e0e0",
+                              borderRadius: "6px",
+                              padding: "1px 4px",
+                            }}
+                          >
+                            <IconButton
+                              size="small"
+                              disabled={
+                                item.status === "Unavailable" ||
+                                (item.isDisplay !== undefined &&
+                                  item.isDisplay === false)
+                              }
+                              sx={{
+                                color: "green",
+                                padding: "2px",
+                              }}
+                              onClick={() =>
+                                handleInputChange(
+                                  item.id,
+                                  (quantityInputs[item.id] ?? item.quantity) - 1
+                                )
+                              }
+                            >
+                              <RemoveIcon fontSize="small" />
+                            </IconButton>
+                            {/* Quantity Input */}
+                            <TextField
+                              value={
+                                quantityInputs[item.id] ??
+                                item.localQuantity ??
+                                item.quantity
+                              }
+                              onChange={(e) =>
+                                handleInputChange(item.id, e.target.value)
+                              }
+                              onFocus={(e) => e.target.select()} // Select the value when the field is focused
+                              type="number"
+                              disabled={
+                                item.status === "Unavailable" ||
+                                (item.isDisplay !== undefined &&
+                                  item.isDisplay === false)
+                              }
+                              inputProps={{ min: 0, max: 99999, maxLength: 5 }} // Allow 0 as the minimum value
+                              variant="standard"
+                              size="small"
+                              sx={{
+                                width: "50px",
+                                textAlign: "center",
+                                padding: 0,
+                                userSelect: "none",
+                                pointerEvents:
+                                  item.status === "Unavailable" ||
+                                  (item.isDisplay !== undefined &&
+                                    item.isDisplay === false)
+                                    ? "none"
+                                    : "auto",
+                                opacity:
+                                  item.status === "Unavailable" ||
+                                  (item.isDisplay !== undefined &&
+                                    item.isDisplay === false)
+                                    ? 0.5
+                                    : 1,
+                                "& .MuiInputBase-root": {
+                                  borderBottom: "none !important",
+                                  padding: "0 !important",
+                                  minHeight: "auto",
                                 },
-                            },
-                          }}
-                        />
-
-                        <IconButton
-                          size="small"
-                          disabled={
-                            item.status === "Unavailable" ||
-                            (item.isDisplay !== undefined &&
-                              item.isDisplay === false)
-                          }
-                          sx={{
-                            color: "green",
-                            padding: "2px",
-                          }}
-                          onClick={() =>
-                            handleInputChange(
-                              item.id,
-                              (quantityInputs[item.id] ?? item.quantity) + 1
-                            )
-                          }
+                                "& .MuiInput-underline:before, & .MuiInput-underline:after":
+                                  {
+                                    display: "none",
+                                  },
+                                "& .MuiInputBase-input": {
+                                  textAlign: "center",
+                                  padding: "0 !important",
+                                  fontSize: "0.85rem",
+                                  MozAppearance: "textfield",
+                                  "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                },
+                              }}
+                            />
+                            <IconButton
+                              size="small"
+                              disabled={
+                                item.status === "Unavailable" ||
+                                (item.isDisplay !== undefined &&
+                                  item.isDisplay === false)
+                              }
+                              sx={{
+                                color: "green",
+                                padding: "2px",
+                              }}
+                              onClick={() =>
+                                handleInputChange(
+                                  item.id,
+                                  (quantityInputs[item.id] ?? item.quantity) + 1
+                                )
+                              }
+                            >
+                              <AddIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        </div>
+                        {/* Stocks Info */}
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "gray", minWidth: "80px" }}
                         >
-                          <AddIcon fontSize="small" />
-                        </IconButton>
+                          Stocks: {item.stocks}
+                        </Typography>
                       </Box>
                     </Box>
                   </Box>

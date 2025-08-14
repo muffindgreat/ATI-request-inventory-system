@@ -78,12 +78,24 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => {
             variant="outlined"
             size="small"
             fullWidth
-            disabled={!isEditing || key === "email"} // Email is always disabled
-            error={key === "phoneNumber" && Boolean(phoneError)}
+            disabled={!isEditing || key === "email"}
+            error={
+              (key === "phoneNumber" && Boolean(phoneError)) ||
+              (isEditing && !finalUserData[key])
+            }
+            required
           />
           {key === "phoneNumber" && (
             <FormHelperText sx={{ color: "red", minHeight: "20px", mt: 0.5 }}>
-              {phoneError || " "}
+              {phoneError ||
+                (isEditing && !finalUserData[key]
+                  ? "This field is required."
+                  : " ")}
+            </FormHelperText>
+          )}
+          {key !== "phoneNumber" && isEditing && !finalUserData[key] && (
+            <FormHelperText sx={{ color: "red", minHeight: "20px", mt: 0.5 }}>
+              This field is required.
             </FormHelperText>
           )}
         </Box>

@@ -61,6 +61,7 @@ export default function ReqCart1() {
                           ? matchingCartItem.quantity
                           : 1, // Initialize localQuantity
                         status: itemData.status,
+                        stocks: itemData.quantity || 0,
                         isDisplay:
                           itemData.isDisplay !== undefined
                             ? itemData.isDisplay
