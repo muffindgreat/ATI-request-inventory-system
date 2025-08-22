@@ -15,12 +15,11 @@ const ProfileActions = ({
   handleSave,
   handleCancel,
   setIsEditing,
-  userData, // <-- add userData prop
+  userData,
 }) => {
-  // Check if any required field is empty
-  const hasEmptyField = requiredFields.some(
-    (key) => !userData || !userData[key]
-  );
+  const hasEmptyField =
+    requiredFields.some((key) => !userData || !userData[key]) ||
+    !/^\d{11}$/.test(userData?.phoneNumber || "");
 
   return (
     <CardActions sx={{ justifyContent: "flex-end", padding: 2 }}>
@@ -42,7 +41,7 @@ const ProfileActions = ({
               textTransform: "none",
             }}
             onClick={handleSave}
-            disabled={hasEmptyField} // <-- disable if any field is empty
+            disabled={hasEmptyField}
           >
             Save
           </Button>

@@ -179,6 +179,7 @@ const UserProfile = () => {
               handleSave={handleSave}
               handleCancel={handleCancel}
               setIsEditing={setIsEditing}
+              userData={userData}
             />
           </CardActions>
         </Card>

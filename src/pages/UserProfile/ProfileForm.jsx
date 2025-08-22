@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, TextField, FormHelperText } from "@mui/material";
+import { use } from "react";
 
 const fieldLabels = {
   firstName: "First Name",
@@ -36,22 +37,29 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => {
   const finalUserData = { ...defaultUserData, ...userData };
 
   // Function to allow only numeric input for the phone number field
+  // ✅ Allow only up to 11 digits and validate
   const handlePhoneNumberChange = (e) => {
     const { name, value } = e.target;
 
-    if (!/^\d*$/.test(value)) {
-      setPhoneError("Only numbers are allowed.");
-      return;
+    // Only keep digits, max 11
+    const numericValue = value.replace(/\D/g, "").slice(0, 11);
+
+    // Validation
+    let error = "";
+    if (numericValue.length > 0 && numericValue.length < 11) {
+      error = "Phone number must be exactly 11 digits.";
     }
 
-    if (value.length > 11) {
-      setPhoneError("Phone number must be exactly 11 digits.");
-      return;
-    }
-
-    setPhoneError(""); // Clear error when input is valid
-    handleInputChange({ target: { name, value } });
+    setPhoneError(error);
+    handleInputChange({ target: { name, value: numericValue } });
   };
+
+  // ✅ Clear error when not editing
+  useEffect(() => {
+    if (!isEditing) {
+      setPhoneError("");
+    }
+  }, [isEditing]);
 
   return (
     <Box
@@ -83,16 +91,18 @@ const ProfileForm = ({ userData, isEditing, handleInputChange }) => {
               (key === "phoneNumber" && Boolean(phoneError)) ||
               (isEditing && !finalUserData[key])
             }
+            autoComplete="off"
             required
           />
           {key === "phoneNumber" && (
             <FormHelperText sx={{ color: "red", minHeight: "20px", mt: 0.5 }}>
-              {phoneError ||
-                (isEditing && !finalUserData[key]
-                  ? "This field is required."
-                  : " ")}
+              {isEditing
+                ? phoneError ||
+                  (!finalUserData[key] ? "This field is required." : " ")
+                : " "}
             </FormHelperText>
           )}
+
           {key !== "phoneNumber" && isEditing && !finalUserData[key] && (
             <FormHelperText sx={{ color: "red", minHeight: "20px", mt: 0.5 }}>
               This field is required.
